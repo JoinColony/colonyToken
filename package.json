@@ -1,0 +1,25 @@
+{
+  "name": "colony-token",
+  "version": "0.0.1",
+  "description": "Colony Token and vesting contracts",
+  "author": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoinColony/colonyToken.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoinColony/colonyToken/issues"
+  },
+  "homepage": "https://github.com/JoinColony/colonyToken#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "truffle": "^4.1.5"
+  }
+}
