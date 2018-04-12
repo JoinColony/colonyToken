@@ -7,8 +7,26 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "solium-staged": "bash ./scripts/solium.sh",
+    "eslint-staged": "bash ./scripts/eslint.sh",
+    "eslint": "eslint .",
+    "solium": "solium --dir .",
+    "clean:contracts": "rimraf ./build/contracts/*",
+    "start:blockchain:client": "bash ./scripts/start-blockchain-client.sh",
+    "stop:blockchain:client": "bash ./scripts/stop-blockchain-client.sh",
+    "test:contracts": "npm run start:blockchain:client & truffle migrate --reset --compile-all && truffle test --network development",
+    "test:contracts:gasCosts": "npm run start:blockchain:client & truffle migrate --reset --compile-all && truffle test gasCosts/gasCosts.js --network development",
+    "test:contracts:coverage": "SOLIDITY_COVERAGE=1 solidity-coverage && istanbul check-coverage --statements 94 --branches 88 --functions 92 --lines 94",
+    "pretest:contracts": "sed -ie \"s/eth-gas-reporter/mocha-circleci-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
+    "pretest:contracts:gasCosts": "sed -ie \"s/mocha-circleci-reporter/eth-gas-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
+    "pretest:contracts:coverage": "sed -ie \"s/eth-gas-reporter/mocha-circleci-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
+    "posttest:contracts": "npm run stop:blockchain:client",
+    "posttest:contracts:gasCosts": "npm run stop:blockchain:client"
   },
+  "pre-commit": [
+    "eslint-staged",
+    "solium-staged"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JoinColony/colonyToken.git"
@@ -20,6 +38,17 @@
   "homepage": "https://github.com/JoinColony/colonyToken#readme",
   "dependencies": {},
   "devDependencies": {
+    "@colony/eslint-config-colony": "^4.0.1",
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.44.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "ganache-cli": "^6.1.0",
+    "prettier": "^1.10.2",
+    "solium": "^1.1.6",
     "truffle": "^4.1.5"
   }
 }

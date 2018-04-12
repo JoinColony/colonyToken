@@ -1,0 +1,24 @@
+machine:
+  node:
+    version: 9.1.0
+
+dependencies:
+  cache_directories:
+    - "~/.yarn-cache"
+
+  override:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
+    - mkdir -p ~/.yarn-cache
+    - yarn --pure-lockfile --cache-folder ~/.yarn-cache #truffle-contract replies on ethjs-abi which requires node>v6.5
+    
+test:
+  override:
+    - yarn run eslint
+    - yarn run solium
+   # - yarn run test:contracts
+   # - yarn run test:contracts:coverage
+   # - yarn run test:contracts:gasCosts
+
+  post:
+    #- mv ./test-results.xml $CIRCLE_TEST_REPORTS/truffle.xml
+    #- mv ./coverage/ $CIRCLE_ARTIFACTS/coverage/
