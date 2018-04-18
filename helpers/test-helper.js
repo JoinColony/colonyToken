@@ -77,7 +77,7 @@ async function checkError(promise, isAssert) {
   let receipt;
   try {
     tx = await promise;
-    receipt = await web3GetTransactionReceipt(tx);
+    ({ receipt } = tx);
   } catch (err) {
     ({ tx, receipt } = err);
   }

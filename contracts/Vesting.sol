@@ -9,10 +9,11 @@ contract Vesting is DSMath {
   Token public token;
   address public colonyMultiSig;
 
-  //uint constant public TOKEN_PRICE_MULTIPLIER = 1000;
-  //uint constant public MIN_CONTRIBUTION = 10 finney;
   uint constant internal SECONDS_PER_MONTH = 2628000;
 
+  event GrantAdded(address recipient, uint amount, uint issuanceTime, uint vestingDuration, uint vestingCliff);
+  event GrantTokensClaimed(address recipient, uint amountClaimed);
+  
   struct Grant {
     uint amount;
     uint issuanceTime;
@@ -22,9 +23,6 @@ contract Vesting is DSMath {
     uint totalClaimed;
   }
   mapping (address => Grant) public tokenGrants;
-
-  event GrantAdded(address recipient, uint amount, uint issuanceTime, uint vestingDuration, uint vestingCliff);
-  event GrantTokensClaimed(address recipient, uint amountClaimed);
 
   modifier onlyColonyMultiSig {
     require(msg.sender == colonyMultiSig);
@@ -45,10 +43,14 @@ contract Vesting is DSMath {
   }
 
   // TODO: Maybe transfer the token amount under the control of the vesting contract at this point
-  // TODO: Think about other checks for vesting schedule to do here, e.g. duration mod cliff = 0, duration / cliff > 1?
   function addTokenGrant(address _recipient, uint _amount, uint _vestingDuration, uint _vestingCliff) public 
   onlyColonyMultiSig
   {
+    require(_vestingCliff > 0);
+    require(_vestingDuration > _vestingCliff);
+    uint amountVestedPerMonth = _amount / _vestingDuration;
+    require(amountVestedPerMonth > 0);
+
     Grant memory grant = Grant({
       amount: _amount,
       issuanceTime: now,
