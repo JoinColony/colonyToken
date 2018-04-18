@@ -36,14 +36,14 @@ contract("Vesting", accounts => {
   const ACCOUNT_10_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
 
   const TOTAL_SUPPLY = ACCOUNT_1_GRANT_AMOUNT.add(ACCOUNT_2_GRANT_AMOUNT)
-  .add(ACCOUNT_3_GRANT_AMOUNT)
-  .add(ACCOUNT_4_GRANT_AMOUNT)
-  .add(ACCOUNT_5_GRANT_AMOUNT)
-  .add(ACCOUNT_6_GRANT_AMOUNT)
-  .add(ACCOUNT_7_GRANT_AMOUNT)
-  .add(ACCOUNT_8_GRANT_AMOUNT)
-  .add(ACCOUNT_9_GRANT_AMOUNT)
-  .add(ACCOUNT_10_GRANT_AMOUNT);
+    .add(ACCOUNT_3_GRANT_AMOUNT)
+    .add(ACCOUNT_4_GRANT_AMOUNT)
+    .add(ACCOUNT_5_GRANT_AMOUNT)
+    .add(ACCOUNT_6_GRANT_AMOUNT)
+    .add(ACCOUNT_7_GRANT_AMOUNT)
+    .add(ACCOUNT_8_GRANT_AMOUNT)
+    .add(ACCOUNT_9_GRANT_AMOUNT)
+    .add(ACCOUNT_10_GRANT_AMOUNT);
 
   let colonyMultiSig;
   let token;
@@ -51,81 +51,86 @@ contract("Vesting", accounts => {
 
   before(async () => {
     colonyMultiSig = await MultiSigWallet.new([COLONY_ACCOUNT], 1);
-  }); 
+  });
 
   beforeEach(async () => {
-    token = await Token.new('Colony token', 'CLNY', 18);  
+    token = await Token.new("Colony token", "CLNY", 18);
     await token.setOwner(colonyMultiSig.address);
-    
+
     let txData = await token.contract.mint.getData(TOTAL_SUPPLY.toString());
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
     let totalBalance = await token.balanceOf.call(colonyMultiSig.address);
     assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());
 
-    vesting = await Vesting.new(token.address, colonyMultiSig.address); 
+    vesting = await Vesting.new(token.address, colonyMultiSig.address);
 
     txData = await token.contract.transfer.getData(vesting.address, TOTAL_SUPPLY.toString());
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
-    
+
     totalBalance = await token.balanceOf.call(vesting.address);
-    assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());     
+    assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());
   });
 
   describe("when initialised", () => {
-    it("should set the Token correctly", async function() {
+    it("should set the Token correctly", async () => {
       const tokenAddress = await vesting.token.call();
       assert.equal(token.address, tokenAddress);
     });
 
-    it("should set the MultiSig correctly", async function() {
+    it("should set the MultiSig correctly", async () => {
       const multiSigAddress = await vesting.colonyMultiSig.call();
-      assert.equal(colonyMultiSig.address, multiSigAddress);      
+      assert.equal(colonyMultiSig.address, multiSigAddress);
     });
   });
 
   describe("when creating token grants", () => {
-    it("should create the correct grant", async function() {
-      await vesting.addTokenGrant(ACCOUNT_2, 1000, 24, 6);
-      const grant = await vesting.tokenGrants.call(ACCOUNT_2);
+    it("should create the correct grant", async () => {
+      const txData = await await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const grant = await vesting.tokenGrants.call(ACCOUNT_1);
       assert.equal(grant[0].toNumber(), 1000);
       // TODO: allow backdating of grants
-      //assert.equal(grant[1].toNumber(), )
+      // assert.equal(grant[1].toNumber(), )
       assert.equal(grant[2].toNumber(), 24);
       assert.equal(grant[3].toNumber(), 6);
       assert.equal(grant[4].toNumber(), 0);
       assert.equal(grant[5].toNumber(), 0);
     });
 
-    it("should log correct event", async function() {
-      expectEvent(vesting.addTokenGrant(ACCOUNT_2, 1000, 24, 6), "GrantAdded");
+    it("should log correct event", async () => {
+      const txData = await await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 6);
+      expectEvent(await colonyMultiSig.submitTransaction(vesting.address, 0, txData), "GrantAdded");
     });
 
-    it("should error if called by anyone but the Colony multisig", async function() {
-      checkErrorRevert(vesting.addTokenGrant(ACCOUNT_2, 1000, 24, 6), "GrantAdded", { from: ACCOUNT_3 });
+    it("should error if called by anyone but the Colony multisig", async () => {
+      checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 24, 6), "GrantAdded", { from: ACCOUNT_3 });
     });
   });
 
   describe("when claiming vested tokens", () => {
-    it("should NOT be able to claim within the first month", async function() {
-      vesting.addTokenGrant(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
+    it("should NOT be able to claim within the first month", async () => {
+      const txData = await await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       forwardTime(3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
       assert.equal(balanceBefore.toNumber(), 0);
 
-      checkErrorRevert(vesting.claimVestedTokens({ from: COLONY_ACCOUNT }));
+      checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }));
 
       const balanceAfter = await token.balanceOf.call(ACCOUNT_1);
       assert.equal(balanceAfter.toNumber(), 0);
     });
 
-    it("should NOT be able to claim before cliff reached", async function() {
-      vesting.addTokenGrant(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
+    it("should NOT be able to claim before cliff reached", async () => {
+      const txData = await await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       forwardTime(SECONDS_PER_MONTH * 6 - 3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
       assert.equal(balanceBefore.toNumber(), 0);
 
-      checkErrorRevert(vesting.claimVestedTokens({ from: COLONY_ACCOUNT }));
+      checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }));
 
       const balanceAfter = await token.balanceOf.call(ACCOUNT_1);
       assert.equal(balanceAfter.toNumber(), 0);
@@ -182,20 +187,37 @@ contract("Vesting", accounts => {
     grantProperties.forEach(async grantProp => {
       it(`${grantProp.monthsElapsed} months after grant start date, user should be able to claim
        ${grantProp.monthsElapsed}/${grantProp.duration} of their total token grant`, async () => {
-        await vesting.addTokenGrant(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), grantProp.duration, grantProp.cliff);
+        const txData = await await vesting.contract.addTokenGrant.getData(
+          ACCOUNT_1,
+          ACCOUNT_1_GRANT_AMOUNT.toString(10),
+          grantProp.duration,
+          grantProp.cliff
+        );
+        await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
         const timeToForward = SECONDS_PER_MONTH * grantProp.monthsElapsed;
         await forwardTime(timeToForward, this);
         const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
         assert.equal(balanceBefore.toNumber(), 0);
 
         await vesting.claimVestedTokens({ from: ACCOUNT_1 });
-      
+
         const balanceAfter = await token.balanceOf.call(ACCOUNT_1);
-        assert.equal(balanceAfter.toNumber(), ACCOUNT_1_GRANT_AMOUNT.divn(grantProp.duration).muln(grantProp.monthsElapsed).toString());
+        assert.equal(
+          balanceAfter.toNumber(),
+          ACCOUNT_1_GRANT_AMOUNT.divn(grantProp.duration)
+            .muln(grantProp.monthsElapsed)
+            .toString()
+        );
 
         const tokenGrant = await vesting.tokenGrants.call(ACCOUNT_1);
         assert.equal(tokenGrant[4].toNumber(), grantProp.monthsElapsed);
-        assert.equal(tokenGrant[5].toNumber(), ACCOUNT_1_GRANT_AMOUNT.divn(grantProp.duration).muln(grantProp.monthsElapsed).toString());
+        assert.equal(
+          tokenGrant[5].toNumber(),
+          ACCOUNT_1_GRANT_AMOUNT.divn(grantProp.duration)
+            .muln(grantProp.monthsElapsed)
+            .toString()
+        );
       });
     });
   });

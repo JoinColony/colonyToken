@@ -26,7 +26,7 @@ contract Vesting is DSMath {
   event GrantAdded(address recipient, uint amount, uint issuanceTime, uint vestingDuration, uint vestingCliff);
   event GrantTokensClaimed(address recipient, uint amountClaimed);
 
-  modifier onlycolonyMultiSig {
+  modifier onlyColonyMultiSig {
     require(msg.sender == colonyMultiSig);
     _;
   }
@@ -44,10 +44,11 @@ contract Vesting is DSMath {
     colonyMultiSig = _colonyMultiSig;
   }
 
-  // TODO: only colony multisig should be able to add this
   // TODO: Maybe transfer the token amount under the control of the vesting contract at this point
   // TODO: Think about other checks for vesting schedule to do here, e.g. duration mod cliff = 0, duration / cliff > 1?
-  function addTokenGrant(address _recipient, uint _amount, uint _vestingDuration, uint _vestingCliff) public {
+  function addTokenGrant(address _recipient, uint _amount, uint _vestingDuration, uint _vestingCliff) public 
+  onlyColonyMultiSig
+  {
     Grant memory grant = Grant({
       amount: _amount,
       issuanceTime: now,
