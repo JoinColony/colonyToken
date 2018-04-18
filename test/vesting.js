@@ -13,16 +13,16 @@ contract("Vesting", accounts => {
   const SECONDS_PER_MONTH = 2628000;
   const COLONY_ACCOUNT = accounts[0];
   const ACCOUNT_1 = accounts[1];
-  const ACCOUNT_2 = accounts[2];
+  // const ACCOUNT_2 = accounts[2];
   const ACCOUNT_3 = accounts[3];
-  const ACCOUNT_4 = accounts[4];
-  const ACCOUNT_5 = accounts[5];
-  const ACCOUNT_6 = accounts[6];
-  const ACCOUNT_7 = accounts[7];
-  const ACCOUNT_8 = accounts[8];
-  const ACCOUNT_9 = accounts[9];
-  const ACCOUNT_10 = accounts[10];
-  const OTHER_ACCOUNT = accounts[11];
+  // const ACCOUNT_4 = accounts[4];
+  // const ACCOUNT_5 = accounts[5];
+  // const ACCOUNT_6 = accounts[6];
+  // const ACCOUNT_7 = accounts[7];
+  // const ACCOUNT_8 = accounts[8];
+  // const ACCOUNT_9 = accounts[9];
+  // const ACCOUNT_10 = accounts[10];
+  // const OTHER_ACCOUNT = accounts[11];
 
   const ACCOUNT_1_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
   const ACCOUNT_2_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
@@ -106,6 +106,12 @@ contract("Vesting", accounts => {
       await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 24, 6), { from: ACCOUNT_3 });
     });
 
+    it("should error if there is an existing grant for user", async () => {
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+      await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
+    });
+
     it("should error if duration is 0", async () => {
       const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
@@ -122,11 +128,72 @@ contract("Vesting", accounts => {
     });
   });
 
+  describe("when removing token grants", () => {
+    beforeEach(async () => {
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(), 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+    });
+
+    it("should remove the grant", async () => {
+      const txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+      assert.equal(0, grant[0].toNumber());
+      assert.equal(0, grant[1]);
+      assert.equal(0, grant[2]);
+      assert.equal(0, grant[3]);
+      assert.equal(0, grant[4]);
+      assert.equal(0, grant[5]);
+    });
+
+    it("should return non-vested tokens to the Colony MultiSig", async () => {
+      const balanceBefore = await token.balanceOf.call(colonyMultiSig.address);
+      // 7 months vested
+      await forwardTime(SECONDS_PER_MONTH * 7, this);
+      // Grant is of total 998 finney
+      const txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const balanceAfter = await token.balanceOf.call(colonyMultiSig.address);
+      const balanceChange = balanceAfter.sub(balanceBefore).toString();
+      assert.equal(balanceChange, "706916666666666669");
+    });
+
+    it("should give grant recipient any vested amount", async () => {
+      const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
+      // 7 months vested
+      await forwardTime(SECONDS_PER_MONTH * 7, this);
+      // Grant is of total 998 finney
+      const txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const balanceAfter = await token.balanceOf.call(ACCOUNT_1);
+      const balanceChange = balanceAfter.sub(balanceBefore).toString();
+      assert.equal(balanceChange, "291083333333333331");
+    });
+
+    it("should be able to add a new grant for same recipient as one removed", async () => {
+      let txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1001, 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+      assert.equal(1001, grant[0].toNumber());
+    });
+
+    it("should error if called by anyone but the Colony multisig", async () => {
+      await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1), { from: ACCOUNT_3 });
+    });
+  });
+
   describe("when claiming vested tokens", () => {
     it("should NOT be able to claim within the first month", async () => {
       const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
-      forwardTime(3600);
+      await forwardTime(3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
       assert.equal(balanceBefore.toNumber(), 0);
 
@@ -139,7 +206,7 @@ contract("Vesting", accounts => {
     it("should NOT be able to claim before cliff reached", async () => {
       const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
-      forwardTime(SECONDS_PER_MONTH * 6 - 3600);
+      await forwardTime(SECONDS_PER_MONTH * 6 - 3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
       assert.equal(balanceBefore.toNumber(), 0);
 

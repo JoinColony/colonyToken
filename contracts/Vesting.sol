@@ -13,6 +13,7 @@ contract Vesting is DSMath {
   uint constant internal SECONDS_PER_MONTH = 2628000;
 
   event GrantAdded(address recipient, uint amount, uint issuanceTime, uint vestingDuration, uint vestingCliff);
+  event GrantRemoved(address recipient, uint amountVested, uint amountNotVested);
   event GrantTokensClaimed(address recipient, uint amountClaimed);
 
   struct Grant {
@@ -35,6 +36,11 @@ contract Vesting is DSMath {
     _;
   }
 
+  modifier noGrantExistsForUser(address _user) {
+    require(tokenGrants[_user].issuanceTime == 0);
+    _;
+  }
+
   function Vesting(address _token, address _colonyMultiSig) public
   nonZeroAddress(_token)
   nonZeroAddress(_colonyMultiSig)
@@ -45,6 +51,7 @@ contract Vesting is DSMath {
 
   function addTokenGrant(address _recipient, uint _amount, uint _vestingDuration, uint _vestingCliff) public 
   onlyColonyMultiSig
+  noGrantExistsForUser(_recipient)
   {
     require(_vestingCliff > 0);
     require(_vestingDuration > _vestingCliff);
@@ -67,33 +74,64 @@ contract Vesting is DSMath {
     emit GrantAdded(_recipient, _amount, now, _vestingDuration, _vestingCliff);
   }
 
-  function claimVestedTokens() public
+  /// @notice Terminate grant returning all non-vested tokens to the Colony multisig
+  function removeTokenGrant(address _recipient) public 
+  onlyColonyMultiSig
   {
+    Grant storage tokenGrant = tokenGrants[_recipient];
+    uint elapsedMonths;
+    uint amountVested;
+    (elapsedMonths, amountVested) = calculateGrantClaim(_recipient);
+    uint amountNotVested = sub(tokenGrant.amount, amountVested);
+
+    token.transfer(_recipient, amountVested);
+    token.transfer(colonyMultiSig, amountNotVested);
+
+    tokenGrant.amount = 0;
+    tokenGrant.issuanceTime = 0;
+    tokenGrant.vestingDuration = 0;
+    tokenGrant.vestingCliff = 0;
+    tokenGrant.monthsClaimed = 0;
+    tokenGrant.totalClaimed = 0;
+
+    emit GrantRemoved(_recipient, amountVested, amountNotVested);
+  }
+
+  function claimVestedTokens() public {
+    uint elapsedMonths;
+    uint amountVested;
+    (elapsedMonths, amountVested) = calculateGrantClaim(msg.sender);
+    require(amountVested > 0);
+
     Grant storage tokenGrant = tokenGrants[msg.sender];
+    tokenGrant.monthsClaimed = uint64(elapsedMonths);
+    tokenGrant.totalClaimed = add(tokenGrant.totalClaimed, amountVested);
+    
+    token.transfer(msg.sender, amountVested);
+    emit GrantTokensClaimed(msg.sender, amountVested);
+  }
+
+  function calculateGrantClaim(address _recipient) public view returns (uint256, uint256) {
+    Grant storage tokenGrant = tokenGrants[_recipient];
 
     // Check cliff was reached
     uint elapsedTime = sub(now, tokenGrant.issuanceTime);
     uint64 elapsedMonths = uint64(elapsedTime / SECONDS_PER_MONTH);
-    require(elapsedMonths >= tokenGrant.vestingCliff);
+    
+    if (elapsedMonths < tokenGrant.vestingCliff) {
+      return (elapsedMonths, 0);
+    }
 
     // If over vesting duration, all tokens vested
     if (elapsedMonths >= tokenGrant.vestingDuration) {
       uint remainingGrant = sub(tokenGrant.amount, tokenGrant.totalClaimed);
-      tokenGrant.monthsClaimed = uint64(tokenGrant.vestingDuration);
-      tokenGrant.totalClaimed = tokenGrant.amount;
-      token.transfer(msg.sender, remainingGrant);
-      emit GrantTokensClaimed(msg.sender, remainingGrant);
+      return (tokenGrant.vestingDuration, remainingGrant);
     } else {
       uint64 monthsPendingClaim = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
       // Calculate vested tokens and transfer them to recipient
       uint amountVestedPerMonth = tokenGrant.amount / tokenGrant.vestingDuration;
       uint amountVested = mul(monthsPendingClaim, amountVestedPerMonth);
-      tokenGrant.monthsClaimed = elapsedMonths;
-      tokenGrant.totalClaimed = add(tokenGrant.totalClaimed, amountVested);
-      token.transfer(msg.sender, amountVested);
-      emit GrantTokensClaimed(msg.sender, amountVested);
+      return (elapsedMonths, amountVested);
     }
   }
-
-  // TODO: Function to terminate grant returning all non vested tokens to the Colony multisig
 }
