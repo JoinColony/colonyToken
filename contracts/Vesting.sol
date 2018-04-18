@@ -3,6 +3,7 @@ pragma experimental "v0.5.0";
 
 import "./Token.sol";
 import "../lib/dappsys/math.sol";
+import "../lib/dappsys/erc20.sol";
 
 
 contract Vesting is DSMath {
@@ -13,7 +14,7 @@ contract Vesting is DSMath {
 
   event GrantAdded(address recipient, uint amount, uint issuanceTime, uint vestingDuration, uint vestingCliff);
   event GrantTokensClaimed(address recipient, uint amountClaimed);
-  
+
   struct Grant {
     uint amount;
     uint issuanceTime;
@@ -42,7 +43,6 @@ contract Vesting is DSMath {
     colonyMultiSig = _colonyMultiSig;
   }
 
-  // TODO: Maybe transfer the token amount under the control of the vesting contract at this point
   function addTokenGrant(address _recipient, uint _amount, uint _vestingDuration, uint _vestingCliff) public 
   onlyColonyMultiSig
   {
@@ -50,6 +50,9 @@ contract Vesting is DSMath {
     require(_vestingDuration > _vestingCliff);
     uint amountVestedPerMonth = _amount / _vestingDuration;
     require(amountVestedPerMonth > 0);
+
+    // Transfer the grant tokens under the control of the vesting contract
+    token.transferFrom(colonyMultiSig, address(this), _amount);
 
     Grant memory grant = Grant({
       amount: _amount,

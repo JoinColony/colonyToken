@@ -60,16 +60,14 @@ contract("Vesting", accounts => {
     let txData = await token.contract.mint.getData(TOTAL_SUPPLY.toString());
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
-    let totalBalance = await token.balanceOf.call(colonyMultiSig.address);
+    const totalBalance = await token.balanceOf.call(colonyMultiSig.address);
     assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());
 
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
 
-    txData = await token.contract.transfer.getData(vesting.address, TOTAL_SUPPLY.toString());
+    // Approve the total balance to be tranferred by the vesting contract as part of the `addTokenGrant` call
+    txData = await token.contract.approve.getData(vesting.address, TOTAL_SUPPLY.toString());
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
-
-    totalBalance = await token.balanceOf.call(vesting.address);
-    assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());
   });
 
   describe("when initialised", () => {
