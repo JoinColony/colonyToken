@@ -12,13 +12,13 @@ contract Vesting is DSMath {
 
   uint constant internal SECONDS_PER_MONTH = 2628000;
 
-  event GrantAdded(address recipient, uint amount, uint issuanceTime, uint vestingDuration, uint vestingCliff);
+  event GrantAdded(address recipient, uint amount, uint startTime, uint vestingDuration, uint vestingCliff);
   event GrantRemoved(address recipient, uint amountVested, uint amountNotVested);
   event GrantTokensClaimed(address recipient, uint amountClaimed);
 
   struct Grant {
     uint amount;
-    uint issuanceTime;
+    uint startTime;
     uint vestingDuration;
     uint vestingCliff;
     uint64 monthsClaimed;
@@ -37,7 +37,7 @@ contract Vesting is DSMath {
   }
 
   modifier noGrantExistsForUser(address _user) {
-    require(tokenGrants[_user].issuanceTime == 0);
+    require(tokenGrants[_user].startTime == 0);
     _;
   }
 
@@ -49,7 +49,7 @@ contract Vesting is DSMath {
     colonyMultiSig = _colonyMultiSig;
   }
 
-  function addTokenGrant(address _recipient, uint _amount, uint _vestingDuration, uint _vestingCliff) public 
+  function addTokenGrant(address _recipient, uint _amount, uint _startTime, uint _vestingDuration, uint _vestingCliff) public 
   onlyColonyMultiSig
   noGrantExistsForUser(_recipient)
   {
@@ -63,7 +63,7 @@ contract Vesting is DSMath {
 
     Grant memory grant = Grant({
       amount: _amount,
-      issuanceTime: now,
+      startTime: _startTime == 0 ? now : _startTime,
       vestingDuration: _vestingDuration,
       vestingCliff: _vestingCliff,
       monthsClaimed: 0,
@@ -88,7 +88,7 @@ contract Vesting is DSMath {
     token.transfer(colonyMultiSig, amountNotVested);
 
     tokenGrant.amount = 0;
-    tokenGrant.issuanceTime = 0;
+    tokenGrant.startTime = 0;
     tokenGrant.vestingDuration = 0;
     tokenGrant.vestingCliff = 0;
     tokenGrant.monthsClaimed = 0;
@@ -115,7 +115,7 @@ contract Vesting is DSMath {
     Grant storage tokenGrant = tokenGrants[_recipient];
 
     // Check cliff was reached
-    uint elapsedTime = sub(now, tokenGrant.issuanceTime);
+    uint elapsedTime = sub(now, tokenGrant.startTime);
     uint64 elapsedMonths = uint64(elapsedTime / SECONDS_PER_MONTH);
     
     if (elapsedMonths < tokenGrant.vestingCliff) {

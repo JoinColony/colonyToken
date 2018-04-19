@@ -3,7 +3,7 @@
 import { assert } from "chai";
 import BN from "bn.js";
 import web3Utils from "web3-utils";
-import { forwardTime, expectEvent, checkErrorRevert } from "../helpers/test-helper";
+import { currentBlockTime, forwardTime, expectEvent, checkErrorRevert } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
 const Vesting = artifacts.require("Vesting");
@@ -84,13 +84,27 @@ contract("Vesting", accounts => {
 
   describe("when creating token grants", () => {
     it("should create the correct grant", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 6);
+      const currentTime = await currentBlockTime();
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, currentTime - SECONDS_PER_MONTH, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
       const grant = await vesting.tokenGrants.call(ACCOUNT_1);
       assert.equal(grant[0].toNumber(), 1000);
-      // TODO: allow backdating of grants
-      // assert.equal(grant[1].toNumber(), )
+      assert.equal(grant[1].toNumber(), currentTime - SECONDS_PER_MONTH);
+      assert.equal(grant[2].toNumber(), 24);
+      assert.equal(grant[3].toNumber(), 6);
+      assert.equal(grant[4].toNumber(), 0);
+      assert.equal(grant[5].toNumber(), 0);
+    });
+
+    it("should create the grant with current startDate if no startDate was passed", async () => {
+      const currentTime = await currentBlockTime();
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 6);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+      assert.equal(grant[0].toNumber(), 1000);
+      assert.closeTo(grant[1].toNumber(), currentTime, 10);
       assert.equal(grant[2].toNumber(), 24);
       assert.equal(grant[3].toNumber(), 6);
       assert.equal(grant[4].toNumber(), 0);
@@ -98,39 +112,39 @@ contract("Vesting", accounts => {
     });
 
     it("should log correct event", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "Execution");
     });
 
     it("should error if called by anyone but the Colony multisig", async () => {
-      await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 24, 6), { from: OTHER_ACCOUNT });
+      await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 0, 24, 6), { from: OTHER_ACCOUNT });
     });
 
     it("should error if there is an existing grant for user", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
 
     it("should error if duration is 0", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 0, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
 
     it("should error if cliff is 0", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 24, 0);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 0);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
 
     it("should error if amount/duration is not greater than zero", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 1001, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 1001, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
   });
 
   describe("when removing token grants", () => {
     beforeEach(async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(), 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(), 0, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
     });
 
@@ -177,7 +191,7 @@ contract("Vesting", accounts => {
       let txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
-      txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1001, 24, 6);
+      txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1001, 0, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
       const grant = await vesting.tokenGrants.call(ACCOUNT_1);
@@ -191,7 +205,7 @@ contract("Vesting", accounts => {
 
   describe("when claiming vested tokens", () => {
     it("should NOT be able to claim within the first month", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 0, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       await forwardTime(3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
@@ -204,7 +218,7 @@ contract("Vesting", accounts => {
     });
 
     it("should NOT be able to claim before cliff reached", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 0, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       await forwardTime(SECONDS_PER_MONTH * 6 - 3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
@@ -217,35 +231,37 @@ contract("Vesting", accounts => {
     });
 
     const account1GrantProperties = [
-      { duration: 24, cliff: 6, monthsElapsed: 6 }, // 24 months duration, 6 months cliff cases
-      { duration: 24, cliff: 6, monthsElapsed: 7 },
-      { duration: 24, cliff: 6, monthsElapsed: 8 },
-      { duration: 24, cliff: 6, monthsElapsed: 9 },
-      { duration: 24, cliff: 6, monthsElapsed: 10 },
-      { duration: 24, cliff: 6, monthsElapsed: 11 },
-      { duration: 24, cliff: 6, monthsElapsed: 12 },
-      { duration: 24, cliff: 6, monthsElapsed: 18 },
-      { duration: 24, cliff: 6, monthsElapsed: 24 },
-      { duration: 6, cliff: 1, monthsElapsed: 1 }, // 6 months duration, 1 month cliff cases
-      { duration: 6, cliff: 1, monthsElapsed: 2 },
-      { duration: 6, cliff: 1, monthsElapsed: 3 },
-      { duration: 6, cliff: 1, monthsElapsed: 4 },
-      { duration: 6, cliff: 1, monthsElapsed: 5 },
-      { duration: 6, cliff: 1, monthsElapsed: 6 },
-      { duration: 15, cliff: 2, monthsElapsed: 2 }, // Other mixed cases of valid grant options
-      { duration: 18, cliff: 4, monthsElapsed: 10 },
-      { duration: 25, cliff: 7, monthsElapsed: 21 },
-      { duration: 33, cliff: 10, monthsElapsed: 28 },
-      { duration: 34, cliff: 9, monthsElapsed: 30 },
-      { duration: 40, cliff: 12, monthsElapsed: 35 }
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 6 }, // 24 months duration, 6 months cliff cases
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 7 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 8 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 9 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 10 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 11 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 12 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 18 },
+      { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 24 },
+      { duration: 6, cliff: 1, startTimeMonthsBeforeNow: 0, monthsElapsed: 1 }, // 6 months duration, 1 month cliff cases
+      { duration: 6, cliff: 1, startTimeMonthsBeforeNow: 0, monthsElapsed: 2 },
+      { duration: 6, cliff: 1, startTimeMonthsBeforeNow: 0, monthsElapsed: 3 },
+      { duration: 6, cliff: 1, startTimeMonthsBeforeNow: 0, monthsElapsed: 4 },
+      { duration: 6, cliff: 1, startTimeMonthsBeforeNow: 0, monthsElapsed: 5 },
+      { duration: 6, cliff: 1, startTimeMonthsBeforeNow: 0, monthsElapsed: 6 },
+      { duration: 15, cliff: 2, startTimeMonthsBeforeNow: 1, monthsElapsed: 1 }, // Other mixed cases of valid grant options
+      { duration: 18, cliff: 4, startTimeMonthsBeforeNow: 3, monthsElapsed: 10 },
+      { duration: 25, cliff: 7, startTimeMonthsBeforeNow: 1, monthsElapsed: 21 },
+      { duration: 33, cliff: 10, startTimeMonthsBeforeNow: 2, monthsElapsed: 26 },
+      { duration: 34, cliff: 9, startTimeMonthsBeforeNow: 4, monthsElapsed: 29 },
+      { duration: 40, cliff: 12, startTimeMonthsBeforeNow: 9, monthsElapsed: 25 }
     ];
 
     account1GrantProperties.forEach(async grantProp => {
       it(`${grantProp.monthsElapsed} months after grant start date, user should be able to claim
-       ${grantProp.monthsElapsed}/${grantProp.duration} of their total token grant`, async () => {
+       ${grantProp.monthsElapsed}/${grantProp.duration + grantProp.startTimeMonthsBeforeNow} of their total token grant`, async () => {
+        const currentTime = await currentBlockTime();
         const txData = await vesting.contract.addTokenGrant.getData(
           ACCOUNT_1,
           ACCOUNT_1_GRANT_AMOUNT.toString(10),
+          currentTime - grantProp.startTimeMonthsBeforeNow * SECONDS_PER_MONTH,
           grantProp.duration,
           grantProp.cliff
         );
@@ -262,16 +278,16 @@ contract("Vesting", accounts => {
         assert.equal(
           balanceAfter.toNumber(),
           ACCOUNT_1_GRANT_AMOUNT.divn(grantProp.duration)
-            .muln(grantProp.monthsElapsed)
+            .muln(grantProp.monthsElapsed + grantProp.startTimeMonthsBeforeNow)
             .toString()
         );
 
         const tokenGrant = await vesting.tokenGrants.call(ACCOUNT_1);
-        assert.equal(tokenGrant[4].toNumber(), grantProp.monthsElapsed);
+        assert.equal(tokenGrant[4].toNumber(), grantProp.monthsElapsed + grantProp.startTimeMonthsBeforeNow);
         assert.equal(
           tokenGrant[5].toNumber(),
           ACCOUNT_1_GRANT_AMOUNT.divn(grantProp.duration)
-            .muln(grantProp.monthsElapsed)
+            .muln(grantProp.monthsElapsed + grantProp.startTimeMonthsBeforeNow)
             .toString()
         );
       });
@@ -296,6 +312,7 @@ contract("Vesting", accounts => {
           const txData = await vesting.contract.addTokenGrant.getData(
             grantProp.account,
             grantProp.amount.toString(10),
+            0,
             grantProp.duration,
             grantProp.cliff
           );
