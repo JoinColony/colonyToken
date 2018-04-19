@@ -13,16 +13,16 @@ contract("Vesting", accounts => {
   const SECONDS_PER_MONTH = 2628000;
   const COLONY_ACCOUNT = accounts[0];
   const ACCOUNT_1 = accounts[1];
-  // const ACCOUNT_2 = accounts[2];
+  const ACCOUNT_2 = accounts[2];
   const ACCOUNT_3 = accounts[3];
-  // const ACCOUNT_4 = accounts[4];
-  // const ACCOUNT_5 = accounts[5];
-  // const ACCOUNT_6 = accounts[6];
-  // const ACCOUNT_7 = accounts[7];
-  // const ACCOUNT_8 = accounts[8];
-  // const ACCOUNT_9 = accounts[9];
-  // const ACCOUNT_10 = accounts[10];
-  // const OTHER_ACCOUNT = accounts[11];
+  const ACCOUNT_4 = accounts[4];
+  const ACCOUNT_5 = accounts[5];
+  const ACCOUNT_6 = accounts[6];
+  const ACCOUNT_7 = accounts[7];
+  const ACCOUNT_8 = accounts[8];
+  const ACCOUNT_9 = accounts[9];
+  const ACCOUNT_10 = accounts[10];
+  const OTHER_ACCOUNT = accounts[11];
 
   const ACCOUNT_1_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
   const ACCOUNT_2_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
@@ -103,7 +103,7 @@ contract("Vesting", accounts => {
     });
 
     it("should error if called by anyone but the Colony multisig", async () => {
-      await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 24, 6), { from: ACCOUNT_3 });
+      await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 24, 6), { from: OTHER_ACCOUNT });
     });
 
     it("should error if there is an existing grant for user", async () => {
@@ -185,7 +185,7 @@ contract("Vesting", accounts => {
     });
 
     it("should error if called by anyone but the Colony multisig", async () => {
-      await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1), { from: ACCOUNT_3 });
+      await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1), { from: OTHER_ACCOUNT });
     });
   });
 
@@ -216,55 +216,31 @@ contract("Vesting", accounts => {
       assert.equal(balanceAfter.toNumber(), 0);
     });
 
-    const grantProperties = [
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 6
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 7
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 8
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 9
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 10
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 11
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 12
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 18
-      },
-      {
-        duration: 24,
-        cliff: 6,
-        monthsElapsed: 24
-      }
+    const account1GrantProperties = [
+      { duration: 24, cliff: 6, monthsElapsed: 6 }, // 24 months duration, 6 months cliff cases
+      { duration: 24, cliff: 6, monthsElapsed: 7 },
+      { duration: 24, cliff: 6, monthsElapsed: 8 },
+      { duration: 24, cliff: 6, monthsElapsed: 9 },
+      { duration: 24, cliff: 6, monthsElapsed: 10 },
+      { duration: 24, cliff: 6, monthsElapsed: 11 },
+      { duration: 24, cliff: 6, monthsElapsed: 12 },
+      { duration: 24, cliff: 6, monthsElapsed: 18 },
+      { duration: 24, cliff: 6, monthsElapsed: 24 },
+      { duration: 6, cliff: 1, monthsElapsed: 1 }, // 6 months duration, 1 month cliff cases
+      { duration: 6, cliff: 1, monthsElapsed: 2 },
+      { duration: 6, cliff: 1, monthsElapsed: 3 },
+      { duration: 6, cliff: 1, monthsElapsed: 4 },
+      { duration: 6, cliff: 1, monthsElapsed: 5 },
+      { duration: 6, cliff: 1, monthsElapsed: 6 },
+      { duration: 15, cliff: 2, monthsElapsed: 2 }, // Other mixed cases of valid grant options
+      { duration: 18, cliff: 4, monthsElapsed: 10 },
+      { duration: 25, cliff: 7, monthsElapsed: 21 },
+      { duration: 33, cliff: 10, monthsElapsed: 28 },
+      { duration: 34, cliff: 9, monthsElapsed: 30 },
+      { duration: 40, cliff: 12, monthsElapsed: 35 }
     ];
 
-    grantProperties.forEach(async grantProp => {
+    account1GrantProperties.forEach(async grantProp => {
       it(`${grantProp.monthsElapsed} months after grant start date, user should be able to claim
        ${grantProp.monthsElapsed}/${grantProp.duration} of their total token grant`, async () => {
         const txData = await vesting.contract.addTokenGrant.getData(
@@ -299,6 +275,279 @@ contract("Vesting", accounts => {
             .toString()
         );
       });
+    });
+
+    const grantProperties = [
+      { account: ACCOUNT_1, amount: ACCOUNT_1_GRANT_AMOUNT, duration: 24, cliff: 6 }, // claim at month 6, 20, 24
+      { account: ACCOUNT_2, amount: ACCOUNT_2_GRANT_AMOUNT, duration: 24, cliff: 5 }, // claim at month 6, 20, 24
+      { account: ACCOUNT_3, amount: ACCOUNT_3_GRANT_AMOUNT, duration: 12, cliff: 1 }, // claim at month 1, 12
+      { account: ACCOUNT_4, amount: ACCOUNT_4_GRANT_AMOUNT, duration: 36, cliff: 12 }, // claim at month 12, 20, 24, 36
+      { account: ACCOUNT_5, amount: ACCOUNT_5_GRANT_AMOUNT, duration: 33, cliff: 12 }, // claim at month 12, 20, 24, 36
+      { account: ACCOUNT_6, amount: ACCOUNT_6_GRANT_AMOUNT, duration: 28, cliff: 9 }, // claim at month 12, 24, 36
+      { account: ACCOUNT_7, amount: ACCOUNT_7_GRANT_AMOUNT, duration: 20, cliff: 2 }, // claim at month 2, 17, 20
+      { account: ACCOUNT_8, amount: ACCOUNT_8_GRANT_AMOUNT, duration: 12, cliff: 3 }, // claim at month 3, 12
+      { account: ACCOUNT_9, amount: ACCOUNT_9_GRANT_AMOUNT, duration: 16, cliff: 4 }, // claim at month 4, 17
+      { account: ACCOUNT_10, amount: ACCOUNT_10_GRANT_AMOUNT, duration: 6, cliff: 1 } // claim at month 1, 12
+    ];
+
+    it("should be able to handle multiple grants correctly over time", async () => {
+      await Promise.all(
+        grantProperties.map(async grantProp => {
+          const txData = await vesting.contract.addTokenGrant.getData(
+            grantProp.account,
+            grantProp.amount.toString(10),
+            grantProp.duration,
+            grantProp.cliff
+          );
+          await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+        })
+      );
+
+      let balanceBefore;
+      let balanceAfter;
+      // Go forward 1 month
+      await forwardTime(SECONDS_PER_MONTH, this);
+      // Check account 3 and 10 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_3);
+      await vesting.claimVestedTokens({ from: ACCOUNT_3 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_3);
+      assert.equal(balanceAfter.sub(balanceBefore).toString(), ACCOUNT_3_GRANT_AMOUNT.divn(12).toString());
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_10);
+      await vesting.claimVestedTokens({ from: ACCOUNT_10 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_10);
+      assert.equal(balanceAfter.sub(balanceBefore).toString(), ACCOUNT_10_GRANT_AMOUNT.divn(6).toString());
+
+      // Go forward another 1 month, to the end of month 2 since grants created
+      await forwardTime(SECONDS_PER_MONTH, this);
+      // Check account 7 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_7);
+      await vesting.claimVestedTokens({ from: ACCOUNT_7 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_7);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_7_GRANT_AMOUNT.divn(20)
+          .muln(2)
+          .toString()
+      );
+
+      // Go forward another 1 month, to the end of month 3 since grants created
+      await forwardTime(SECONDS_PER_MONTH, this);
+      // Check account 8 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_8);
+      await vesting.claimVestedTokens({ from: ACCOUNT_8 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_8);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_8_GRANT_AMOUNT.divn(12)
+          .muln(3)
+          .toString()
+      );
+
+      // Go forward another 1 month, to the end of month 4 since grants created
+      await forwardTime(SECONDS_PER_MONTH, this);
+      // Check account 9 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_9);
+      await vesting.claimVestedTokens({ from: ACCOUNT_9 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_9);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_9_GRANT_AMOUNT.divn(16)
+          .muln(4)
+          .toString()
+      );
+
+      // Go forward another 2 months, to the end of month 6 since grants created
+      await forwardTime(SECONDS_PER_MONTH * 2, this);
+      // Check accounts 1 and 2 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_1);
+      await vesting.claimVestedTokens({ from: ACCOUNT_1 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_1);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_1_GRANT_AMOUNT.divn(24)
+          .muln(6)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_2);
+      await vesting.claimVestedTokens({ from: ACCOUNT_2 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_2);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_2_GRANT_AMOUNT.divn(24)
+          .muln(6)
+          .toString()
+      );
+
+      // Go forward another 6 months, to the end of month 12 since grants created
+      await forwardTime(SECONDS_PER_MONTH * 6, this);
+      // Check accounts 4, 5 and 6 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_4);
+      await vesting.claimVestedTokens({ from: ACCOUNT_4 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_4);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_4_GRANT_AMOUNT.divn(36)
+          .muln(12)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_5);
+      await vesting.claimVestedTokens({ from: ACCOUNT_5 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_5);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_5_GRANT_AMOUNT.divn(33)
+          .muln(12)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_6);
+      await vesting.claimVestedTokens({ from: ACCOUNT_6 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_6);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_6_GRANT_AMOUNT.divn(28)
+          .muln(12)
+          .toString()
+      );
+
+      // Check account 3, 8 and 10 can claim their entire left grant
+      await vesting.claimVestedTokens({ from: ACCOUNT_3 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_3);
+      assert.equal(balanceAfter.toString(), ACCOUNT_3_GRANT_AMOUNT.toString());
+
+      await vesting.claimVestedTokens({ from: ACCOUNT_8 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_8);
+      assert.equal(balanceAfter.toString(), ACCOUNT_8_GRANT_AMOUNT.toString());
+
+      await vesting.claimVestedTokens({ from: ACCOUNT_10 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_10);
+      assert.equal(balanceAfter.toString(), ACCOUNT_10_GRANT_AMOUNT.toString());
+
+      // Go forward another 5 months, to the end of month 17 since grants created
+      await forwardTime(SECONDS_PER_MONTH * 5, this);
+      // Check account 9 can claim their entire left grant
+      await vesting.claimVestedTokens({ from: ACCOUNT_9 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_9);
+      assert.equal(balanceAfter.toString(), ACCOUNT_9_GRANT_AMOUNT.toString());
+
+      // Check account 7 can claim (15 months vested tokens) correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_7);
+      await vesting.claimVestedTokens({ from: ACCOUNT_7 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_7);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_7_GRANT_AMOUNT.divn(20)
+          .muln(17 - 2)
+          .toString()
+      );
+
+      // Go forward another 3 months, to the end of month 20 since grants created
+      await forwardTime(SECONDS_PER_MONTH * 3, this);
+      // Check account 7 can claim their entire left grant
+      await vesting.claimVestedTokens({ from: ACCOUNT_7 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_7);
+      assert.equal(balanceAfter.toString(), ACCOUNT_7_GRANT_AMOUNT.toString());
+
+      // Check accounts 1, 2, 4 and 5 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_1);
+      await vesting.claimVestedTokens({ from: ACCOUNT_1 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_1);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_1_GRANT_AMOUNT.divn(24)
+          .muln(20 - 6)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_2);
+      await vesting.claimVestedTokens({ from: ACCOUNT_2 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_2);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_2_GRANT_AMOUNT.divn(24)
+          .muln(20 - 6)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_4);
+      await vesting.claimVestedTokens({ from: ACCOUNT_4 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_4);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_4_GRANT_AMOUNT.divn(36)
+          .muln(20 - 12)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_5);
+      await vesting.claimVestedTokens({ from: ACCOUNT_5 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_5);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_5_GRANT_AMOUNT.divn(33)
+          .muln(20 - 12)
+          .toString()
+      );
+
+      // Go forward another 4 months, to the end of month 24 since grants created
+      await forwardTime(SECONDS_PER_MONTH * 4, this);
+      // Check account 1 and 2 can claim their entire left grant
+      await vesting.claimVestedTokens({ from: ACCOUNT_1 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_1);
+      assert.equal(balanceAfter.toString(), ACCOUNT_1_GRANT_AMOUNT.toString());
+
+      await vesting.claimVestedTokens({ from: ACCOUNT_2 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_2);
+      assert.equal(balanceAfter.toString(), ACCOUNT_2_GRANT_AMOUNT.toString());
+
+      // Check accounts 4, 5 and 6 can claim correctly
+      balanceBefore = await token.balanceOf.call(ACCOUNT_4);
+      await vesting.claimVestedTokens({ from: ACCOUNT_4 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_4);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_4_GRANT_AMOUNT.divn(36)
+          .muln(24 - 20)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_5);
+      await vesting.claimVestedTokens({ from: ACCOUNT_5 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_5);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_5_GRANT_AMOUNT.divn(33)
+          .muln(24 - 20)
+          .toString()
+      );
+
+      balanceBefore = await token.balanceOf.call(ACCOUNT_6);
+      await vesting.claimVestedTokens({ from: ACCOUNT_6 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_6);
+      assert.equal(
+        balanceAfter.sub(balanceBefore).toString(),
+        ACCOUNT_6_GRANT_AMOUNT.divn(28)
+          .muln(24 - 12)
+          .toString()
+      );
+
+      // Go forward another 12 months, to the end of month 36 since grants created
+      await forwardTime(SECONDS_PER_MONTH * 12, this);
+      // Check account 4, 5 and 6 can claim their entire left grant
+      await vesting.claimVestedTokens({ from: ACCOUNT_4 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_4);
+      assert.equal(balanceAfter.toString(), ACCOUNT_4_GRANT_AMOUNT.toString());
+
+      await vesting.claimVestedTokens({ from: ACCOUNT_5 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_5);
+      assert.equal(balanceAfter.toString(), ACCOUNT_5_GRANT_AMOUNT.toString());
+
+      await vesting.claimVestedTokens({ from: ACCOUNT_6 });
+      balanceAfter = await token.balanceOf.call(ACCOUNT_6);
+      assert.equal(balanceAfter.toString(), ACCOUNT_6_GRANT_AMOUNT.toString());
     });
   });
 });
