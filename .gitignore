@@ -3,3 +3,5 @@ build
 lib/dappsys
 test-accounts.json
 test-results.xml
+coverage.json
+/coverage

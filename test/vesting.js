@@ -80,6 +80,22 @@ contract("Vesting", accounts => {
       const multiSigAddress = await vesting.colonyMultiSig.call();
       assert.equal(colonyMultiSig.address, multiSigAddress);
     });
+
+    it("should fail with 0 address for Token", async () => {
+      let vestingContract = "";
+      try {
+        vestingContract = await Vesting.new(0x0, colonyMultiSig.address);
+      } catch (err) {} // eslint-disable-line no-empty
+      assert.equal(vestingContract, "");
+    });
+
+    it("should fail with 0 address for MultiSig", async () => {
+      let vestingContract = "";
+      try {
+        vestingContract = await Vesting.new(token.address, 0x0);
+      } catch (err) {} // eslint-disable-line no-empty
+      assert.equal(vestingContract, "");
+    });
   });
 
   describe("when creating token grants", () => {

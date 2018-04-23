@@ -1,7 +1,7 @@
 /* globals artifacts */
 
 import { assert } from "chai";
-import { expectEvent, checkErrorAssert, checkErrorRevert, web3GetBalance, checkErrorNonPayableFunction } from "../helpers/test-helper";
+import { expectEvent, checkErrorAssert, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
 
@@ -129,26 +129,6 @@ contract("Token", accounts => {
   describe("when working with ether transfers", () => {
     it("should NOT accept eth", async () => {
       await checkErrorRevert(token.send(2));
-      const tokenBalance = await web3GetBalance(token.address);
-      assert.equal(0, tokenBalance.toNumber());
-    });
-
-    it.skip("should NOT accept eth via etherRouter transfer", async () => {
-      await checkErrorRevert(await token.send(2));
-      const tokenBalance = await web3GetBalance(token.address);
-      assert.equal(0, tokenBalance.toNumber());
-    });
-
-    it("should NOT accept eth via etherRouter call to function", async () => {
-      try {
-        await token.mint(200, { value: 2 });
-      } catch (err) {
-        checkErrorNonPayableFunction(err);
-      }
-
-      const totalSupply = await token.totalSupply.call();
-      assert.equal(0, totalSupply.toNumber());
-
       const tokenBalance = await web3GetBalance(token.address);
       assert.equal(0, tokenBalance.toNumber());
     });
