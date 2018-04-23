@@ -8,7 +8,6 @@ import "./ERC20Extended.sol";
 
 
 contract Token is DSAuth, DSMath, ERC20Extended {
-  address resolver;
   bytes32 public symbol;
   uint256 public decimals;
   bytes32 public name;
