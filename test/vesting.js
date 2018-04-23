@@ -230,6 +230,12 @@ contract("Vesting", accounts => {
       assert.equal(balanceAfter.toNumber(), 0);
     });
 
+    it("should NOT be able to claim a non-existent grant", async () => {
+      await checkErrorRevert(vesting.claimVestedTokens({ from: OTHER_ACCOUNT }));
+      const balanceAfter = await token.balanceOf.call(OTHER_ACCOUNT);
+      assert.equal(balanceAfter.toNumber(), 0);
+    });
+
     const account1GrantProperties = [
       { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 6 }, // 24 months duration, 6 months cliff cases
       { duration: 24, cliff: 6, startTimeMonthsBeforeNow: 0, monthsElapsed: 7 },
