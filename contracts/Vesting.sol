@@ -49,6 +49,15 @@ contract Vesting is DSMath {
     colonyMultiSig = _colonyMultiSig;
   }
 
+  /// @notice Add a new token grant for user `_recipient`. Only one grant per user is allowed
+  /// The amount of CLNY tokens here need to be preapproved for transfer by this `Vesting` contract before this call
+  /// Secured to the Colony MultiSig only
+  /// @param _recipient Address of the token grant repipient entitled to claim the grant funds
+  /// @param _amount Total number of tokens in grant
+  /// @param _startTime Grant start time as seconds since unix epoch
+  /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
+  /// @param _vestingDuration Number of months of the grant's duration
+  /// @param _vestingCliff Number of months of the grant's vesting cliff
   function addTokenGrant(address _recipient, uint _amount, uint _startTime, uint _vestingDuration, uint _vestingCliff) public 
   onlyColonyMultiSig
   noGrantExistsForUser(_recipient)
@@ -74,7 +83,10 @@ contract Vesting is DSMath {
     emit GrantAdded(_recipient, _amount, now, _vestingDuration, _vestingCliff);
   }
 
-  /// @notice Terminate grant returning all non-vested tokens to the Colony multisig
+  /// @notice Terminate token grant transferring all vested tokens to the `_recipient`
+  /// and returning all non-vested tokens to the Colony MultiSig
+  /// Secured to the Colony MultiSig only
+  /// @param _recipient Address of the token grant repipient
   function removeTokenGrant(address _recipient) public 
   onlyColonyMultiSig
   {
@@ -97,6 +109,8 @@ contract Vesting is DSMath {
     emit GrantRemoved(_recipient, amountVested, amountNotVested);
   }
 
+  /// @notice Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested
+  /// It is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this
   function claimVestedTokens() public {
     uint elapsedMonths;
     uint amountVested;
@@ -111,6 +125,9 @@ contract Vesting is DSMath {
     emit GrantTokensClaimed(msg.sender, amountVested);
   }
 
+  /// @notice Calculate the vested months and vested tokens for `_recepient`
+  /// Due to rounding errors once grant duration is reached, returns the entire left grant amount
+  /// Returns (0, 0) if cliff has not been reached
   function calculateGrantClaim(address _recipient) public view returns (uint256, uint256) {
     Grant storage tokenGrant = tokenGrants[_recipient];
 
