@@ -45,3 +45,7 @@ To lint contracts using [Solium](https://github.com/duaraghav8/Solium)
 ```
 gulp lint:contracts
 ```
+
+## Deployment
+
+Flattened contracts are in source control under `flattened` folder and can be generated via `yarn run flatten:contracts` which uses [solidity-flattener](https://github.com/BlockCatIO/solidity-flattener) which you can install via `pip3 install solidity-flattener`

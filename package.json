@@ -21,7 +21,8 @@
     "pretest:contracts:gasCosts": "sed -ie \"s/mocha-circleci-reporter/eth-gas-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
     "pretest:contracts:coverage": "sed -ie \"s/eth-gas-reporter/mocha-circleci-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
     "posttest:contracts": "npm run stop:blockchain:client",
-    "posttest:contracts:gasCosts": "npm run stop:blockchain:client"
+    "posttest:contracts:gasCosts": "npm run stop:blockchain:client",
+    "flatten:contracts": "solidity_flattener contracts/Token.sol --output flattened/TokenFlattened.sol --solc-paths=lib/dappsys/auth.sol && solidity_flattener contracts/Vesting.sol --output flattened/VestingFlattened.sol --solc-paths=lib/dappsys/auth.sol"
   },
   "pre-commit": [
     "eslint-staged",
