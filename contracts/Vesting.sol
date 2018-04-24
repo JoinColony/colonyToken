@@ -94,7 +94,7 @@ contract Vesting is DSMath {
     uint elapsedMonths;
     uint amountVested;
     (elapsedMonths, amountVested) = calculateGrantClaim(_recipient);
-    uint amountNotVested = sub(tokenGrant.amount, amountVested);
+    uint amountNotVested = sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested);
 
     token.transfer(_recipient, amountVested);
     token.transfer(colonyMultiSig, amountNotVested);

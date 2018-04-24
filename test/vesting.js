@@ -203,6 +203,41 @@ contract("Vesting", accounts => {
       assert.equal(balanceChange, "291083333333333331");
     });
 
+    it("should return the correct amounts if there have been tokens claimed already", async () => {
+      const balanceBeforeMultiSig = await token.balanceOf.call(colonyMultiSig.address);
+      const balanceBeforeRecipient = await token.balanceOf.call(ACCOUNT_1);
+
+      // 7 months vested and claimed
+      await forwardTime(SECONDS_PER_MONTH * 7, this);
+      await vesting.claimVestedTokens({ from: ACCOUNT_1 });
+      // Another 6 months vested and claimed
+      await forwardTime(SECONDS_PER_MONTH * 6, this);
+      await vesting.claimVestedTokens({ from: ACCOUNT_1 });
+      const balanceAfterClaimsRecipient = await token.balanceOf.call(ACCOUNT_1);
+      const balanceChangeAfterClaimsRecipient = balanceAfterClaimsRecipient.sub(balanceBeforeRecipient).toString();
+      assert.equal(balanceChangeAfterClaimsRecipient, "540583333333333329");
+
+      // Another 3 months vested but not claimed
+      await forwardTime(SECONDS_PER_MONTH * 3, this);
+
+      // Grant is of total 998 finney
+      // 16 months vested of which 13 months claimed, another 6 months not yet vested
+      const txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
+      await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+      const balanceAfterRecipient = await token.balanceOf.call(ACCOUNT_1);
+      const balanceChangeRecipient = balanceAfterRecipient.sub(balanceAfterClaimsRecipient).toString();
+      // Expecting 3 months worth of vested unclaimed tokens here
+      assert.equal(balanceChangeRecipient, "124749999999999999");
+      // Expectingt their total balanace to be 16 months worth of vested tokens
+      assert.equal(balanceAfterRecipient.sub(balanceBeforeRecipient).toString(), "665333333333333328");
+
+      const balanceAfterMultiSig = await token.balanceOf.call(colonyMultiSig.address);
+      const balanceChangeMultiSig = balanceAfterMultiSig.sub(balanceBeforeMultiSig).toString();
+      // Expecting non-vested tokens here to = total grant amount - 16 months worth of vested tokens
+      assert.equal(balanceChangeMultiSig.toString(), "332666666666666672");
+    });
+
     it("should be able to add a new grant for same recipient as one removed", async () => {
       let txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
