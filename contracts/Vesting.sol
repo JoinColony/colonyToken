@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.23;
 pragma experimental "v0.5.0";
 
 import "./Token.sol";
@@ -41,7 +41,7 @@ contract Vesting is DSMath {
     _;
   }
 
-  function Vesting(address _token, address _colonyMultiSig) public
+  constructor(address _token, address _colonyMultiSig) public
   nonZeroAddress(_token)
   nonZeroAddress(_colonyMultiSig)
   {
