@@ -37,7 +37,9 @@
     "url": "https://github.com/JoinColony/colonyToken/issues"
   },
   "homepage": "https://github.com/JoinColony/colonyToken#readme",
-  "dependencies": {},
+  "dependencies": {
+    "truffle-hdwallet-provider": "^0.0.3"
+  },
   "devDependencies": {
     "@colony/eslint-config-colony": "^4.0.1",
     "babel-cli": "^6.26.0",
