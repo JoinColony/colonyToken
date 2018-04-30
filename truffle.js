@@ -26,7 +26,12 @@ module.exports = {
     }
   },
   mocha: {
-    reporter: "mocha-circleci-reporter"
+    reporter: "eth-gas-reporter",
+    reporterOptions: {
+      currency: "USD",
+      gasPrice: 1,
+      onlyCalledMethods: true
+    }
   },
   solc: {
     optimizer: {
