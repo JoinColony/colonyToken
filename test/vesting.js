@@ -101,12 +101,12 @@ contract("Vesting", accounts => {
   describe("when creating token grants", () => {
     it("should create the correct grant", async () => {
       const currentTime = await currentBlockTime();
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, currentTime - SECONDS_PER_MONTH, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, currentTime - SECONDS_PER_MONTH, 1000, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
       const grant = await vesting.tokenGrants.call(ACCOUNT_1);
-      assert.equal(grant[0].toNumber(), 1000);
-      assert.equal(grant[1].toNumber(), currentTime - SECONDS_PER_MONTH);
+      assert.equal(grant[0].toNumber(), currentTime - SECONDS_PER_MONTH);
+      assert.equal(grant[1].toNumber(), 1000);
       assert.equal(grant[2].toNumber(), 24);
       assert.equal(grant[3].toNumber(), 6);
       assert.equal(grant[4].toNumber(), 0);
@@ -115,12 +115,12 @@ contract("Vesting", accounts => {
 
     it("should create the grant with current startDate if no startDate was passed", async () => {
       const currentTime = await currentBlockTime();
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
       const grant = await vesting.tokenGrants.call(ACCOUNT_1);
-      assert.equal(grant[0].toNumber(), 1000);
-      assert.closeTo(grant[1].toNumber(), currentTime, 10);
+      assert.closeTo(grant[0].toNumber(), currentTime, 10);
+      assert.equal(grant[1].toNumber(), 1000);
       assert.equal(grant[2].toNumber(), 24);
       assert.equal(grant[3].toNumber(), 6);
       assert.equal(grant[4].toNumber(), 0);
@@ -128,39 +128,48 @@ contract("Vesting", accounts => {
     });
 
     it("should log correct event", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 24, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "Execution");
     });
 
     it("should error if called by anyone but the Colony multisig", async () => {
-      await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 1000, 0, 24, 6), { from: OTHER_ACCOUNT });
+      await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 0, 1000, 24, 6), { from: OTHER_ACCOUNT });
     });
 
     it("should error if there is an existing grant for user", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
 
     it("should error if duration is 0", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 0, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 0, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
 
     it("should error if cliff is 0", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 24, 0);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 24, 0);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
     });
 
     it("should error if amount/duration is not greater than zero", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1000, 0, 1001, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 1001, 6);
       await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
+    });
+
+    it("should error on grant duration overflow", async () => {
+      const grantDuration = new BN(2).pow(new BN(16)).addn(1);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, grantDuration.muln(10).toString(), grantDuration.toString(), 6);
+      await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
+
+      const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+      assert.equal(0, grant[0]);
     });
   });
 
   describe("when removing token grants", () => {
     beforeEach(async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(), 0, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, ACCOUNT_1_GRANT_AMOUNT.toString(), 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
     });
 
@@ -169,7 +178,7 @@ contract("Vesting", accounts => {
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
       const grant = await vesting.tokenGrants.call(ACCOUNT_1);
-      assert.equal(0, grant[0].toNumber());
+      assert.equal(0, grant[0]);
       assert.equal(0, grant[1]);
       assert.equal(0, grant[2]);
       assert.equal(0, grant[3]);
@@ -242,11 +251,11 @@ contract("Vesting", accounts => {
       let txData = await vesting.contract.removeTokenGrant.getData(ACCOUNT_1);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
-      txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 1001, 0, 24, 6);
+      txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1001, 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
       const grant = await vesting.tokenGrants.call(ACCOUNT_1);
-      assert.equal(1001, grant[0].toNumber());
+      assert.equal(1001, grant[1].toNumber());
     });
 
     it("should error if called by anyone but the Colony multisig", async () => {
@@ -256,7 +265,7 @@ contract("Vesting", accounts => {
 
   describe("when claiming vested tokens", () => {
     it("should NOT be able to claim within the first month", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 0, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       await forwardTime(3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
@@ -269,7 +278,7 @@ contract("Vesting", accounts => {
     });
 
     it("should NOT be able to claim before cliff reached", async () => {
-      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(10), 0, 24, 6);
+      const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, ACCOUNT_1_GRANT_AMOUNT.toString(10), 24, 6);
       await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
       await forwardTime(SECONDS_PER_MONTH * 6 - 3600);
       const balanceBefore = await token.balanceOf.call(ACCOUNT_1);
@@ -317,8 +326,8 @@ contract("Vesting", accounts => {
         const currentTime = await currentBlockTime();
         const txData = await vesting.contract.addTokenGrant.getData(
           ACCOUNT_1,
-          ACCOUNT_1_GRANT_AMOUNT.toString(10),
           currentTime - grantProp.startTimeMonthsBeforeNow * SECONDS_PER_MONTH,
+          ACCOUNT_1_GRANT_AMOUNT.toString(10),
           grantProp.duration,
           grantProp.cliff
         );
@@ -368,8 +377,8 @@ contract("Vesting", accounts => {
         grantProperties.map(async grantProp => {
           const txData = await vesting.contract.addTokenGrant.getData(
             grantProp.account,
-            grantProp.amount.toString(10),
             0,
+            grantProp.amount.toString(10),
             grantProp.duration,
             grantProp.cliff
           );

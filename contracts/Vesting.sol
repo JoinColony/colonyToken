@@ -17,12 +17,12 @@ contract Vesting is DSMath {
   event GrantTokensClaimed(address recipient, uint amountClaimed);
 
   struct Grant {
-    uint amount;
     uint startTime;
-    uint vestingDuration;
-    uint vestingCliff;
-    uint64 monthsClaimed;
-    uint totalClaimed;
+    uint64 amount;
+    uint16 vestingDuration;
+    uint16 vestingCliff;
+    uint16 monthsClaimed;
+    uint64 totalClaimed;
   }
   mapping (address => Grant) public tokenGrants;
 
@@ -58,7 +58,7 @@ contract Vesting is DSMath {
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
   /// @param _vestingDuration Number of months of the grant's duration
   /// @param _vestingCliff Number of months of the grant's vesting cliff
-  function addTokenGrant(address _recipient, uint _amount, uint _startTime, uint _vestingDuration, uint _vestingCliff) public 
+  function addTokenGrant(address _recipient, uint _startTime, uint64 _amount, uint16 _vestingDuration, uint16 _vestingCliff) public 
   onlyColonyMultiSig
   noGrantExistsForUser(_recipient)
   {
@@ -71,8 +71,8 @@ contract Vesting is DSMath {
     token.transferFrom(colonyMultiSig, address(this), _amount);
 
     Grant memory grant = Grant({
-      amount: _amount,
       startTime: _startTime == 0 ? now : _startTime,
+      amount: _amount,
       vestingDuration: _vestingDuration,
       vestingCliff: _vestingCliff,
       monthsClaimed: 0,
@@ -99,8 +99,8 @@ contract Vesting is DSMath {
     token.transfer(_recipient, amountVested);
     token.transfer(colonyMultiSig, amountNotVested);
 
-    tokenGrant.amount = 0;
     tokenGrant.startTime = 0;
+    tokenGrant.amount = 0;
     tokenGrant.vestingDuration = 0;
     tokenGrant.vestingCliff = 0;
     tokenGrant.monthsClaimed = 0;
@@ -118,8 +118,8 @@ contract Vesting is DSMath {
     require(amountVested > 0);
 
     Grant storage tokenGrant = tokenGrants[msg.sender];
-    tokenGrant.monthsClaimed = uint64(add(tokenGrant.monthsClaimed, monthsVested));
-    tokenGrant.totalClaimed = add(tokenGrant.totalClaimed, amountVested);
+    tokenGrant.monthsClaimed = uint16(add(tokenGrant.monthsClaimed, monthsVested));
+    tokenGrant.totalClaimed = uint64(add(tokenGrant.totalClaimed, amountVested));
     
     token.transfer(msg.sender, amountVested);
     emit GrantTokensClaimed(msg.sender, amountVested);

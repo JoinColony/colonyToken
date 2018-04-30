@@ -28,7 +28,7 @@ contract("Vesting", accounts => {
 
   describe("Gas costs", () => {
     it("working with grants", async () => {
-      await vesting.addTokenGrant(ACCOUNT_1, ACCOUNT_1_GRANT_AMOUNT.toString(), 0, 24, 6);
+      await vesting.addTokenGrant(ACCOUNT_1, 0, ACCOUNT_1_GRANT_AMOUNT.toString(), 24, 6);
       await forwardTime(SECONDS_PER_MONTH * 7);
       await vesting.claimVestedTokens({ from: ACCOUNT_1 });
       await vesting.removeTokenGrant(ACCOUNT_1);
