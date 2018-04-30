@@ -91,9 +91,9 @@ contract Vesting is DSMath {
   onlyColonyMultiSig
   {
     Grant storage tokenGrant = tokenGrants[_recipient];
-    uint elapsedMonths;
+    uint monthsVested;
     uint amountVested;
-    (elapsedMonths, amountVested) = calculateGrantClaim(_recipient);
+    (monthsVested, amountVested) = calculateGrantClaim(_recipient);
     uint amountNotVested = sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested);
 
     token.transfer(_recipient, amountVested);
@@ -112,20 +112,20 @@ contract Vesting is DSMath {
   /// @notice Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested
   /// It is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this
   function claimVestedTokens() public {
-    uint elapsedMonths;
+    uint monthsVested;
     uint amountVested;
-    (elapsedMonths, amountVested) = calculateGrantClaim(msg.sender);
+    (monthsVested, amountVested) = calculateGrantClaim(msg.sender);
     require(amountVested > 0);
 
     Grant storage tokenGrant = tokenGrants[msg.sender];
-    tokenGrant.monthsClaimed = uint64(elapsedMonths);
+    tokenGrant.monthsClaimed = uint64(add(tokenGrant.monthsClaimed, monthsVested));
     tokenGrant.totalClaimed = add(tokenGrant.totalClaimed, amountVested);
     
     token.transfer(msg.sender, amountVested);
     emit GrantTokensClaimed(msg.sender, amountVested);
   }
 
-  /// @notice Calculate the vested months and vested tokens for `_recepient`
+  /// @notice Calculate the vested and unclaimed months and tokens available for `_recepient` to claim
   /// Due to rounding errors once grant duration is reached, returns the entire left grant amount
   /// Returns (0, 0) if cliff has not been reached
   function calculateGrantClaim(address _recipient) public view returns (uint256, uint256) {
@@ -144,11 +144,11 @@ contract Vesting is DSMath {
       uint remainingGrant = sub(tokenGrant.amount, tokenGrant.totalClaimed);
       return (tokenGrant.vestingDuration, remainingGrant);
     } else {
-      uint64 monthsPendingClaim = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
+      uint64 monthsVested = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
       // Calculate vested tokens and transfer them to recipient
       uint amountVestedPerMonth = tokenGrant.amount / tokenGrant.vestingDuration;
-      uint amountVested = mul(monthsPendingClaim, amountVestedPerMonth);
-      return (elapsedMonths, amountVested);
+      uint amountVested = mul(monthsVested, amountVestedPerMonth);
+      return (monthsVested, amountVested);
     }
   }
 }
