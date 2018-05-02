@@ -1,7 +1,7 @@
 /* globals artifacts */
 
 import { assert } from "chai";
-import { expectEvent, checkErrorAssert, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
+import { expectEvent, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
 
@@ -49,7 +49,7 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to transfer more tokens than they have", async () => {
-      await checkErrorAssert(token.transfer(ACCOUNT_TWO, 1500001));
+      await checkErrorRevert(token.transfer(ACCOUNT_TWO, 1500001));
       const balanceAccount2 = await token.balanceOf.call(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
     });
@@ -69,14 +69,14 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to transfer tokens from another address if NOT pre-approved", async () => {
-      await checkErrorAssert(token.transferFrom(COINBASE_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transferFrom(COINBASE_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }));
       const balanceAccount2 = await token.balanceOf.call(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
     });
 
     it("should NOT be able to transfer from another address more tokens than pre-approved", async () => {
       await token.approve(ACCOUNT_TWO, 300000);
-      await checkErrorAssert(token.transferFrom(COINBASE_ACCOUNT, ACCOUNT_TWO, 300001, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transferFrom(COINBASE_ACCOUNT, ACCOUNT_TWO, 300001, { from: ACCOUNT_TWO }));
 
       const balanceAccount2 = await token.balanceOf.call(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
@@ -86,7 +86,7 @@ contract("Token", accounts => {
       await token.approve(ACCOUNT_TWO, 300000);
       await token.transfer(ACCOUNT_THREE, 1500000);
 
-      await checkErrorAssert(token.transferFrom(COINBASE_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transferFrom(COINBASE_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }));
       const balanceAccount2 = await token.balanceOf.call(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
     });
