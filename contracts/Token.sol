@@ -64,5 +64,7 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   {
     _balances[msg.sender] = add(_balances[msg.sender], wad);
     _supply = add(_supply, wad);
+
+    emit Mint(msg.sender, wad);
   }
 }

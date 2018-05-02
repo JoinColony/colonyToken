@@ -111,7 +111,7 @@ contract("Token", accounts => {
       assert.equal(1500000, balance.toNumber());
 
       // Mint some more tokens
-      await token.mint(1);
+      await expectEvent(token.mint(1), "Mint");
       totalSupply = await token.totalSupply.call();
       assert.equal(1500001, totalSupply.toNumber());
 
