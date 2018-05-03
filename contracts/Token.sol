@@ -15,11 +15,20 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   uint256 _supply;
   mapping (address => uint256) _balances;
   mapping (address => mapping (address => uint256)) _approvals;
+  bool public locked;
 
   constructor(bytes32 _name, bytes32 _symbol, uint256 _decimals) public {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
+    locked = true;
+  }
+
+  modifier unlocked {
+    if (locked) {
+      require(isAuthorized(msg.sender, msg.sig));
+    }
+    _;
   }
 
   function totalSupply() public view returns (uint256) {
@@ -38,7 +47,10 @@ contract Token is DSAuth, DSMath, ERC20Extended {
     return transferFrom(msg.sender, dst, wad);
   }
 
-  function transferFrom(address src, address dst, uint wad) public returns (bool) {
+  function transferFrom(address src, address dst, uint wad) public
+  unlocked
+  returns (bool)
+  {
     if (src != msg.sender) {
       _approvals[src][msg.sender] = sub(_approvals[src][msg.sender], wad);
     }
@@ -66,5 +78,12 @@ contract Token is DSAuth, DSMath, ERC20Extended {
     _supply = add(_supply, wad);
 
     emit Mint(msg.sender, wad);
+  }
+
+  function unlock() public
+  auth
+  {
+    require(locked);
+    locked = false;
   }
 }
