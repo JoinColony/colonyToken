@@ -4,10 +4,7 @@ import { assert } from "chai";
 import { expectEvent, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
-const TokenAuthority = artifacts.require("TokenAuthority");
 const DSAuth = artifacts.require("DSAuth");
-const Vesting = artifacts.require("Vesting");
-const MultiSigWallet = artifacts.require("gnosis/MultiSigWallet.sol");
 
 contract("Token", accounts => {
   const COLONY_ACCOUNT = accounts[0];
@@ -15,22 +12,14 @@ contract("Token", accounts => {
   const ACCOUNT_THREE = accounts[2];
 
   let token;
-  let tokenAuthority;
   let dsAuthToken;
-  let vesting;
-  let colonyMultiSig;
 
   beforeEach(async () => {
     token = await Token.new("Colony token", "CLNY", 18);
-    colonyMultiSig = await MultiSigWallet.new([COLONY_ACCOUNT], 1);
-    vesting = await Vesting.new(token.address, colonyMultiSig.address);
-
-    tokenAuthority = await TokenAuthority.new(token.address, vesting.address, COLONY_ACCOUNT);
     dsAuthToken = DSAuth.at(token.address);
-    await dsAuthToken.setAuthority(tokenAuthority.address);
   });
 
-  describe("when working with ERC20 functions", () => {
+  describe("when working with ERC20 functions and token is unlocked", () => {
     beforeEach("mint 1500000 tokens", async () => {
       await token.unlock();
       await token.mint(1500000);
@@ -116,6 +105,34 @@ contract("Token", accounts => {
     });
   });
 
+  describe("when working with ERC20 functions and token is locked", () => {
+    beforeEach(async () => {
+      await token.mint(1500000);
+      await token.transfer(ACCOUNT_TWO, 1500000);
+    });
+
+    it("shouldn't be able to transfer tokens from own address", async () => {
+      await checkErrorRevert(token.transfer(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO }));
+
+      const balanceAccount1 = await token.balanceOf.call(ACCOUNT_TWO);
+      assert.equal(1500000, balanceAccount1.toNumber());
+      const balanceAccount2 = await token.balanceOf.call(ACCOUNT_THREE);
+      assert.equal(0, balanceAccount2.toNumber());
+    });
+
+    it("shouldn't be able to transfer pre-approved tokens", async () => {
+      await token.approve(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO });
+      await checkErrorRevert(token.transferFrom(ACCOUNT_TWO, ACCOUNT_THREE, 300000, { from: ACCOUNT_THREE }));
+
+      const balanceAccount1 = await token.balanceOf.call(ACCOUNT_TWO);
+      assert.equal(1500000, balanceAccount1.toNumber());
+      const balanceAccount2 = await token.balanceOf.call(ACCOUNT_THREE);
+      assert.equal(0, balanceAccount2.toNumber());
+      const allowance = await token.allowance.call(ACCOUNT_TWO, ACCOUNT_THREE);
+      assert.equal(300000, allowance.toNumber());
+    });
+  });
+
   describe("when working with additional functions", () => {
     it("should be able to mint new tokens, when called by the Token owner", async () => {
       await token.mint(1500000, { from: COLONY_ACCOUNT });
@@ -138,6 +155,30 @@ contract("Token", accounts => {
       await checkErrorRevert(token.mint(1500000, { from: ACCOUNT_THREE }));
       const totalSupply = await token.totalSupply.call();
       assert.equal(0, totalSupply.toNumber());
+    });
+
+    it("should be able to unlock token by owner", async () => {
+      await token.unlock({ from: COLONY_ACCOUNT });
+      await dsAuthToken.setAuthority("0x0");
+
+      const locked = await token.locked.call();
+      assert.isFalse(locked);
+
+      const tokenAuthorityLocal = await token.authority.call();
+      assert.equal(tokenAuthorityLocal, "0x0000000000000000000000000000000000000000");
+    });
+
+    it("shouldn't be able to unlock token by non-owner", async () => {
+      await checkErrorRevert(token.unlock({ from: ACCOUNT_THREE }));
+      await checkErrorRevert(dsAuthToken.setAuthority("0x0", { from: ACCOUNT_THREE }));
+
+      const locked = await token.locked.call();
+      assert.isTrue(locked);
+    });
+
+    it("shouldn't be able to unlock a token which is already unlocked", async () => {
+      await token.unlock({ from: COLONY_ACCOUNT });
+      await checkErrorRevert(token.unlock({ from: COLONY_ACCOUNT }));
     });
   });
 
