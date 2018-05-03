@@ -5,7 +5,9 @@ import web3Utils from "web3-utils";
 import { forwardTime } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
+const TokenAuthority = artifacts.require("TokenAuthority");
 const Vesting = artifacts.require("Vesting");
+const DSAuth = artifacts.require("DSAuth");
 
 contract("Vesting", accounts => {
   const SECONDS_PER_MONTH = 2628000;
@@ -24,6 +26,10 @@ contract("Vesting", accounts => {
     vesting = await Vesting.new(token.address, COLONY_ACCOUNT);
     // Approve the total balance to be tranferred by the vesting contract as part of the `addTokenGrant` call
     await token.approve(vesting.address, ACCOUNT_1_GRANT_AMOUNT.toString());
+
+    const tokenAuthority = await TokenAuthority.new(token.address, vesting.address, COLONY_ACCOUNT);
+    const dsAuthToken = DSAuth.at(token.address);
+    await dsAuthToken.setAuthority(tokenAuthority.address);
   });
 
   describe("Gas costs", () => {
