@@ -71,7 +71,7 @@ contract("Vesting", accounts => {
     txData = await token.contract.approve.getData(vesting.address, TOTAL_SUPPLY.toString());
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
-    const tokenAuthority = await TokenAuthority.new(token.address, vesting.address, colonyMultiSig.address);
+    const tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
     const dsAuthToken = DSAuth.at(token.address);
     txData = await dsAuthToken.contract.setAuthority.getData(tokenAuthority.address);
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
