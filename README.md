@@ -41,7 +41,7 @@ Secured to Colony MultiSig only:
 * `removeTokenGrant` - Terminate token grant for a given user transferring all vested tokens to the user and returning all non-vested tokens to the Colony MultiSig.
 
 Public functions:
-* `claimVestedTokens` - Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested. Note that it is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this.
+* `claimVestedTokens` - Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested. Note that it is advised recipients check they are entitled to claim via `calculateGrantClaim` before calling this.
 
 * `calculateGrantClaim` - Calculates the vested and unclaimed months and tokens available for a given user to claim. Due to rounding errors once grant duration is reached, returns the entire left grant amount. Returns (0, 0) if cliff has not been reached.
 
