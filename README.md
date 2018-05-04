@@ -23,11 +23,27 @@ git submodule update --init
 
 ## Contracts
 
-The CLNY Token contract is defined in contracts/Token.sol
+[Token.sol](./contracts/Token.sol)
 
-The Token grants are defined and managed in contracts/Vesting.sol
+CLNY Token contract based on an ERC20 token with `mint` functionality. The Token largely reuses the `DSToken` implementation from [Dappsys library](https://github.com/dapphub/dappsys). Additionally implements a one-way unlock switch to open the token to transfers to all token holders. When deployed initially, token transfers will only be allowed for the Colony MultiSig and Vesting contracts, see `TokenAuthority` contract for details. 
 
-The `math`, `erc20` and a significant part of the `token` contracts have been reused from the [Dappsys library](https://github.com/dapphub/dappsys).
+[TokenAuthority.sol](./contracts/TokenAuthority.sol)
+
+Acts as the Token Authority while CLNY Token is locked for token transfers. Implements `DSAuthority` to allow Colony MultiSig and Vesting contracts to be the only two that can transfer tokens for the purposes of pre-allocating tokens and token grants.
+
+[Vesting.sol](./contracts/Vesting.sol) 
+
+Stores and manages the CLNY Token grants via the following functions:
+
+Secured to Colony MultiSig only:
+* `addTokenGrant` - Adds a new token grant for a given user. Only one grant per user is allowed. The amount of CLNY grant tokens here need to be preapproved by the Colony MultiSig (which mints and owns the tokens) for transfer by the `Vesting` contract before this call. There is an option to backdate the grant here if needed.
+
+* `removeTokenGrant` - Terminate token grant for a given user transferring all vested tokens to the user and returning all non-vested tokens to the Colony MultiSig.
+
+Public functions:
+* `claimVestedTokens` - Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested. Note that it is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this.
+
+* `calculateGrantClaim` - Calculates the vested and unclaimed months and tokens available for a given user to claim. Due to rounding errors once grant duration is reached, returns the entire left grant amount. Returns (0, 0) if cliff has not been reached.
 
 The Colony Multisignature contract is defined in gnosis/MultiSigWallet.sol and based on the [Gnosis MultiSig](https://github.com/gnosis/MultiSigWallet)
 
