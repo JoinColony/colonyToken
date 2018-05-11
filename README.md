@@ -50,4 +50,4 @@ gulp lint:contracts
 
 We use a hosted Ethereum node cluster - [Infura](https://infura.io) for deployment to main and test networks.
 
-Flattened contracts are in source control under `flattened` folder and can be generated via `yarn run flatten:contracts` which uses [solidity-flattener](https://github.com/BlockCatIO/solidity-flattener) which you can install via `pip3 install solidity-flattener`
+Flattened contracts are in source control under `flattened` folder and can be generated via `yarn run flatten:contracts` which uses [/solidity-steamroller](https://github.com/JoinColony/solidity-steamroller)

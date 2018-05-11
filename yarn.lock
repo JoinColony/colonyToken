@@ -384,7 +384,7 @@ async-eventemitter@^0.2.2:
   dependencies:
     async "^2.4.0"
 
-"async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c":
+async-eventemitter@ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c:
   version "0.2.3"
   resolved "https://codeload.github.com/ahultgren/async-eventemitter/tar.gz/fa06e39e56786ba541c180061dbf2c0a5bbf951c"
   dependencies:
@@ -6237,6 +6237,10 @@ solidity-coverage@^0.5.0:
     solidity-parser-sc "0.4.8"
     web3 "^0.18.4"
 
+solidity-parser-antlr@^0.2.10:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/solidity-parser-antlr/-/solidity-parser-antlr-0.2.10.tgz#6bc9e48faf49c1bf7bb49562cc1900f25153171c"
+
 solidity-parser-sc@0.4.8:
   version "0.4.8"
   resolved "https://registry.yarnpkg.com/solidity-parser-sc/-/solidity-parser-sc-0.4.8.tgz#b2d14f0effe638f78b38b489cb4a763ad88613cd"
@@ -6244,6 +6248,13 @@ solidity-parser-sc@0.4.8:
     mocha "^2.4.5"
     pegjs "^0.10.0"
     yargs "^4.6.0"
+
+solidity-steamroller@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/solidity-steamroller/-/solidity-steamroller-1.0.0.tgz#a80ffa6019dab5a587ea5afd5295997af299a25d"
+  dependencies:
+    semver "^5.5.0"
+    solidity-parser-antlr "^0.2.10"
 
 solium-plugin-security@0.1.1:
   version "0.1.1"

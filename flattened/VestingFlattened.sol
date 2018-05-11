@@ -1,4 +1,22 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.23;
+pragma experimental "v0.5.0";
+
+
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 
 contract DSAuthority {
     function canCall(
@@ -15,9 +33,9 @@ contract DSAuth is DSAuthEvents {
     DSAuthority  public  authority;
     address      public  owner;
 
-    function DSAuth() public {
+    constructor() public {
         owner = msg.sender;
-        LogSetOwner(msg.sender);
+        emit LogSetOwner(msg.sender);
     }
 
     function setOwner(address owner_)
@@ -25,7 +43,7 @@ contract DSAuth is DSAuthEvents {
         auth
     {
         owner = owner_;
-        LogSetOwner(owner);
+        emit LogSetOwner(owner);
     }
 
     function setAuthority(DSAuthority authority_)
@@ -33,7 +51,7 @@ contract DSAuth is DSAuthEvents {
         auth
     {
         authority = authority_;
-        LogSetAuthority(authority);
+        emit LogSetAuthority(authority);
     }
 
     modifier auth {
@@ -53,27 +71,22 @@ contract DSAuth is DSAuthEvents {
         }
     }
 }
+/// math.sol -- mixin for inline numerical wizardry
 
-contract ERC20Events {
-    event Approval(address indexed src, address indexed guy, uint wad);
-    event Transfer(address indexed src, address indexed dst, uint wad);
-}
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 
-contract ERC20 is ERC20Events {
-    function totalSupply() public view returns (uint);
-    function balanceOf(address guy) public view returns (uint);
-    function allowance(address src, address guy) public view returns (uint);
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-    function approve(address guy, uint wad) public returns (bool);
-    function transfer(address dst, uint wad) public returns (bool);
-    function transferFrom(
-        address src, address dst, uint wad
-    ) public returns (bool);
-}
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-contract ERC20Extended is ERC20 {
-  function mint(uint wad) public;
-}
+
 
 contract DSMath {
     function add(uint x, uint y) internal pure returns (uint z) {
@@ -142,6 +155,60 @@ contract DSMath {
         }
     }
 }
+/*
+  This file is part of The Colony Network.
+
+  The Colony Network is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  The Colony Network is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
+
+/// erc20.sol -- API for the ERC20 token standard
+
+// See <https://github.com/ethereum/EIPs/issues/20>.
+
+// This file likely does not meet the threshold of originality
+// required for copyright to apply.  As a result, this is free and
+// unencumbered software belonging to the public domain.
+
+
+
+contract ERC20Events {
+    event Approval(address indexed src, address indexed guy, uint wad);
+    event Transfer(address indexed src, address indexed dst, uint wad);
+}
+
+contract ERC20 is ERC20Events {
+    function totalSupply() public view returns (uint);
+    function balanceOf(address guy) public view returns (uint);
+    function allowance(address src, address guy) public view returns (uint);
+
+    function approve(address guy, uint wad) public returns (bool);
+    function transfer(address dst, uint wad) public returns (bool);
+    function transferFrom(
+        address src, address dst, uint wad
+    ) public returns (bool);
+}
+
+
+contract ERC20Extended is ERC20 {
+  event Mint(address indexed guy, uint wad);
+
+  function mint(uint wad) public;
+}
+
 
 contract Token is DSAuth, DSMath, ERC20Extended {
   bytes32 public symbol;
@@ -151,11 +218,20 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   uint256 _supply;
   mapping (address => uint256) _balances;
   mapping (address => mapping (address => uint256)) _approvals;
+  bool public locked;
 
-  function Token(bytes32 _name, bytes32 _symbol, uint256 _decimals) public {
+  constructor(bytes32 _name, bytes32 _symbol, uint256 _decimals) public {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
+    locked = true;
+  }
+
+  modifier unlocked {
+    if (locked) {
+      require(isAuthorized(msg.sender, msg.sig));
+    }
+    _;
   }
 
   function totalSupply() public view returns (uint256) {
@@ -171,21 +247,17 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   }
 
   function transfer(address dst, uint wad) public returns (bool) {
-    assert(_balances[msg.sender] >= wad);
-
-    _balances[msg.sender] = sub(_balances[msg.sender], wad);
-    _balances[dst] = add(_balances[dst], wad);
-
-    emit Transfer(msg.sender, dst, wad);
-
-    return true;
+    return transferFrom(msg.sender, dst, wad);
   }
 
-  function transferFrom(address src, address dst, uint wad) public returns (bool) {
-    assert(_balances[src] >= wad);
-    assert(_approvals[src][msg.sender] >= wad);
+  function transferFrom(address src, address dst, uint wad) public
+  unlocked
+  returns (bool)
+  {
+    if (src != msg.sender) {
+      _approvals[src][msg.sender] = sub(_approvals[src][msg.sender], wad);
+    }
 
-    _approvals[src][msg.sender] = sub(_approvals[src][msg.sender], wad);
     _balances[src] = sub(_balances[src], wad);
     _balances[dst] = add(_balances[dst], wad);
 
@@ -207,8 +279,20 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   {
     _balances[msg.sender] = add(_balances[msg.sender], wad);
     _supply = add(_supply, wad);
+
+    emit Mint(msg.sender, wad);
+  }
+
+  function unlock() public
+  auth
+  {
+    require(locked);
+    locked = false;
   }
 }
+
+
+
 
 contract Vesting is DSMath {
   Token public token;
@@ -221,12 +305,12 @@ contract Vesting is DSMath {
   event GrantTokensClaimed(address recipient, uint amountClaimed);
 
   struct Grant {
-    uint amount;
     uint startTime;
-    uint vestingDuration;
-    uint vestingCliff;
-    uint64 monthsClaimed;
-    uint totalClaimed;
+    uint64 amount;
+    uint16 vestingDuration;
+    uint16 vestingCliff;
+    uint16 monthsClaimed;
+    uint64 totalClaimed;
   }
   mapping (address => Grant) public tokenGrants;
 
@@ -245,7 +329,7 @@ contract Vesting is DSMath {
     _;
   }
 
-  function Vesting(address _token, address _colonyMultiSig) public
+  constructor(address _token, address _colonyMultiSig) public
   nonZeroAddress(_token)
   nonZeroAddress(_colonyMultiSig)
   {
@@ -262,7 +346,7 @@ contract Vesting is DSMath {
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
   /// @param _vestingDuration Number of months of the grant's duration
   /// @param _vestingCliff Number of months of the grant's vesting cliff
-  function addTokenGrant(address _recipient, uint _amount, uint _startTime, uint _vestingDuration, uint _vestingCliff) public 
+  function addTokenGrant(address _recipient, uint _startTime, uint64 _amount, uint16 _vestingDuration, uint16 _vestingCliff) public 
   onlyColonyMultiSig
   noGrantExistsForUser(_recipient)
   {
@@ -275,8 +359,8 @@ contract Vesting is DSMath {
     token.transferFrom(colonyMultiSig, address(this), _amount);
 
     Grant memory grant = Grant({
-      amount: _amount,
       startTime: _startTime == 0 ? now : _startTime,
+      amount: _amount,
       vestingDuration: _vestingDuration,
       vestingCliff: _vestingCliff,
       monthsClaimed: 0,
@@ -295,16 +379,16 @@ contract Vesting is DSMath {
   onlyColonyMultiSig
   {
     Grant storage tokenGrant = tokenGrants[_recipient];
-    uint elapsedMonths;
+    uint monthsVested;
     uint amountVested;
-    (elapsedMonths, amountVested) = calculateGrantClaim(_recipient);
+    (monthsVested, amountVested) = calculateGrantClaim(_recipient);
     uint amountNotVested = sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested);
 
     token.transfer(_recipient, amountVested);
     token.transfer(colonyMultiSig, amountNotVested);
 
-    tokenGrant.amount = 0;
     tokenGrant.startTime = 0;
+    tokenGrant.amount = 0;
     tokenGrant.vestingDuration = 0;
     tokenGrant.vestingCliff = 0;
     tokenGrant.monthsClaimed = 0;
@@ -316,20 +400,20 @@ contract Vesting is DSMath {
   /// @notice Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested
   /// It is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this
   function claimVestedTokens() public {
-    uint elapsedMonths;
+    uint monthsVested;
     uint amountVested;
-    (elapsedMonths, amountVested) = calculateGrantClaim(msg.sender);
+    (monthsVested, amountVested) = calculateGrantClaim(msg.sender);
     require(amountVested > 0);
 
     Grant storage tokenGrant = tokenGrants[msg.sender];
-    tokenGrant.monthsClaimed = uint64(elapsedMonths);
-    tokenGrant.totalClaimed = add(tokenGrant.totalClaimed, amountVested);
+    tokenGrant.monthsClaimed = uint16(add(tokenGrant.monthsClaimed, monthsVested));
+    tokenGrant.totalClaimed = uint64(add(tokenGrant.totalClaimed, amountVested));
     
     token.transfer(msg.sender, amountVested);
     emit GrantTokensClaimed(msg.sender, amountVested);
   }
 
-  /// @notice Calculate the vested months and vested tokens for `_recepient`
+  /// @notice Calculate the vested and unclaimed months and tokens available for `_recepient` to claim
   /// Due to rounding errors once grant duration is reached, returns the entire left grant amount
   /// Returns (0, 0) if cliff has not been reached
   function calculateGrantClaim(address _recipient) public view returns (uint256, uint256) {
@@ -348,12 +432,11 @@ contract Vesting is DSMath {
       uint remainingGrant = sub(tokenGrant.amount, tokenGrant.totalClaimed);
       return (tokenGrant.vestingDuration, remainingGrant);
     } else {
-      uint64 monthsPendingClaim = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
+      uint64 monthsVested = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
       // Calculate vested tokens and transfer them to recipient
       uint amountVestedPerMonth = tokenGrant.amount / tokenGrant.vestingDuration;
-      uint amountVested = mul(monthsPendingClaim, amountVestedPerMonth);
-      return (elapsedMonths, amountVested);
+      uint amountVested = mul(monthsVested, amountVestedPerMonth);
+      return (monthsVested, amountVested);
     }
   }
 }
-
