@@ -145,7 +145,6 @@ contract Vesting is DSMath {
       return (tokenGrant.vestingDuration, remainingGrant);
     } else {
       uint64 monthsVested = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
-      // Calculate vested tokens and transfer them to recipient
       uint amountVestedPerMonth = tokenGrant.amount / tokenGrant.vestingDuration;
       uint amountVested = mul(monthsVested, amountVestedPerMonth);
       return (monthsVested, amountVested);
