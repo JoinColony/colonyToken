@@ -52,7 +52,7 @@ contract Vesting is DSMath {
   /// @notice Add a new token grant for user `_recipient`. Only one grant per user is allowed
   /// The amount of CLNY tokens here need to be preapproved for transfer by this `Vesting` contract before this call
   /// Secured to the Colony MultiSig only
-  /// @param _recipient Address of the token grant repipient entitled to claim the grant funds
+  /// @param _recipient Address of the token grant recipient entitled to claim the grant funds
   /// @param _amount Total number of tokens in grant
   /// @param _startTime Grant start time as seconds since unix epoch
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
@@ -86,7 +86,7 @@ contract Vesting is DSMath {
   /// @notice Terminate token grant transferring all vested tokens to the `_recipient`
   /// and returning all non-vested tokens to the Colony MultiSig
   /// Secured to the Colony MultiSig only
-  /// @param _recipient Address of the token grant repipient
+  /// @param _recipient Address of the token grant recipient
   function removeTokenGrant(address _recipient) public 
   onlyColonyMultiSig
   {
@@ -110,7 +110,7 @@ contract Vesting is DSMath {
   }
 
   /// @notice Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested
-  /// It is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this
+  /// It is advised recipients check they are entitled to claim via `calculateGrantClaim` before calling this
   function claimVestedTokens() public {
     uint monthsVested;
     uint amountVested;
