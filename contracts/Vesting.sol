@@ -18,11 +18,11 @@ contract Vesting is DSMath {
 
   struct Grant {
     uint startTime;
-    uint64 amount;
+    uint128 amount;
     uint16 vestingDuration;
     uint16 vestingCliff;
     uint16 monthsClaimed;
-    uint64 totalClaimed;
+    uint128 totalClaimed;
   }
   mapping (address => Grant) public tokenGrants;
 
@@ -136,7 +136,7 @@ contract Vesting is DSMath {
     uint64 elapsedMonths = uint64(elapsedTime / SECONDS_PER_MONTH);
     
     if (elapsedMonths < tokenGrant.vestingCliff) {
-      return (elapsedMonths, 0);
+      return (0, 0);
     }
 
     // If over vesting duration, all tokens vested
