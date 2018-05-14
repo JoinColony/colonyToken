@@ -286,7 +286,6 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   function unlock() public
   auth
   {
-    require(locked);
     locked = false;
   }
 }
@@ -306,11 +305,11 @@ contract Vesting is DSMath {
 
   struct Grant {
     uint startTime;
-    uint64 amount;
+    uint128 amount;
     uint16 vestingDuration;
     uint16 vestingCliff;
     uint16 monthsClaimed;
-    uint64 totalClaimed;
+    uint128 totalClaimed;
   }
   mapping (address => Grant) public tokenGrants;
 
@@ -340,7 +339,7 @@ contract Vesting is DSMath {
   /// @notice Add a new token grant for user `_recipient`. Only one grant per user is allowed
   /// The amount of CLNY tokens here need to be preapproved for transfer by this `Vesting` contract before this call
   /// Secured to the Colony MultiSig only
-  /// @param _recipient Address of the token grant repipient entitled to claim the grant funds
+  /// @param _recipient Address of the token grant recipient entitled to claim the grant funds
   /// @param _amount Total number of tokens in grant
   /// @param _startTime Grant start time as seconds since unix epoch
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
@@ -374,7 +373,7 @@ contract Vesting is DSMath {
   /// @notice Terminate token grant transferring all vested tokens to the `_recipient`
   /// and returning all non-vested tokens to the Colony MultiSig
   /// Secured to the Colony MultiSig only
-  /// @param _recipient Address of the token grant repipient
+  /// @param _recipient Address of the token grant recipient
   function removeTokenGrant(address _recipient) public 
   onlyColonyMultiSig
   {
@@ -398,7 +397,7 @@ contract Vesting is DSMath {
   }
 
   /// @notice Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested
-  /// It is adviced recipients check they are entitled to claim via `calculateGrantClaim` before calling this
+  /// It is advised recipients check they are entitled to claim via `calculateGrantClaim` before calling this
   function claimVestedTokens() public {
     uint monthsVested;
     uint amountVested;
@@ -424,7 +423,7 @@ contract Vesting is DSMath {
     uint64 elapsedMonths = uint64(elapsedTime / SECONDS_PER_MONTH);
     
     if (elapsedMonths < tokenGrant.vestingCliff) {
-      return (elapsedMonths, 0);
+      return (0, 0);
     }
 
     // If over vesting duration, all tokens vested
@@ -433,7 +432,6 @@ contract Vesting is DSMath {
       return (tokenGrant.vestingDuration, remainingGrant);
     } else {
       uint64 monthsVested = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
-      // Calculate vested tokens and transfer them to recipient
       uint amountVestedPerMonth = tokenGrant.amount / tokenGrant.vestingDuration;
       uint amountVested = mul(monthsVested, amountVestedPerMonth);
       return (monthsVested, amountVested);
