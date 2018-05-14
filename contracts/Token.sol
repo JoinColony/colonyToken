@@ -83,7 +83,6 @@ contract Token is DSAuth, DSMath, ERC20Extended {
   function unlock() public
   auth
   {
-    require(locked);
     locked = false;
   }
 }
