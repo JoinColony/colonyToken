@@ -57,6 +57,10 @@ contract("Vesting", accounts => {
 
   beforeEach(async () => {
     token = await Token.new("Colony token", "CLNY", 18);
+    vesting = await Vesting.new(token.address, colonyMultiSig.address);
+
+    const tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
+    await token.setAuthority(tokenAuthority.address);
     await token.setOwner(colonyMultiSig.address);
 
     let txData = await token.contract.mint.getData(TOTAL_SUPPLY.toString());
@@ -65,15 +69,8 @@ contract("Vesting", accounts => {
     const totalBalance = await token.balanceOf.call(colonyMultiSig.address);
     assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());
 
-    vesting = await Vesting.new(token.address, colonyMultiSig.address);
-
     // Approve the total balance to be tranferred by the vesting contract as part of the `addTokenGrant` call
     txData = await token.contract.approve.getData(vesting.address, TOTAL_SUPPLY.toString());
-    await colonyMultiSig.submitTransaction(token.address, 0, txData);
-
-    const tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
-    const dsAuthToken = DSAuth.at(token.address);
-    txData = await dsAuthToken.contract.setAuthority.getData(tokenAuthority.address);
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
   });
 
