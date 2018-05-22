@@ -54,8 +54,8 @@ contract Vesting is DSMath {
   /// Secured to the Colony MultiSig only
   /// @param _recipient Address of the token grant recipient entitled to claim the grant funds
   /// @param _startTime Grant start time as seconds since unix epoch
-  /// @param _amount Total number of tokens in grant
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
+  /// @param _amount Total number of tokens in grant
   /// @param _vestingDuration Number of months of the grant's duration
   /// @param _vestingCliff Number of months of the grant's vesting cliff
   function addTokenGrant(address _recipient, uint256 _startTime, uint128 _amount, uint16 _vestingDuration, uint16 _vestingCliff) public 
@@ -80,7 +80,7 @@ contract Vesting is DSMath {
     });
 
     tokenGrants[_recipient] = grant;
-    emit GrantAdded(_recipient, now, _amount, _vestingDuration, _vestingCliff);
+    emit GrantAdded(_recipient, grant.startTime, _amount, _vestingDuration, _vestingCliff);
   }
 
   /// @notice Terminate token grant transferring all vested tokens to the `_recipient`
