@@ -12,9 +12,9 @@ contract Vesting is DSMath {
 
   uint constant internal SECONDS_PER_MONTH = 2628000;
 
-  event GrantAdded(address recipient, uint amount, uint startTime, uint vestingDuration, uint vestingCliff);
-  event GrantRemoved(address recipient, uint amountVested, uint amountNotVested);
-  event GrantTokensClaimed(address recipient, uint amountClaimed);
+  event GrantAdded(address recipient, uint256 startTime, uint128 amount, uint16 vestingDuration, uint16 vestingCliff);
+  event GrantRemoved(address recipient, uint128 amountVested, uint128 amountNotVested);
+  event GrantTokensClaimed(address recipient, uint128 amountClaimed);
 
   struct Grant {
     uint startTime;
@@ -58,7 +58,7 @@ contract Vesting is DSMath {
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
   /// @param _vestingDuration Number of months of the grant's duration
   /// @param _vestingCliff Number of months of the grant's vesting cliff
-  function addTokenGrant(address _recipient, uint _startTime, uint64 _amount, uint16 _vestingDuration, uint16 _vestingCliff) public 
+  function addTokenGrant(address _recipient, uint256 _startTime, uint128 _amount, uint16 _vestingDuration, uint16 _vestingCliff) public 
   onlyColonyMultiSig
   noGrantExistsForUser(_recipient)
   {
@@ -80,7 +80,7 @@ contract Vesting is DSMath {
     });
 
     tokenGrants[_recipient] = grant;
-    emit GrantAdded(_recipient, _amount, now, _vestingDuration, _vestingCliff);
+    emit GrantAdded(_recipient, now, _amount, _vestingDuration, _vestingCliff);
   }
 
   /// @notice Terminate token grant transferring all vested tokens to the `_recipient`
@@ -91,10 +91,10 @@ contract Vesting is DSMath {
   onlyColonyMultiSig
   {
     Grant storage tokenGrant = tokenGrants[_recipient];
-    uint monthsVested;
-    uint amountVested;
+    uint16 monthsVested;
+    uint128 amountVested;
     (monthsVested, amountVested) = calculateGrantClaim(_recipient);
-    uint amountNotVested = sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested);
+    uint128 amountNotVested = uint128(sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested));
 
     token.transfer(_recipient, amountVested);
     token.transfer(colonyMultiSig, amountNotVested);
@@ -112,14 +112,14 @@ contract Vesting is DSMath {
   /// @notice Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested
   /// It is advised recipients check they are entitled to claim via `calculateGrantClaim` before calling this
   function claimVestedTokens() public {
-    uint monthsVested;
-    uint amountVested;
+    uint16 monthsVested;
+    uint128 amountVested;
     (monthsVested, amountVested) = calculateGrantClaim(msg.sender);
     require(amountVested > 0);
 
     Grant storage tokenGrant = tokenGrants[msg.sender];
     tokenGrant.monthsClaimed = uint16(add(tokenGrant.monthsClaimed, monthsVested));
-    tokenGrant.totalClaimed = uint64(add(tokenGrant.totalClaimed, amountVested));
+    tokenGrant.totalClaimed = uint128(add(tokenGrant.totalClaimed, amountVested));
     
     token.transfer(msg.sender, amountVested);
     emit GrantTokensClaimed(msg.sender, amountVested);
@@ -128,12 +128,12 @@ contract Vesting is DSMath {
   /// @notice Calculate the vested and unclaimed months and tokens available for `_recepient` to claim
   /// Due to rounding errors once grant duration is reached, returns the entire left grant amount
   /// Returns (0, 0) if cliff has not been reached
-  function calculateGrantClaim(address _recipient) public view returns (uint256, uint256) {
+  function calculateGrantClaim(address _recipient) public view returns (uint16, uint128) {
     Grant storage tokenGrant = tokenGrants[_recipient];
 
     // Check cliff was reached
     uint elapsedTime = sub(now, tokenGrant.startTime);
-    uint64 elapsedMonths = uint64(elapsedTime / SECONDS_PER_MONTH);
+    uint elapsedMonths = elapsedTime / SECONDS_PER_MONTH;
     
     if (elapsedMonths < tokenGrant.vestingCliff) {
       return (0, 0);
@@ -141,12 +141,12 @@ contract Vesting is DSMath {
 
     // If over vesting duration, all tokens vested
     if (elapsedMonths >= tokenGrant.vestingDuration) {
-      uint remainingGrant = sub(tokenGrant.amount, tokenGrant.totalClaimed);
+      uint128 remainingGrant = tokenGrant.amount - tokenGrant.totalClaimed;
       return (tokenGrant.vestingDuration, remainingGrant);
     } else {
-      uint64 monthsVested = uint64(sub(elapsedMonths, tokenGrant.monthsClaimed));
+      uint16 monthsVested = uint16(sub(elapsedMonths, tokenGrant.monthsClaimed));
       uint amountVestedPerMonth = tokenGrant.amount / tokenGrant.vestingDuration;
-      uint amountVested = mul(monthsVested, amountVestedPerMonth);
+      uint128 amountVested = uint128(mul(monthsVested, amountVestedPerMonth));
       return (monthsVested, amountVested);
     }
   }

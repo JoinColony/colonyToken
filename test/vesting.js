@@ -162,6 +162,15 @@ contract("Vesting", accounts => {
         await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
       });
 
+      it("should error on grant amount overflow", async () => {
+        const grantAmount = new BN(2).pow(new BN(128)).addn(1);
+        const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, grantAmount.toString(), 24, 6);
+        await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
+
+        const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+        assert.equal(0, grant[0]);
+      });
+
       it("should error on grant duration overflow", async () => {
         const grantDuration = new BN(2).pow(new BN(16)).addn(1);
         const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, grantDuration.muln(10).toString(), grantDuration.toString(), 6);
