@@ -175,11 +175,6 @@ contract("Token", accounts => {
       const locked = await token.locked.call();
       assert.isTrue(locked);
     });
-
-    it("shouldn't be able to unlock a token which is already unlocked", async () => {
-      await token.unlock({ from: COLONY_ACCOUNT });
-      await checkErrorRevert(token.unlock({ from: COLONY_ACCOUNT }));
-    });
   });
 
   describe("when working with ether transfers", () => {

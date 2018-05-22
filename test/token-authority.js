@@ -22,7 +22,7 @@ contract("TokenAuthority", accounts => {
     colonyMultiSig = await MultiSigWallet.new([COLONY_ACCOUNT], 1);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
 
-    tokenAuthority = await TokenAuthority.new(token.address, vesting.address, colonyMultiSig.address);
+    tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
     dsAuthToken = DSAuth.at(token.address);
     await dsAuthToken.setAuthority(tokenAuthority.address);
   });
@@ -56,21 +56,6 @@ contract("TokenAuthority", accounts => {
     it("vesting contract cannnot mint", async () => {
       const check = await tokenAuthority.canCall.call(vesting.address, token.address, "0xa0712d68");
       assert.isFalse(check);
-    });
-
-    it("multiSig contract can transfer", async () => {
-      const check = await tokenAuthority.canCall.call(colonyMultiSig.address, token.address, "0xa9059cbb");
-      assert.isTrue(check);
-    });
-
-    it("multiSig contract can transferFrom", async () => {
-      const check = await tokenAuthority.canCall.call(colonyMultiSig.address, token.address, "0x23b872dd");
-      assert.isTrue(check);
-    });
-
-    it("multiSig contract can mint", async () => {
-      const check = await tokenAuthority.canCall.call(colonyMultiSig.address, token.address, "0xa0712d68");
-      assert.isTrue(check);
     });
   });
 });
