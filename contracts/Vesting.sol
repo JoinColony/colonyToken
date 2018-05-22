@@ -53,8 +53,8 @@ contract Vesting is DSMath {
   /// The amount of CLNY tokens here need to be preapproved for transfer by this `Vesting` contract before this call
   /// Secured to the Colony MultiSig only
   /// @param _recipient Address of the token grant recipient entitled to claim the grant funds
-  /// @param _amount Total number of tokens in grant
   /// @param _startTime Grant start time as seconds since unix epoch
+  /// @param _amount Total number of tokens in grant
   /// Allows backdating grants by passing time in the past. If `0` is passed here current blocktime is used. 
   /// @param _vestingDuration Number of months of the grant's duration
   /// @param _vestingCliff Number of months of the grant's vesting cliff
