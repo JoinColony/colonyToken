@@ -151,10 +151,30 @@ contract("Token", accounts => {
       assert.equal(1500001, balance.toNumber());
     });
 
+    it("should emit a Mint event when minting tokens", async () => {
+      await expectEvent(token.mint(1), "Mint");
+    });
+
     it("should NOT be able to mint new tokens, when called by anyone NOT the Token owner", async () => {
       await checkErrorRevert(token.mint(1500000, { from: ACCOUNT_THREE }));
       const totalSupply = await token.totalSupply.call();
       assert.equal(0, totalSupply.toNumber());
+    });
+
+    it("should be able to burn tokens", async () => {
+      await token.mint(1500000);
+      await token.burn(500000);
+
+      const totalSupply = await token.totalSupply.call();
+      assert.equal(1000000, totalSupply.toNumber());
+
+      const balance = await token.balanceOf.call(COLONY_ACCOUNT);
+      assert.equal(1000000, balance.toNumber());
+    });
+
+    it("should emit a Burn event when burning tokens", async () => {
+      await token.mint(1);
+      await expectEvent(token.burn(1), "Burn");
     });
 
     it("should be able to unlock token by owner", async () => {

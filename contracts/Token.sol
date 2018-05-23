@@ -38,12 +38,6 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
     _;
   }
 
-  function unlock() public
-  auth
-  {
-    locked = false;
-  }
-
   constructor(bytes32 _name, bytes32 _symbol, uint256 _decimals) public {
     name = _name;
     symbol = _symbol;
@@ -65,5 +59,18 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
     _supply = add(_supply, wad);
 
     emit Mint(msg.sender, wad);
+  }
+
+  function burn(uint wad) public {
+    _balances[msg.sender] = sub(_balances[msg.sender], wad);
+    _supply = sub(_supply, wad);
+
+    emit Burn(msg.sender, wad);
+  }
+
+  function unlock() public
+  auth
+  {
+    locked = false;
   }
 }

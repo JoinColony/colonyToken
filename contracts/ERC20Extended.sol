@@ -23,6 +23,9 @@ import "../lib/dappsys/erc20.sol";
 
 contract ERC20Extended is ERC20 {
   event Mint(address indexed guy, uint wad);
+  event Burn(address indexed guy, uint wad);
 
   function mint(uint wad) public;
+  
+  function burn(uint wad) public;
 }
