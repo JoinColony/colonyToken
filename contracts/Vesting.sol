@@ -113,8 +113,8 @@ contract Vesting is DSMath {
     (monthsVested, amountVested) = calculateGrantClaim(_recipient);
     uint128 amountNotVested = uint128(sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested));
 
-    token.transfer(_recipient, amountVested);
-    token.transfer(colonyMultiSig, amountNotVested);
+    require(token.transfer(_recipient, amountVested));
+    require(token.transfer(colonyMultiSig, amountNotVested));
 
     tokenGrant.startTime = 0;
     tokenGrant.amount = 0;
@@ -138,7 +138,7 @@ contract Vesting is DSMath {
     tokenGrant.monthsClaimed = uint16(add(tokenGrant.monthsClaimed, monthsVested));
     tokenGrant.totalClaimed = uint128(add(tokenGrant.totalClaimed, amountVested));
     
-    token.transfer(msg.sender, amountVested);
+    require(token.transfer(msg.sender, amountVested));
     emit GrantTokensClaimed(msg.sender, amountVested);
   }
 

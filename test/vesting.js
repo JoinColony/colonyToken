@@ -179,6 +179,18 @@ contract("Vesting", accounts => {
         const grant = await vesting.tokenGrants.call(ACCOUNT_1);
         assert.equal(0, grant[0]);
       });
+
+      it("should error if grant amount cannot be transferred", async () => {
+        // Remove the allowance for the vesting contract
+        let txData = await token.contract.approve.getData(vesting.address, 0);
+        await colonyMultiSig.submitTransaction(token.address, 0, txData);
+
+        txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 10, 24, 6);
+        await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
+
+        const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+        assert.equal(0, grant[0]);
+      });
     });
 
     describe("when removing token grants", () => {
