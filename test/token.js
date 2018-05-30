@@ -134,6 +134,21 @@ contract("Token", accounts => {
   });
 
   describe("when working with additional functions", () => {
+    it("should be able to get the token decimals", async () => {
+      const decimals = await token.decimals.call();
+      assert.equal(decimals.toNumber(), 18);
+    });
+
+    it("should be able to get the token symbol", async () => {
+      const symbol = await token.symbol.call();
+      assert.equal(symbol, "CLNY");
+    });
+
+    it("should be able to get the token name", async () => {
+      const name = await token.name.call();
+      assert.equal(name, "Colony token");
+    });
+
     it("should be able to mint new tokens, when called by the Token owner", async () => {
       await token.mint(1500000, { from: COLONY_ACCOUNT });
       let totalSupply = await token.totalSupply.call();
