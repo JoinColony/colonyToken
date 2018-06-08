@@ -13,7 +13,6 @@ const DSAuth = artifacts.require("DSAuth");
 
 contract("Vesting", accounts => {
   const SECONDS_PER_MONTH = 2628000;
-  const COLONY_ACCOUNT = accounts[0];
   const ACCOUNT_1 = accounts[1];
   const ACCOUNT_2 = accounts[2];
   const ACCOUNT_3 = accounts[3];
@@ -52,7 +51,7 @@ contract("Vesting", accounts => {
   let vesting;
 
   before(async () => {
-    colonyMultiSig = await MultiSigWallet.new([COLONY_ACCOUNT], 1);
+    colonyMultiSig = await MultiSigWallet.deployed();
   });
 
   beforeEach(async () => {

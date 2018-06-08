@@ -3,28 +3,21 @@
 import { assert } from "chai";
 
 const TokenAuthority = artifacts.require("TokenAuthority");
-const DSAuth = artifacts.require("DSAuth");
 const Token = artifacts.require("Token");
 const Vesting = artifacts.require("Vesting");
 const MultiSigWallet = artifacts.require("gnosis/MultiSigWallet.sol");
 
-contract("TokenAuthority", accounts => {
-  const COLONY_ACCOUNT = accounts[0];
-
+contract("TokenAuthority", () => {
   let tokenAuthority;
   let token;
-  let dsAuthToken;
   let vesting;
   let colonyMultiSig;
 
   before(async () => {
-    token = await Token.new("Colony token", "CLNY", 18);
-    colonyMultiSig = await MultiSigWallet.new([COLONY_ACCOUNT], 1);
-    vesting = await Vesting.new(token.address, colonyMultiSig.address);
-
-    tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
-    dsAuthToken = DSAuth.at(token.address);
-    await dsAuthToken.setAuthority(tokenAuthority.address);
+    token = await Token.deployed();
+    colonyMultiSig = await MultiSigWallet.deployed();
+    vesting = await Vesting.deployed();
+    tokenAuthority = await TokenAuthority.deployed();
   });
 
   describe("when initialised", () => {
