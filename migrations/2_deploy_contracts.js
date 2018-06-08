@@ -1,7 +1,7 @@
-const MultiSigWallet = artifacts.require("./gnosis/MultiSigWallet.sol");
-const TokenAuthority = artifacts.require("./TokenAuthority.sol");
-const Token = artifacts.require("./Token.sol");
-const Vesting = artifacts.require("./Vesting.sol");
+const MultiSigWallet = artifacts.require("./gnosis/MultiSigWallet");
+const TokenAuthority = artifacts.require("./TokenAuthority");
+const Token = artifacts.require("./Token");
+const Vesting = artifacts.require("./Vesting");
 
 module.exports = (deployer, network, accounts) => {
   const COLONY_ACCOUNT = accounts[0];
