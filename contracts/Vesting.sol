@@ -148,6 +148,11 @@ contract Vesting is DSMath {
   function calculateGrantClaim(address _recipient) public view returns (uint16, uint128) {
     Grant storage tokenGrant = tokenGrants[_recipient];
 
+    // For grants created with a future start date, that hasn't been reached, return 0, 0
+    if (now < tokenGrant.startTime) {
+      return (0, 0);
+    }
+
     // Check cliff was reached
     uint elapsedTime = sub(now, tokenGrant.startTime);
     uint elapsedMonths = elapsedTime / SECONDS_PER_MONTH;
