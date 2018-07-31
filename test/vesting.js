@@ -103,7 +103,7 @@ contract("Vesting", accounts => {
 
   function testSpecifications() {
     describe("when creating token grants", () => {
-      it("should create the correct grant", async () => {
+      it("should create grant correctly, when a startDate in the past is used", async () => {
         const currentTime = await currentBlockTime();
         const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, currentTime - SECONDS_PER_MONTH, 1000, 24, 6);
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
@@ -117,7 +117,25 @@ contract("Vesting", accounts => {
         assert.equal(grant[5].toNumber(), 0);
       });
 
-      it("should create the grant with current startDate if no startDate was passed", async () => {
+      it("should create grant correctly, when a startDate in the future is used", async () => {
+        const currentTime = await currentBlockTime();
+        const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, currentTime + SECONDS_PER_MONTH, 1000, 24, 6);
+        await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
+
+        const grant = await vesting.tokenGrants.call(ACCOUNT_1);
+        assert.equal(grant[0].toNumber(), currentTime + SECONDS_PER_MONTH);
+        assert.equal(grant[1].toNumber(), 1000);
+        assert.equal(grant[2].toNumber(), 24);
+        assert.equal(grant[3].toNumber(), 6);
+        assert.equal(grant[4].toNumber(), 0);
+        assert.equal(grant[5].toNumber(), 0);
+
+        const x = await vesting.calculateGrantClaim.call(ACCOUNT_1);
+        assert.isTrue(x[0].isZero());
+        assert.isTrue(x[1].isZero());
+      });
+
+      it("should create grant correctly, using the current time, when no startDate was passed", async () => {
         const currentTime = await currentBlockTime();
         const txData = await vesting.contract.addTokenGrant.getData(ACCOUNT_1, 0, 1000, 24, 6);
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
