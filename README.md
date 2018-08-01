@@ -24,14 +24,17 @@ git submodule update --init
 ## Contracts
 
 [Token.sol](./contracts/Token.sol)
+Deployed on mainnet at `0x06441deaf11d60d77e5e42d4f644c64ca05c2fce`
 
 CLNY Token contract based on an ERC20 token with `mint` functionality. The Token largely reuses the `DSToken` implementation from [Dappsys library](https://github.com/dapphub/dappsys). Additionally implements a one-way unlock switch to open the token to transfers to all token holders. When deployed initially, token transfers will only be allowed for the Colony MultiSig and Vesting contracts, see `TokenAuthority` contract for details. 
 
 [TokenAuthority.sol](./contracts/TokenAuthority.sol)
+Deployed on mainnet at `0xcac5519b7efe284386c286787b099b391a092d15`
 
 Acts as the Token Authority while CLNY Token is locked for token transfers. Implements `DSAuthority` to allow Colony MultiSig and Vesting contracts to be the only two that can transfer tokens for the purposes of pre-allocating tokens and token grants.
 
 [Vesting.sol](./contracts/Vesting.sol) 
+Deployed on mainnet at `0x48d8a487a90207e371acd3ded547e5c6afe90332`
 
 Stores and manages the CLNY Token grants via the following functions:
 
