@@ -1,0 +1,14 @@
+{
+  "package_name": "colony-token",
+  "version": "0.1.0",
+  "description": "Simple token with support for locking and vesting",
+  "authors": [
+    "Colony Team <hello@colony.io>"
+  ],
+  "keywords": [
+    "ethereum",
+    "token",
+    "vesting"
+  ],
+  "license": "GNU GPL v3"
+}

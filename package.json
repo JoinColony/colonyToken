@@ -68,7 +68,7 @@
     "solidity-coverage": "^0.5.4",
     "solidity-steamroller": "^1.0.0",
     "solium": "^1.1.7",
-    "truffle": "^4.1.11",
+    "truffle": "^4.1.12",
     "web3-utils": "^1.0.0-beta.34"
   }
 }

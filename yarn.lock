@@ -395,7 +395,7 @@ async-eventemitter@^0.2.2:
   dependencies:
     async "^2.4.0"
 
-"async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c":
+async-eventemitter@ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c:
   version "0.2.3"
   resolved "https://codeload.github.com/ahultgren/async-eventemitter/tar.gz/fa06e39e56786ba541c180061dbf2c0a5bbf951c"
   dependencies:
@@ -4986,7 +4986,7 @@ ora@^0.2.3:
     cli-spinners "^0.1.2"
     object-assign "^4.0.1"
 
-original-require@^1.0.1:
+original-require@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/original-require/-/original-require-1.0.1.tgz#0f130471584cd33511c5ec38c8d59213f9ac5e20"
 
@@ -6658,12 +6658,12 @@ truffle-hdwallet-provider@^0.0.5:
     web3 "^0.18.2"
     web3-provider-engine "^14.0.5"
 
-truffle@^4.1.11:
-  version "4.1.11"
-  resolved "https://registry.yarnpkg.com/truffle/-/truffle-4.1.11.tgz#a4df812ebf4a564892900c4a1dac1131104a0799"
+truffle@^4.1.12:
+  version "4.1.14"
+  resolved "https://registry.yarnpkg.com/truffle/-/truffle-4.1.14.tgz#8d2c298e29abf9b1e486e44ff9faca6d34bb9030"
   dependencies:
     mocha "^4.1.0"
-    original-require "^1.0.1"
+    original-require "1.0.1"
     solc "0.4.24"
 
 tty-browserify@0.0.0:
