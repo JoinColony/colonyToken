@@ -2,7 +2,7 @@ require("babel-register");
 
 const HDWalletProvider = require("truffle-hdwallet-provider");
 
-const mnemonic = "";
+const mnemonic = "can only correct achieve orphan target annual machine used letter science theme";
 
 const API_KEY = "OGfF4xYJ82HoyaJNFkla";
 

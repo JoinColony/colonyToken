@@ -28,7 +28,7 @@ contract("Vesting", accounts => {
     await token.approve(vesting.address, ACCOUNT_1_GRANT_AMOUNT.toString());
 
     const tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
-    const dsAuthToken = DSAuth.at(token.address);
+    const dsAuthToken = await DSAuth.at(token.address);
     await dsAuthToken.setAuthority(tokenAuthority.address);
   });
 

@@ -27,9 +27,9 @@ module.exports = (deployer) => {
     })
     .then(() => token.setOwner(multiSig.address))
     // mint the token
-    .then(() => token.contract.mint.getData(TOTAL_SUPPLY.toString()))
+    .then(() => token.contract.methods.mint(TOTAL_SUPPLY.toString()).encodeABI())
     .then(txData => multiSig.submitTransaction(token.address, 0, txData))
     // approve vesting contract for entire supply
-    .then(() => token.contract.approve.getData(vesting.address, TOTAL_SUPPLY.toString()))
+    .then(() => token.contract.methods.approve(vesting.address, TOTAL_SUPPLY.toString()).encodeABI())
     .then(txData => multiSig.submitTransaction(token.address, 0, txData));
 };
