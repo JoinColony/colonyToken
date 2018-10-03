@@ -1,4 +1,4 @@
-![Colony Logo](https://user-images.githubusercontent.com/9886144/31672259-f9586cc4-b353-11e7-97fd-486069cbd256.png)
+![Colony Logo](./horizontal_color.png)
 
 # Colony Token and Vesting contracts
 
