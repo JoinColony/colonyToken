@@ -1,0 +1,51 @@
+version: 2
+
+jobs:
+  lint-and-unit-test:
+    docker:
+      - image: circleci/node:9.11.2
+    working_directory: ~/colonyToken
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - node-modules-{{ checksum "yarn.lock" }}
+            - node-modules-
+      - run:
+          name: "Set up global packages"
+          command: |
+            yarn --pure-lockfile
+            git submodule update --init
+      - save_cache:
+          paths:
+            - node_modules
+          key: node-modules-{{ checksum "yarn.lock" }}
+       - run:
+          name: "Linting JavaScript"
+          command: yarn run eslint
+      - run:
+          name: "Linting Solidity"
+          command: yarn run solium
+      - run:
+          name: "Running unit tests"
+          command: yarn run test:contracts
+      - run:
+          name: "Running gas cost tests"
+          command: yarn run test:contracts:gasCosts
+     - run:
+          name: "Running unit tests with coverage"
+          command: yarn run test:contracts:coverage
+      # Save test results
+      - store_test_results:
+          path: test-results.xml
+      - store_artifacts:
+          path: test-results.xml
+      # Save coverage artifacts
+      - store_artifacts:
+          path: coverage
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - lint-and-unit-test
