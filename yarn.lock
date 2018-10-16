@@ -3565,7 +3565,7 @@ optionator@^0.8.1, optionator@^0.8.2:
     type-check "~0.3.2"
     wordwrap "~1.0.0"
 
-original-require@^1.0.1:
+original-require@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/original-require/-/original-require-1.0.1.tgz#0f130471584cd33511c5ec38c8d59213f9ac5e20"
 
@@ -4392,7 +4392,17 @@ sol-explore@^1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/sol-explore/-/sol-explore-1.6.2.tgz#43ae8c419fd3ac056a05f8a9d1fb1022cd41ecc2"
 
-solc@0.4.24, solc@^0.4.2:
+solc@0.4.25:
+  version "0.4.25"
+  resolved "https://registry.yarnpkg.com/solc/-/solc-0.4.25.tgz#06b8321f7112d95b4b903639b1138a4d292f5faa"
+  dependencies:
+    fs-extra "^0.30.0"
+    memorystream "^0.3.1"
+    require-from-string "^1.1.0"
+    semver "^5.3.0"
+    yargs "^4.7.1"
+
+solc@^0.4.2:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/solc/-/solc-0.4.24.tgz#354f14b269b38cbaa82a47d1ff151723502b954e"
   dependencies:
@@ -4799,13 +4809,13 @@ truffle-hdwallet-provider@^0.0.6:
     web3 "^0.18.2"
     web3-provider-engine "^14.0.5"
 
-truffle@^5.0.0-next.9:
-  version "5.0.0-next.9"
-  resolved "https://registry.yarnpkg.com/truffle/-/truffle-5.0.0-next.9.tgz#47141465a08cf44925cbb4a864f1dbab0ce8a1e2"
+truffle@^5.0.0-beta.1:
+  version "5.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/truffle/-/truffle-5.0.0-beta.1.tgz#2ac40eb6128c1fa66b76c63567185e8fca17950b"
   dependencies:
     mocha "^4.1.0"
     original-require "1.0.1"
-    solc "0.4.24"
+    solc "0.4.25"
 
 tunnel-agent@^0.6.0:
   version "0.6.0"
