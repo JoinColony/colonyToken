@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 9.1.0
+    version: 9.11.2
 
 dependencies:
   cache_directories:
