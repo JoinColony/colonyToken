@@ -24,21 +24,24 @@ contract TokenAuthority is DSAuthority {
   address public token;
   mapping(address => mapping(bytes4 => bool)) authorizations;
   
-  constructor(address _token, address _vesting, address _metaColony, address _tokenLocking) public {
+  constructor(address _token, address _colonyNetwork, address _metaColony, address _tokenLocking, address _vesting) public {
     token = _token;
     bytes4 transferSig = bytes4(keccak256("transfer(address,uint256)"));
     bytes4 transferFromSig = bytes4(keccak256("transferFrom(address,address,uint256)"));
     bytes4 mintSig = bytes4(keccak256("mint(uint256)"));
 
-    authorizations[_vesting][transferSig] = true;
-    authorizations[_vesting][transferFromSig] = true;
+    authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers
+    authorizations[_colonyNetwork][transferFromSig] = true;
 
     authorizations[_metaColony][transferSig] = true;        // Used in IColony: bootstrapColony, mintTokensForColonyNetwork,
                                                             // claimPayout and claimRewardPayout
     authorizations[_metaColony][mintSig] = true;            // Used in IColony.mintTokensForColonyNetwork
 
-    authorizations[_tokenLocking][transferSig] = true;     // Used in ITokenLocking.withdraw
-    authorizations[_tokenLocking][transferFromSig] = true; // Used in ITokenLocking.deposit
+    authorizations[_tokenLocking][transferSig] = true;      // Used in ITokenLocking.withdraw
+    authorizations[_tokenLocking][transferFromSig] = true;  // Used in ITokenLocking.deposit
+
+    authorizations[_vesting][transferSig] = true;
+    authorizations[_vesting][transferFromSig] = true;
   }
 
   function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
