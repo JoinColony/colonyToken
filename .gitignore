@@ -1,5 +1,4 @@
 node_modules
-build
 lib/dappsys
 test-accounts.json
 test-results.xml
