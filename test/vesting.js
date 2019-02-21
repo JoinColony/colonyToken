@@ -57,8 +57,17 @@ contract("Vesting", accounts => {
   beforeEach(async () => {
     token = await Token.new("Colony token", "CLNY", 18);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
+    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-    const tokenAuthority = await TokenAuthority.new(token.address, vesting.address);
+    const tokenAuthority = await TokenAuthority.new(
+      token.address,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      vesting.address,
+      [ZERO_ADDRESS],
+      ZERO_ADDRESS
+    );
     await token.setAuthority(tokenAuthority.address);
     await token.setOwner(colonyMultiSig.address);
 
