@@ -279,7 +279,7 @@
         "id": 3,
         "nodeType": "ImportDirective",
         "scope": 29,
-        "sourceUnit": 2271,
+        "sourceUnit": 2462,
         "src": "756:34:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -293,10 +293,10 @@
               "id": 4,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2270,
+              "referencedDeclaration": 2461,
               "src": "819:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$2270",
+                "typeIdentifier": "t_contract$_ERC20_$2461",
                 "typeString": "contract ERC20"
               }
             },
@@ -306,8 +306,8 @@
           }
         ],
         "contractDependencies": [
-          2217,
-          2270
+          2408,
+          2461
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -315,8 +315,8 @@
         "id": 28,
         "linearizedBaseContracts": [
           28,
-          2270,
-          2217
+          2461,
+          2408
         ],
         "name": "ERC20Extended",
         "nodeType": "ContractDefinition",
@@ -614,7 +614,7 @@
         "id": 3,
         "nodeType": "ImportDirective",
         "scope": 29,
-        "sourceUnit": 2271,
+        "sourceUnit": 2462,
         "src": "756:34:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -628,10 +628,10 @@
               "id": 4,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2270,
+              "referencedDeclaration": 2461,
               "src": "819:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$2270",
+                "typeIdentifier": "t_contract$_ERC20_$2461",
                 "typeString": "contract ERC20"
               }
             },
@@ -641,8 +641,8 @@
           }
         ],
         "contractDependencies": [
-          2217,
-          2270
+          2408,
+          2461
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -650,8 +650,8 @@
         "id": 28,
         "linearizedBaseContracts": [
           28,
-          2270,
-          2217
+          2461,
+          2408
         ],
         "name": "ERC20Extended",
         "nodeType": "ContractDefinition",
@@ -919,5 +919,5 @@
   },
   "networks": {},
   "schemaVersion": "3.0.0-beta.1",
-  "updatedAt": "2018-12-18T09:42:41.906Z"
+  "updatedAt": "2019-03-15T13:02:44.318Z"
 }
