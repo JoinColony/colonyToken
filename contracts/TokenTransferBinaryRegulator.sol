@@ -24,7 +24,6 @@ contract TokenTransferBinaryRegulator {
   struct Transfer {
     address from;
     address to;
-    address token;
     uint256 amount;
     bool valid;
   }
@@ -32,26 +31,38 @@ contract TokenTransferBinaryRegulator {
   mapping (uint256 => Transfer) public transfers;
   uint public transferCount = 0;
   address public owner;
+  ERC20Extended public token;
 
-  constructor(address _owner) {
+  event TransferRequested(uint256 id, address from, address to, uint256 amount);
+  event TransferRequestExecuted(uint256 id);
+  event TransferRequestInvalidated(uint256 id);
+
+  constructor(address _owner, ERC20Extended _token) public {
     owner = _owner;
+    token = _token;
+  }
+
+  function requestTransfer(address _from, address _to, uint256 _amount) public {
+    require(_from == msg.sender, "colony-token-regulator-not-from-address");
+    transferCount += 1;
+    transfers[transferCount] = Transfer(_from, _to, _amount, true);
+
+    emit TransferRequested(transferCount, _from, _to, _amount);
+  }
+
+  function executeTransfer(uint256 _id) public {
+    require(transfers[_id].valid, "colony-token-regulator-transfer-invalid-or-already-executed");
+    require(msg.sender == owner, "colony-token-regulator-only-owner-can-execute");
+    transfers[_id].valid = false;
+    token.transferFrom(transfers[_id].from, transfers[_id].to, transfers[_id].amount);
+  
+    emit TransferRequestExecuted(_id);
   }
 
   function invalidateRequest(uint256 _id) public {
     require(transfers[_id].from == msg.sender || msg.sender == owner, "colony-token-regulator-not-from-address");
     transfers[_id].valid = false;
-  }
 
-  function requestTransfer(address _from, address _to, address _token, uint256 _amount) public {
-    require(_from == msg.sender, "colony-token-regulator-not-from-address");
-    transfers[transferCount] = Transfer(_from, _to, _token, _amount, true);
-    transferCount += 1;
-  }
-
-  function executeTransfer(uint256 _id) public {
-    require(transfers[_id].valid == true, "colony-token-regulator-transfer-invalid-or-already-executed");
-    require(msg.sender == owner, "colony-token-regulator-only-owner-can-execute");
-    transfers[_id].valid = false;
-    ERC20Extended(transfers[_id].token).transferFrom(transfers[_id].from, transfers[_id].to, transfers[_id].amount);
+    emit TransferRequestInvalidated(_id);
   }
 }

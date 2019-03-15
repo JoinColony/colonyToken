@@ -11,6 +11,6 @@ module.exports = (deployer, network, accounts) => {
     .deploy(MultiSigWallet, [COLONY_ACCOUNT], 1)
     .then(() => deployer.deploy(Token, "Colony Token", "CLNY", 18))
     .then(() => deployer.deploy(Vesting, Token.address, MultiSigWallet.address))
-    .then(() => deployer.deploy(TokenTransferBinaryRegulator, MultiSigWallet.address))
+    .then(() => deployer.deploy(TokenTransferBinaryRegulator, MultiSigWallet.address, Token.address))
     .then(() => deployer.deploy(TokenAuthority, Token.address, ZERO_ADDRESS, ZERO_ADDRESS, ZERO_ADDRESS, Vesting.address, [ZERO_ADDRESS], TokenTransferBinaryRegulator.address));
 };
