@@ -2,7 +2,7 @@
 
 import { assert } from "chai";
 import BN from "bn.js";
-import web3Utils from "web3-utils";
+import { toWei } from "web3-utils";
 import { currentBlockTime, forwardTime, expectEvent, checkErrorRevert } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
@@ -25,16 +25,16 @@ contract("Vesting", accounts => {
   const ACCOUNT_10 = accounts[10];
   const OTHER_ACCOUNT = accounts[11];
 
-  const ACCOUNT_1_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
-  const ACCOUNT_2_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_3_GRANT_AMOUNT = new BN(web3Utils.toWei("2", "ether"));
-  const ACCOUNT_4_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_5_GRANT_AMOUNT = new BN(web3Utils.toWei("20", "finney"));
-  const ACCOUNT_6_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_7_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
-  const ACCOUNT_8_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_9_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
-  const ACCOUNT_10_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
+  const ACCOUNT_1_GRANT_AMOUNT = new BN(toWei("998", "finney"));
+  const ACCOUNT_2_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_3_GRANT_AMOUNT = new BN(toWei("2", "ether"));
+  const ACCOUNT_4_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_5_GRANT_AMOUNT = new BN(toWei("20", "finney"));
+  const ACCOUNT_6_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_7_GRANT_AMOUNT = new BN(toWei("998", "finney"));
+  const ACCOUNT_8_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_9_GRANT_AMOUNT = new BN(toWei("998", "finney"));
+  const ACCOUNT_10_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
 
   const TOTAL_SUPPLY = ACCOUNT_1_GRANT_AMOUNT.add(ACCOUNT_2_GRANT_AMOUNT)
     .add(ACCOUNT_3_GRANT_AMOUNT)
