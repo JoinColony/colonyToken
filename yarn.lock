@@ -1232,6 +1232,7 @@ camelcase@^3.0.0:
 camelcase@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
+  integrity sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0=
 
 camelcase@^5.0.0:
   version "5.2.0"
@@ -1446,9 +1447,14 @@ commander@2.15.1:
   version "2.15.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
 
-commander@^2.11.0, commander@^2.9.0:
+commander@^2.11.0:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
+
+commander@^2.9.0:
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
+  integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
 
 component-emitter@^1.2.1:
   version "1.2.1"
@@ -1716,7 +1722,7 @@ diff@3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.3.1.tgz#aa8567a6eed03c531fc89d3f711cd0e5259dec75"
 
-diff@3.5.0:
+diff@3.5.0, diff@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
 
@@ -1797,6 +1803,7 @@ end-of-stream@^1.1.0:
 eol@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/eol/-/eol-0.9.1.tgz#f701912f504074be35c6117a5c4ade49cd547acd"
+  integrity sha512-Ds/TEoZjwggRoz/Q2O7SE3i4Jm66mqTDfmdHdq/7DKVk3bro9Q8h6WdXKdPqFLMoqxrDK5SVRzHVPOS6uuGtrg==
 
 errno@~0.1.1:
   version "0.1.7"
@@ -2286,6 +2293,25 @@ ethjs-util@^0.1.3:
     is-hex-prefixed "1.0.0"
     strip-hex-prefix "1.0.0"
 
+ethlint@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/ethlint/-/ethlint-1.2.3.tgz#f0efd1970ccebc7156a3b8ae9b0510b3e57c8882"
+  integrity sha512-1qKDsfPdFmAdQgU8mnSiRAOZd82K6h677LQIDAdWLdzUcz7rL47z8Jpj8bpL2PA0WwrWkTdKt0RThHdRDmTUNw==
+  dependencies:
+    ajv "^5.2.2"
+    chokidar "^1.6.0"
+    colors "^1.1.2"
+    commander "^2.9.0"
+    diff "^3.5.0"
+    eol "^0.9.1"
+    js-string-escape "^1.0.1"
+    lodash "^4.14.2"
+    sol-digger "0.0.2"
+    sol-explore "1.6.1"
+    solium-plugin-security "0.1.1"
+    solparse "2.2.8"
+    text-table "^0.2.0"
+
 evp_bytestokey@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/evp_bytestokey/-/evp_bytestokey-1.0.3.tgz#7fcbdb198dc71959432efe13842684e0525acb02"
@@ -2296,6 +2322,7 @@ evp_bytestokey@^1.0.3:
 execa@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/execa/-/execa-0.7.0.tgz#944becd34cc41ee32a63a9faf27ad5a65fc59777"
+  integrity sha1-lEvs00zEHuMqY6n68nrVpl/Fl3c=
   dependencies:
     cross-spawn "^5.0.1"
     get-stream "^3.0.0"
@@ -2694,6 +2721,7 @@ get-stdin@^6.0.0:
 get-stream@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-3.0.0.tgz#8e943d1358dc37555054ecbe2edb05aa174ede14"
+  integrity sha1-jpQ9E1jcN1VQVOy+LtsFqhdO3hQ=
 
 get-stream@^4.0.0:
   version "4.1.0"
@@ -3363,6 +3391,7 @@ js-sha3@^0.3.1:
 js-string-escape@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/js-string-escape/-/js-string-escape-1.0.1.tgz#e2625badbc0d67c7533e9edc1068c587ae4137ef"
+  integrity sha1-4mJbrbwNZ8dTPp7cEGjFh65BN+8=
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
@@ -3623,11 +3652,11 @@ lodash.assign@^4.0.3, lodash.assign@^4.0.6:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.assign/-/lodash.assign-4.2.0.tgz#0d99f3ccd7a6d261d19bdaeb9245005d285808e7"
 
-lodash@^4.13.1, lodash@^4.14.2, lodash@^4.17.10, lodash@^4.17.4:
+lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
-lodash@^4.17.11:
+lodash@^4.14.2, lodash@^4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -3705,6 +3734,7 @@ media-typer@0.3.0:
 mem@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/mem/-/mem-1.1.0.tgz#5edd52b485ca1d900fe64895505399a0dfa45f76"
+  integrity sha1-Xt1StIXKHZAP5kiVUFOZoN+kX3Y=
   dependencies:
     mimic-fn "^1.0.0"
 
@@ -4242,6 +4272,7 @@ os-locale@^1.4.0:
 os-locale@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/os-locale/-/os-locale-2.1.0.tgz#42bc2900a6b5b8bd17376c8e882b65afccf24bf2"
+  integrity sha512-3sslG3zJbEYcaC4YVAvDorjGxc7tv6KVATnLPZONiljsUncvihe9BQoVCEs0RZ1kmf4Hk9OBqlZfJZWI4GanKA==
   dependencies:
     execa "^0.7.0"
     lcid "^1.0.0"
@@ -5218,10 +5249,12 @@ snapdragon@^0.8.1:
 sol-digger@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/sol-digger/-/sol-digger-0.0.2.tgz#406c4a9d31e269e7f88eb1c2ea101318e5e09025"
+  integrity sha1-QGxKnTHiaef4jrHC6hATGOXgkCU=
 
 sol-explore@1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/sol-explore/-/sol-explore-1.6.1.tgz#b59f073c69fe332560d5a10c32ba8ca7f2986cfb"
+  integrity sha1-tZ8HPGn+MyVg1aEMMrqMp/KYbPs=
 
 sol-explore@^1.6.2:
   version "1.6.2"
@@ -5284,27 +5317,12 @@ solidity-steamroller@^1.0.0:
 solium-plugin-security@0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/solium-plugin-security/-/solium-plugin-security-0.1.1.tgz#2a87bcf8f8c3abf7d198e292e4ac080284e3f3f6"
+  integrity sha512-kpLirBwIq4mhxk0Y/nn5cQ6qdJTI+U1LO3gpoNIcqNaW+sI058moXBe2UiHs+9wvF9IzYD49jcKhFTxcR9u9SQ==
 
-solium@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/solium/-/solium-1.1.8.tgz#35d30a15c572a233ce8a90226d6cfccb762fadb7"
-  dependencies:
-    ajv "^5.2.2"
-    chokidar "^1.6.0"
-    colors "^1.1.2"
-    commander "^2.9.0"
-    eol "^0.9.1"
-    js-string-escape "^1.0.1"
-    lodash "^4.14.2"
-    sol-digger "0.0.2"
-    sol-explore "1.6.1"
-    solium-plugin-security "0.1.1"
-    solparse "2.2.5"
-    text-table "^0.2.0"
-
-solparse@2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/solparse/-/solparse-2.2.5.tgz#72709c867cd6bfc50ec2325f4b81d2b3ea365d99"
+solparse@2.2.8:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/solparse/-/solparse-2.2.8.tgz#d13e42dbed95ce32f43894f5ec53f00d14cf9f11"
+  integrity sha512-Tm6hdfG72DOxD40SD+T5ddbekWglNWjzDRSNq7ZDIOHVsyaJSeeunUuWNj4DE7uDrJK3tGQuX0ZTDZWNYsGPMA==
   dependencies:
     mocha "^4.0.1"
     pegjs "^0.10.0"
@@ -6121,6 +6139,7 @@ yargs-parser@^2.4.1:
 yargs-parser@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-8.1.0.tgz#f1376a33b6629a5d063782944da732631e966950"
+  integrity sha512-yP+6QqN8BmrgW2ggLtTbdrOyBNSI7zBa4IykmiV5R1wl1JWNxQvWhMfMdmzIYtKU7oP3OOInY/tl2ov3BDjnJQ==
   dependencies:
     camelcase "^4.1.0"
 
@@ -6154,6 +6173,7 @@ yargs@12.0.5, yargs@^12.0.5:
 yargs@^10.0.3:
   version "10.1.2"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.1.2.tgz#454d074c2b16a51a43e2fb7807e4f9de69ccb5c5"
+  integrity sha512-ivSoxqBGYOqQVruxD35+EyCFDYNEFL/Uo6FcOnz+9xZdZzK0Zzw4r4KhbrME1Oo2gOggwJod2MnsdamSG7H9ig==
   dependencies:
     cliui "^4.0.0"
     decamelize "^1.1.1"
