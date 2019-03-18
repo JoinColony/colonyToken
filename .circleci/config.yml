@@ -22,7 +22,7 @@ step_setup_global_packages: &step_setup_global_packages
 step_pull_solc_docker: &step_pull_solc_docker
     run:
       name: "Pull solc docker image"
-      command: docker pull ethereum/solc:0.5.6
+      command: docker pull ethereum/solc:0.4.23
 jobs:
   lint-and-unit-test:
     <<: *job_common
@@ -44,18 +44,15 @@ jobs:
       - run:
           name: "Running gas cost tests"
           command: yarn run test:contracts:gasCosts
-     - run:
+      - run:
           name: "Running unit tests with coverage"
           command: yarn run test:contracts:coverage
-     - <<: *step_save_cache
+      - <<: *step_save_cache
       # Save test results
       - store_test_results:
           path: test-results.xml
       - store_artifacts:
           path: test-results.xml
-      # Save coverage artifacts
-      - store_artifacts:
-          path: coverage
 
 workflows:
   version: 2
