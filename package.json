@@ -59,7 +59,7 @@
     "eth-gas-reporter": "^0.1.10",
     "ganache-cli": "^6.1.8",
     "istanbul": "^0.4.5",
-    "mocha": "^5.2.0",
+    "mocha": "^6.0.2",
     "mocha-circleci-reporter": "^0.0.3",
     "pre-commit": "^1.2.2",
     "prettier": "^1.14.2",
