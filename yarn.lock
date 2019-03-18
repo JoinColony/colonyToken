@@ -78,9 +78,10 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@colony/eslint-config-colony@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@colony/eslint-config-colony/-/eslint-config-colony-5.0.0.tgz#e466d019aebdf98104ddd542dd6709fdc96a2cc3"
+"@colony/eslint-config-colony@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@colony/eslint-config-colony/-/eslint-config-colony-7.0.0.tgz#3371c84f86cd8024b5df57f44f344c50b692e7d0"
+  integrity sha512-6lYncfvTQlIjOPP8QYRlxF/SxlRPimqm4pzbAGvfZ9dchQMciNGifKmVJr1rZNDV2aVmp8HZ2rZ65AQl1VMvEQ==
 
 "@types/concat-stream@^1.6.0":
   version "1.6.0"
