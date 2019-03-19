@@ -3,6 +3,5 @@ helpers
 migrations
 test
 contracts/Migrations.sol
-contracts/gnosis/MultiSigWallet.sol
-lib
+lib/dappsys
 flattened

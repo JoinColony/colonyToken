@@ -1,7 +1,9 @@
 node_modules
 lib/dappsys
 test-accounts.json
+ganache-accounts.json
 test-results.xml
 coverage.json
 /coverage
 /flattened/*
+/build

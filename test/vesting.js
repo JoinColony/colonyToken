@@ -7,7 +7,7 @@ import { currentBlockTime, forwardTime, expectEvent, checkErrorRevert } from "..
 
 const Token = artifacts.require("Token");
 const Vesting = artifacts.require("Vesting");
-const MultiSigWallet = artifacts.require("gnosis/MultiSigWallet.sol");
+const MultiSigWallet = artifacts.require("MultiSigWallet");
 const TokenAuthority = artifacts.require("TokenAuthority");
 const DSAuth = artifacts.require("DSAuth");
 
@@ -25,6 +25,7 @@ contract("Vesting", accounts => {
   const ACCOUNT_10 = accounts[10];
   const OTHER_ACCOUNT = accounts[11];
 
+  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
   const ACCOUNT_1_GRANT_AMOUNT = new BN(toWei("998", "finney"));
   const ACCOUNT_2_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
   const ACCOUNT_3_GRANT_AMOUNT = new BN(toWei("2", "ether"));
@@ -57,7 +58,6 @@ contract("Vesting", accounts => {
   beforeEach(async () => {
     token = await Token.new("Colony token", "CLNY", 18);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
-    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
     const tokenAuthority = await TokenAuthority.new(
       token.address,
@@ -698,7 +698,7 @@ contract("Vesting", accounts => {
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       const dsAuthToken = await DSAuth.at(token.address);
-      txData = await dsAuthToken.contract.methods.setAuthority("0x0").encodeABI();
+      txData = await dsAuthToken.contract.methods.setAuthority(ZERO_ADDRESS).encodeABI();
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       const locked = await token.locked();

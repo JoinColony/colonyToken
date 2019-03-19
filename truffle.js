@@ -1,4 +1,5 @@
-require("babel-register");
+require("@babel/register");
+require("@babel/polyfill");
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -8,12 +9,14 @@ module.exports = {
       host: "127.0.0.1",
       port: 8545,
       network_id: "*", // Match any network id
+      gasPrice: 0,
       skipDryRun: true
     },
     coverage: {
       host: "127.0.0.1",
       port: 8555,
       network_id: "*", // Match any network id
+      gasPrice: 0x01, // <-- Use this low gas price
       skipDryRun: true
     }
   },
@@ -27,7 +30,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.4.23",
+      version: "0.5.6",
       docker: true,
       settings: {
         optimizer: {

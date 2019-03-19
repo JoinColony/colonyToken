@@ -194,7 +194,7 @@ contract("Token", accounts => {
 
     it("should be able to unlock token by owner", async () => {
       await token.unlock({ from: COLONY_ACCOUNT });
-      await dsAuthToken.setAuthority("0x0");
+      await dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000");
 
       const locked = await token.locked();
       assert.isFalse(locked);
@@ -205,7 +205,7 @@ contract("Token", accounts => {
 
     it("shouldn't be able to unlock token by non-owner", async () => {
       await checkErrorRevert(token.unlock({ from: ACCOUNT_THREE }));
-      await checkErrorRevert(dsAuthToken.setAuthority("0x0", { from: ACCOUNT_THREE }));
+      await checkErrorRevert(dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000", { from: ACCOUNT_THREE }));
 
       const locked = await token.locked();
       assert.isTrue(locked);

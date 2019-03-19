@@ -5,7 +5,7 @@ import { assert } from "chai";
 const TokenAuthority = artifacts.require("TokenAuthority");
 const Token = artifacts.require("Token");
 const Vesting = artifacts.require("Vesting");
-const MultiSigWallet = artifacts.require("gnosis/MultiSigWallet.sol");
+const MultiSigWallet = artifacts.require("MultiSigWallet");
 
 contract("TokenAuthority", () => {
   let tokenAuthority;

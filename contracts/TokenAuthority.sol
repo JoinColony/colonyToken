@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.23;
+pragma solidity >=0.5.3;
 
 import "../lib/dappsys/auth.sol";
 
@@ -30,7 +30,7 @@ contract TokenAuthority is DSAuthority {
     address _metaColony,
     address _tokenLocking,
     address _vesting,
-    address[] miners,
+    address[] memory miners,
     address _regulator) public {
     token = _token;
     bytes4 transferSig = bytes4(keccak256("transfer(address,uint256)"));

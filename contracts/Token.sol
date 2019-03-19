@@ -15,8 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.23;
-pragma experimental "v0.5.0";
+pragma solidity >=0.5.3;
 
 
 import "../lib/dappsys/auth.sol";
@@ -33,12 +32,12 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
 
   modifier unlocked {
     if (locked) {
-      require(isAuthorized(msg.sender, msg.sig));
+      require(isAuthorized(msg.sender, msg.sig), "colony-token-unauthorised");
     }
     _;
   }
 
-  constructor(string _name, string _symbol, uint8 _decimals) public {
+  constructor(string memory _name, string memory _symbol, uint8 _decimals) public {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;

@@ -43,7 +43,7 @@ contract("Binary Regulator", accounts => {
       const transferCount = await regulator.transferCount();
 
       // Approve request through multisig
-      txData = await regulator.contract.methods.executeTransfer(transferCount).encodeABI();
+      txData = await regulator.contract.methods.executeTransfer(transferCount.toNumber()).encodeABI();
       await colonyMultiSig.submitTransaction(regulator.address, 0, txData);
 
       // Check it worked
@@ -74,7 +74,8 @@ contract("Binary Regulator", accounts => {
 
     it("should allow an admin to decline a transfer", async () => {
       await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
-      const transferCount = await regulator.transferCount();
+      let transferCount = await regulator.transferCount();
+      transferCount = transferCount.toNumber();
 
       let transfer = await regulator.transfers(transferCount);
       assert.equal(transfer.valid, true);
@@ -96,7 +97,8 @@ contract("Binary Regulator", accounts => {
       await token.approve(regulator.address, 1000, { from: ADDRESS_1 });
       await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
 
-      const transferCount = await regulator.transferCount();
+      let transferCount = await regulator.transferCount();
+      transferCount = transferCount.toNumber();
 
       // Approve request through multisig
       txData = await regulator.contract.methods.executeTransfer(transferCount).encodeABI();
@@ -129,7 +131,8 @@ contract("Binary Regulator", accounts => {
       await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 100, { from: ADDRESS_1 });
       await regulator.requestTransfer(ADDRESS_1, ADDRESS_3, 400, { from: ADDRESS_1 });
 
-      const transferCount = await regulator.transferCount();
+      let transferCount = await regulator.transferCount();
+      transferCount = transferCount.toNumber();
 
       let a1BalanceBefore = await token.balanceOf(ADDRESS_1);
       const a2BalanceBefore = await token.balanceOf(ADDRESS_2);
