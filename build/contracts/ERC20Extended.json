@@ -212,6 +212,24 @@
       "constant": false,
       "inputs": [
         {
+          "name": "guy",
+          "type": "address"
+        },
+        {
+          "name": "wad",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
           "name": "wad",
           "type": "uint256"
         }
@@ -235,22 +253,40 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "guy",
+          "type": "address"
+        },
+        {
+          "name": "wad",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
   ],
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "/*\n  This file is part of The Colony Network.\n\n  The Colony Network is free software: you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation, either version 3 of the License, or\n  (at your option) any later version.\n\n  The Colony Network is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License\n  along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.\n*/\n\npragma solidity >=0.5.3;\n\nimport \"../lib/dappsys/erc20.sol\";\n\n\ncontract ERC20Extended is ERC20 {\n  event Mint(address indexed guy, uint wad);\n  event Burn(address indexed guy, uint wad);\n\n  function mint(uint wad) public;\n  \n  function burn(uint wad) public;\n}\n",
+  "source": "/*\n  This file is part of The Colony Network.\n\n  The Colony Network is free software: you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation, either version 3 of the License, or\n  (at your option) any later version.\n\n  The Colony Network is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License\n  along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.\n*/\n\npragma solidity >=0.5.3;\n\nimport \"../lib/dappsys/erc20.sol\";\n\n\ncontract ERC20Extended is ERC20 {\n  event Mint(address indexed guy, uint wad);\n  event Burn(address indexed guy, uint wad);\n\n  function mint(uint wad) public;\n  function mint(address guy, uint wad) public;\n  function burn(uint wad) public;\n  function burn(address guy, uint wad) public;\n}\n",
   "sourcePath": "/Users/Elena/colonyToken/contracts/ERC20Extended.sol",
   "ast": {
     "absolutePath": "/Users/Elena/colonyToken/contracts/ERC20Extended.sol",
     "exportedSymbols": {
       "ERC20Extended": [
-        27
+        41
       ]
     },
-    "id": 28,
+    "id": 42,
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -269,8 +305,8 @@
         "file": "../lib/dappsys/erc20.sol",
         "id": 2,
         "nodeType": "ImportDirective",
-        "scope": 28,
-        "sourceUnit": 1514,
+        "scope": 42,
+        "sourceUnit": 1471,
         "src": "726:34:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -284,10 +320,10 @@
               "id": 3,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1513,
+              "referencedDeclaration": 1470,
               "src": "789:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1513",
+                "typeIdentifier": "t_contract$_ERC20_$1470",
                 "typeString": "contract ERC20"
               }
             },
@@ -297,17 +333,17 @@
           }
         ],
         "contractDependencies": [
-          1460,
-          1513
+          1417,
+          1470
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 27,
+        "id": 41,
         "linearizedBaseContracts": [
-          27,
-          1513,
-          1460
+          41,
+          1470,
+          1417
         ],
         "name": "ERC20Extended",
         "nodeType": "ContractDefinition",
@@ -500,7 +536,7 @@
               "parameters": [],
               "src": "920:0:0"
             },
-            "scope": 27,
+            "scope": 41,
             "src": "890:31:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -509,23 +545,50 @@
           {
             "body": null,
             "documentation": null,
-            "id": 26,
+            "id": 28,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
-            "name": "burn",
+            "name": "mint",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 24,
+              "id": 26,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
                   "id": 23,
+                  "name": "guy",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 28,
+                  "src": "938:11:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 22,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "938:7:0",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 25,
                   "name": "wad",
                   "nodeType": "VariableDeclaration",
-                  "scope": 26,
-                  "src": "941:8:0",
+                  "scope": 28,
+                  "src": "951:8:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -533,10 +596,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 22,
+                    "id": 24,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "941:4:0",
+                    "src": "951:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -546,35 +609,170 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "940:10:0"
+              "src": "937:23:0"
             },
             "returnParameters": {
-              "id": 25,
+              "id": 27,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "957:0:0"
+              "src": "967:0:0"
             },
-            "scope": 27,
-            "src": "927:31:0",
+            "scope": 41,
+            "src": "924:44:0",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 33,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "burn",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 31,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 30,
+                  "name": "wad",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33,
+                  "src": "985:8:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "985:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "984:10:0"
+            },
+            "returnParameters": {
+              "id": 32,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1001:0:0"
+            },
+            "scope": 41,
+            "src": "971:31:0",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 40,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "burn",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 38,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 35,
+                  "name": "guy",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "1019:11:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 34,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1019:7:0",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 37,
+                  "name": "wad",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "1032:8:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1032:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1018:23:0"
+            },
+            "returnParameters": {
+              "id": 39,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1048:0:0"
+            },
+            "scope": 41,
+            "src": "1005:44:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 28,
-        "src": "763:197:0"
+        "scope": 42,
+        "src": "763:288:0"
       }
     ],
-    "src": "700:261:0"
+    "src": "700:352:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/Elena/colonyToken/contracts/ERC20Extended.sol",
     "exportedSymbols": {
       "ERC20Extended": [
-        27
+        41
       ]
     },
-    "id": 28,
+    "id": 42,
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -593,8 +791,8 @@
         "file": "../lib/dappsys/erc20.sol",
         "id": 2,
         "nodeType": "ImportDirective",
-        "scope": 28,
-        "sourceUnit": 1514,
+        "scope": 42,
+        "sourceUnit": 1471,
         "src": "726:34:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -608,10 +806,10 @@
               "id": 3,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1513,
+              "referencedDeclaration": 1470,
               "src": "789:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1513",
+                "typeIdentifier": "t_contract$_ERC20_$1470",
                 "typeString": "contract ERC20"
               }
             },
@@ -621,17 +819,17 @@
           }
         ],
         "contractDependencies": [
-          1460,
-          1513
+          1417,
+          1470
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 27,
+        "id": 41,
         "linearizedBaseContracts": [
-          27,
-          1513,
-          1460
+          41,
+          1470,
+          1417
         ],
         "name": "ERC20Extended",
         "nodeType": "ContractDefinition",
@@ -824,7 +1022,7 @@
               "parameters": [],
               "src": "920:0:0"
             },
-            "scope": 27,
+            "scope": 41,
             "src": "890:31:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -833,23 +1031,50 @@
           {
             "body": null,
             "documentation": null,
-            "id": 26,
+            "id": 28,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
-            "name": "burn",
+            "name": "mint",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 24,
+              "id": 26,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
                   "id": 23,
+                  "name": "guy",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 28,
+                  "src": "938:11:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 22,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "938:7:0",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 25,
                   "name": "wad",
                   "nodeType": "VariableDeclaration",
-                  "scope": 26,
-                  "src": "941:8:0",
+                  "scope": 28,
+                  "src": "951:8:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -857,10 +1082,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 22,
+                    "id": 24,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "941:4:0",
+                    "src": "951:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -870,26 +1095,161 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "940:10:0"
+              "src": "937:23:0"
             },
             "returnParameters": {
-              "id": 25,
+              "id": 27,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "957:0:0"
+              "src": "967:0:0"
             },
-            "scope": 27,
-            "src": "927:31:0",
+            "scope": 41,
+            "src": "924:44:0",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 33,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "burn",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 31,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 30,
+                  "name": "wad",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33,
+                  "src": "985:8:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "985:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "984:10:0"
+            },
+            "returnParameters": {
+              "id": 32,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1001:0:0"
+            },
+            "scope": 41,
+            "src": "971:31:0",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 40,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "burn",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 38,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 35,
+                  "name": "guy",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "1019:11:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 34,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1019:7:0",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 37,
+                  "name": "wad",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "1032:8:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1032:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1018:23:0"
+            },
+            "returnParameters": {
+              "id": 39,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1048:0:0"
+            },
+            "scope": 41,
+            "src": "1005:44:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 28,
-        "src": "763:197:0"
+        "scope": 42,
+        "src": "763:288:0"
       }
     ],
-    "src": "700:261:0"
+    "src": "700:352:0"
   },
   "compiler": {
     "name": "solc",
@@ -897,7 +1257,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.3",
-  "updatedAt": "2019-03-20T08:56:56.621Z",
+  "updatedAt": "2019-03-20T17:00:15.181Z",
   "devdoc": {
     "methods": {}
   },

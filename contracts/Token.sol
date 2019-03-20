@@ -44,6 +44,11 @@ contract Token is DSToken {
     return super.transferFrom(src, dst, wad);
   }
 
+  function mint(address guy, uint wad) public {
+    super.mint(guy, wad);
+    emit Transfer(address(0x0), guy, wad);
+  }
+
   function unlock() public
   auth
   {
