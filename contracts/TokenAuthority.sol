@@ -35,7 +35,7 @@ contract TokenAuthority is DSAuthority {
     token = _token;
     bytes4 transferSig = bytes4(keccak256("transfer(address,uint256)"));
     bytes4 transferFromSig = bytes4(keccak256("transferFrom(address,address,uint256)"));
-    bytes4 mintSig = bytes4(keccak256("mint(uint256)"));
+    bytes4 mintSig = bytes4(keccak256("mint(address,uint256)"));
 
     authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers
     authorizations[_colonyNetwork][transferFromSig] = true;

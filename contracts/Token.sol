@@ -17,17 +17,10 @@
 
 pragma solidity >=0.5.3;
 
-
-import "../lib/dappsys/auth.sol";
-import "../lib/dappsys/base.sol";
-import "./ERC20Extended.sol";
+import "../lib/dappsys/token.sol";
 
 
-contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
-  uint8 public decimals;
-  string public symbol;
-  string public name;
-
+contract Token is DSToken {
   bool public locked;
 
   modifier unlocked {
@@ -37,11 +30,11 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
     _;
   }
 
-  constructor(string memory _name, string memory _symbol, uint8 _decimals) public {
-    name = _name;
-    symbol = _symbol;
-    decimals = _decimals;
+  constructor(bytes32 _name, bytes32 _symbol, uint8 _decimals)  DSToken(_symbol) public {
     locked = true;
+
+    name = _name;
+    decimals = _decimals;
   }
 
   function transferFrom(address src, address dst, uint wad) public 
@@ -49,22 +42,6 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
   returns (bool)
   {
     return super.transferFrom(src, dst, wad);
-  }
-
-  function mint(uint wad) public
-  auth
-  {
-    _balances[msg.sender] = add(_balances[msg.sender], wad);
-    _supply = add(_supply, wad);
-
-    emit Mint(msg.sender, wad);
-  }
-
-  function burn(uint wad) public {
-    _balances[msg.sender] = sub(_balances[msg.sender], wad);
-    _supply = sub(_supply, wad);
-
-    emit Burn(msg.sender, wad);
   }
 
   function unlock() public

@@ -2,7 +2,7 @@
 
 import { assert } from "chai";
 import BN from "bn.js";
-import { toWei } from "web3-utils";
+import { asciiToHex, toWei } from "web3-utils";
 import { currentBlockTime, forwardTime, expectEvent, checkErrorRevert } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
@@ -56,7 +56,7 @@ contract("Vesting", accounts => {
   });
 
   beforeEach(async () => {
-    token = await Token.new("Colony token", "CLNY", 18);
+    token = await Token.new(asciiToHex("Colony token"), asciiToHex("CLNY"), 18);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
 
     const tokenAuthority = await TokenAuthority.new(
