@@ -54,7 +54,7 @@
     "eslint-plugin-flowtype": "^3.4.2",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "eth-gas-reporter": "^0.1.10",
+    "eth-gas-reporter": "0.1.10",
     "ethlint": "^1.2.3",
     "ganache-cli": "^6.4.1",
     "istanbul": "^0.4.5",

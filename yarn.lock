@@ -2060,9 +2060,10 @@ eth-ens-namehash@2.0.8:
     idna-uts46-hx "^2.3.1"
     js-sha3 "^0.5.7"
 
-eth-gas-reporter@^0.1.10:
+eth-gas-reporter@0.1.10:
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/eth-gas-reporter/-/eth-gas-reporter-0.1.10.tgz#6ac24958f0e018d4729902e802dc8449e8a5ff72"
+  integrity sha512-esVDZWlS+4ByrbHGYHA2sJSevmqBsh7tLTnp7qlc6oJrWqU+SakyTUtHWsUcxhv1SerWEvUl0aRmeytspunmww==
   dependencies:
     abi-decoder "^1.0.8"
     cli-table3 "^0.5.0"
