@@ -1,7 +1,7 @@
 /* globals artifacts */
 
 import BN from "bn.js";
-import web3Utils from "web3-utils";
+import { toWei } from "web3-utils";
 import { forwardTime } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
@@ -15,7 +15,7 @@ contract("Vesting", accounts => {
   const ACCOUNT_1 = accounts[1];
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-  const ACCOUNT_1_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
+  const ACCOUNT_1_GRANT_AMOUNT = new BN(toWei("998", "finney"));
 
   let token;
   let vesting;
