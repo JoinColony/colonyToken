@@ -7,7 +7,7 @@ import { expectEvent, checkErrorRevert, web3GetBalance } from "../helpers/test-h
 const Token = artifacts.require("Token");
 const DSAuth = artifacts.require("DSAuth");
 
-contract.only("Token", accounts => {
+contract("Token", accounts => {
   const COLONY_ACCOUNT = accounts[5];
   const ACCOUNT_TWO = accounts[1];
   const ACCOUNT_THREE = accounts[2];
@@ -168,6 +168,17 @@ contract.only("Token", accounts => {
       assert.equal(1500001, balance.toNumber());
     });
 
+    it("should be able to mint new tokens directly to sender, when called by the Token owner", async () => {
+      // How truffle supports function overloads apparently
+      await token.methods["mint(uint256)"](1500000, { from: COLONY_ACCOUNT });
+
+      const totalSupply = await token.totalSupply();
+      assert.equal(1500000, totalSupply.toNumber());
+
+      const balance = await token.balanceOf(COLONY_ACCOUNT);
+      assert.equal(1500000, balance.toNumber());
+    });
+
     it("should emit a Mint event when minting tokens", async () => {
       await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Mint");
     });
@@ -179,7 +190,7 @@ contract.only("Token", accounts => {
     });
 
     it("should be able to burn tokens", async () => {
-      await token.mint(1500000, { from: COLONY_ACCOUNT });
+      await token.mint(COLONY_ACCOUNT, 1500000, { from: COLONY_ACCOUNT });
       await token.burn(500000, { from: COLONY_ACCOUNT });
 
       const totalSupply = await token.totalSupply();
@@ -189,13 +200,28 @@ contract.only("Token", accounts => {
       assert.equal(1000000, balance.toNumber());
     });
 
+    it("should be able to burn sender tokens", async () => {
+      // How truffle supports function overloads apparently
+      await token.methods["mint(uint256)"](1500000, { from: COLONY_ACCOUNT });
+      await token.methods["burn(uint256)"](500000, { from: COLONY_ACCOUNT });
+
+      const totalSupply = await token.totalSupply();
+      assert.equal(1000000, totalSupply.toNumber());
+
+      const balance = await token.balanceOf(COLONY_ACCOUNT);
+      assert.equal(1000000, balance.toNumber());
+    });
+
     it("should emit a Burn event when burning tokens", async () => {
-      await token.mint(1, { from: COLONY_ACCOUNT });
+      await token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT });
       await expectEvent(token.burn(1, { from: COLONY_ACCOUNT }), "Burn");
     });
 
     it("should be able to unlock token by owner", async () => {
-      await token.unlock({ from: COLONY_ACCOUNT });
+      // Note: due to an apparent bug, we cannot call a parameterless function with transaction params, e.g. { from: senderAccount }
+      // So change the owner to coinbase so we are able to call it without params
+      await dsAuthToken.setOwner(accounts[0], { from: COLONY_ACCOUNT });
+      await token.unlock();
       await dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000");
 
       const locked = await token.locked();
