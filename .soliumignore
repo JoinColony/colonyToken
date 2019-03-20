@@ -4,4 +4,5 @@ migrations
 test
 contracts/Migrations.sol
 lib/dappsys
+lib/gnosis-multisig
 flattened
