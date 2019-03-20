@@ -12,7 +12,7 @@
     "eslint": "eslint .",
     "solium": "solium --dir .",
     "clean:contracts": "rimraf ./build/contracts/*",
-    "provision:multisig:contract": "bash ./scripts/provision-multisig-contract.sh",
+    "provision:multisig:contract": "../node_modules/.bin/truffle compile && bash ./scripts/provision-multisig-contract.sh",
     "start:blockchain:client": "bash ./scripts/start-blockchain-client.sh",
     "stop:blockchain:client": "bash ./scripts/stop-blockchain-client.sh",
     "test:contracts": "npm run start:blockchain:client & truffle migrate --reset --compile-all && truffle test --network development",
@@ -64,7 +64,7 @@
     "prettier": "^1.14.2",
     "rimraf": "^2.6.3",
     "shortid": "^2.2.14",
-    "solidity-coverage": "^0.5.7",
+    "solidity-coverage": "^0.6.0-beta.3",
     "solidity-steamroller": "^1.1.0",
     "truffle": "^5.0.8",
     "web3-utils": "^1.0.0-beta.48"
