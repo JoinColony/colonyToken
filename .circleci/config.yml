@@ -57,8 +57,9 @@ jobs:
       # Save test results
       - store_test_results:
           path: test-results.xml
+      # Save coverage artifacts
       - store_artifacts:
-          path: test-results.xml
+          path: coverage
 
 workflows:
   version: 2
