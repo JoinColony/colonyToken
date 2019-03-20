@@ -15,7 +15,7 @@ module.exports = {
     coverage: {
       host: "127.0.0.1",
       port: 8555,
-      network_id: "*", // Match any network id
+      network_id: "1999",
       gasPrice: 0x01, // <-- Use this low gas price
       skipDryRun: true
     }

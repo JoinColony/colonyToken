@@ -1,7 +1,6 @@
 module.exports = {
     skipFiles: [
-      'Migrations.sol',
-      'gnosis'
+      'Migrations.sol'
     ],
     compileCommand: 'yarn run provision:multisig:contract',
     testCommand: '../node_modules/.bin/truffle test --network coverage',
