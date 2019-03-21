@@ -46,8 +46,8 @@
       "type": "event"
     }
   ],
-  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a72305820a1a9640c725fa0e77ca9e16683e52fe8b726251f0bc5e1cf2cbc0ec5723580e60029",
-  "deployedBytecode": "0x6080604052600080fdfea165627a7a72305820a1a9640c725fa0e77ca9e16683e52fe8b726251f0bc5e1cf2cbc0ec5723580e60029",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a723058204567baae68aaa2db77175b4521b86113aedbcdeb154e97dd71f69b70c1aa629b0029",
+  "deployedBytecode": "0x6080604052600080fdfea165627a7a723058204567baae68aaa2db77175b4521b86113aedbcdeb154e97dd71f69b70c1aa629b0029",
   "sourceMap": "319:168:8:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;319:168:8;;;;;;;",
   "deployedSourceMap": "319:168:8:-;;;;;",
   "source": "/// erc20.sol -- API for the ERC20 token standard\n\n// See <https://github.com/ethereum/EIPs/issues/20>.\n\n// This file likely does not meet the threshold of originality\n// required for copyright to apply.  As a result, this is free and\n// unencumbered software belonging to the public domain.\n\npragma solidity >0.4.20;\n\ncontract ERC20Events {\n    event Approval(address indexed src, address indexed guy, uint wad);\n    event Transfer(address indexed src, address indexed dst, uint wad);\n}\n\ncontract ERC20 is ERC20Events {\n    function totalSupply() public view returns (uint);\n    function balanceOf(address guy) public view returns (uint);\n    function allowance(address src, address guy) public view returns (uint);\n\n    function approve(address guy, uint wad) public returns (bool);\n    function transfer(address dst, uint wad) public returns (bool);\n    function transferFrom(\n        address src, address dst, uint wad\n    ) public returns (bool);\n}\n",
@@ -1807,8 +1807,8 @@
     "version": "0.5.6+commit.b259423e.Linux.g++"
   },
   "networks": {},
-  "schemaVersion": "3.0.3",
-  "updatedAt": "2019-03-21T14:45:28.893Z",
+  "schemaVersion": "3.0.5",
+  "updatedAt": "2019-03-21T21:05:51.898Z",
   "devdoc": {
     "methods": {}
   },

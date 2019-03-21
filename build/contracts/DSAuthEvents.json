@@ -26,8 +26,8 @@
       "type": "event"
     }
   ],
-  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a72305820af9970e5230c6a2fc1faaaeffbce2fc50542180fc1f89404f2e0e5e86e4fff8c0029",
-  "deployedBytecode": "0x6080604052600080fdfea165627a7a72305820af9970e5230c6a2fc1faaaeffbce2fc50542180fc1f89404f2e0e5e86e4fff8c0029",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a72305820cf657a493f46cc38b14547da81d8a9ea95e8ebadc6d5bc16499ed7d2470ccb8f0029",
+  "deployedBytecode": "0x6080604052600080fdfea165627a7a72305820cf657a493f46cc38b14547da81d8a9ea95e8ebadc6d5bc16499ed7d2470ccb8f0029",
   "sourceMap": "797:131:6:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;797:131:6;;;;;;;",
   "deployedSourceMap": "797:131:6:-;;;;;",
   "source": "// This program is free software: you can redistribute it and/or modify\n// it under the terms of the GNU General Public License as published by\n// the Free Software Foundation, either version 3 of the License, or\n// (at your option) any later version.\n\n// This program is distributed in the hope that it will be useful,\n// but WITHOUT ANY WARRANTY; without even the implied warranty of\n// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n// GNU General Public License for more details.\n\n// You should have received a copy of the GNU General Public License\n// along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\npragma solidity >=0.4.23;\n\ncontract DSAuthority {\n    function canCall(\n        address src, address dst, bytes4 sig\n    ) public view returns (bool);\n}\n\ncontract DSAuthEvents {\n    event LogSetAuthority (address indexed authority);\n    event LogSetOwner     (address indexed owner);\n}\n\ncontract DSAuth is DSAuthEvents {\n    DSAuthority  public  authority;\n    address      public  owner;\n\n    constructor() public {\n        owner = msg.sender;\n        emit LogSetOwner(msg.sender);\n    }\n\n    function setOwner(address owner_)\n        public\n        auth\n    {\n        owner = owner_;\n        emit LogSetOwner(owner);\n    }\n\n    function setAuthority(DSAuthority authority_)\n        public\n        auth\n    {\n        authority = authority_;\n        emit LogSetAuthority(address(authority));\n    }\n\n    modifier auth {\n        require(isAuthorized(msg.sender, msg.sig), \"ds-auth-unauthorized\");\n        _;\n    }\n\n    function isAuthorized(address src, bytes4 sig) internal view returns (bool) {\n        if (src == address(this)) {\n            return true;\n        } else if (src == owner) {\n            return true;\n        } else if (authority == DSAuthority(0)) {\n            return false;\n        } else {\n            return authority.canCall(src, address(this), sig);\n        }\n    }\n}\n",
@@ -3479,8 +3479,8 @@
     "version": "0.5.6+commit.b259423e.Linux.g++"
   },
   "networks": {},
-  "schemaVersion": "3.0.3",
-  "updatedAt": "2019-03-21T14:45:28.899Z",
+  "schemaVersion": "3.0.5",
+  "updatedAt": "2019-03-21T21:05:51.910Z",
   "devdoc": {
     "methods": {}
   },
