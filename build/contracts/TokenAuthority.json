@@ -81,11 +81,11 @@
       "signature": "0xb7009613"
     }
   ],
-  "bytecode": "0x608060405234801561001057600080fd5b506040516107a83803806107a8833981018060405260e081101561003357600080fd5b8151602083015160408401516060850151608086015160a0870180519597949693959294919382019264010000000081111561006e57600080fd5b8201602081018481111561008157600080fd5b815185602082028301116401000000008211171561009e57600080fd5b505060209091015160008054600160a060020a038b16600160a060020a0319909116178155604080517f7472616e7366657228616464726573732c75696e74323536290000000000000081529051908190036019018120939550919350908060256107838239602501905060405180910390209050600060405180807f6d696e7428616464726573732c75696e7432353629000000000000000000000081525060150190506040518091039020905060018060008b600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008b600160a060020a0316600160a060020a03168152602001908152602001600020600084600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008a600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008a600160a060020a0316600160a060020a03168152602001908152602001600020600083600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600089600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600089600160a060020a0316600160a060020a03168152602001908152602001600020600084600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600088600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600088600160a060020a0316600160a060020a03168152602001908152602001600020600084600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060008090505b85518110156104de57600086828151811061047a57fe5b602090810291909101810151600160a060020a03166000908152600180835260408083207fffffffff000000000000000000000000000000000000000000000000000000008a168452909352919020805460ff191682179055919091019050610463565b5050600160a060020a0390921660009081526001602081815260408084207fffffffff000000000000000000000000000000000000000000000000000000009096168452949052929020805460ff1916909217909155505050505050506102398061054a6000396000f3fe608060405234801561001057600080fd5b5060043610610052577c01000000000000000000000000000000000000000000000000000000006000350463b70096138114610057578063fc0c546a146100ce575b600080fd5b6100ba6004803603606081101561006d57600080fd5b50803573ffffffffffffffffffffffffffffffffffffffff90811691602081013590911690604001357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166100ff565b604080519115158252519081900360200190f35b6100d66101f1565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b604080517f6275726e28616464726573732c75696e74323536290000000000000000000000815290519081900360150190206000907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1983811690821614156101685760019150506101ea565b60005473ffffffffffffffffffffffffffffffffffffffff8581169116146101945760009150506101ea565b505073ffffffffffffffffffffffffffffffffffffffff831660009081526001602090815260408083207bffffffffffffffffffffffffffffffffffffffffffffffffffffffff198516845290915290205460ff165b9392505050565b60005473ffffffffffffffffffffffffffffffffffffffff168156fea165627a7a723058206efcd121e0e1e3c452b6018e945900bedef728af88d9612555b90cdff5f45a9e00297472616e7366657246726f6d28616464726573732c616464726573732c75696e7432353629",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b5060043610610052577c01000000000000000000000000000000000000000000000000000000006000350463b70096138114610057578063fc0c546a146100ce575b600080fd5b6100ba6004803603606081101561006d57600080fd5b50803573ffffffffffffffffffffffffffffffffffffffff90811691602081013590911690604001357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166100ff565b604080519115158252519081900360200190f35b6100d66101f1565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b604080517f6275726e28616464726573732c75696e74323536290000000000000000000000815290519081900360150190206000907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1983811690821614156101685760019150506101ea565b60005473ffffffffffffffffffffffffffffffffffffffff8581169116146101945760009150506101ea565b505073ffffffffffffffffffffffffffffffffffffffff831660009081526001602090815260408083207bffffffffffffffffffffffffffffffffffffffffffffffffffffffff198516845290915290205460ff165b9392505050565b60005473ffffffffffffffffffffffffffffffffffffffff168156fea165627a7a723058206efcd121e0e1e3c452b6018e945900bedef728af88d9612555b90cdff5f45a9e0029",
-  "sourceMap": "762:2054:3:-;;;892:1545;8:9:-1;5:2;;;30:1;27;20:12;5:2;892:1545:3;;;;;;;;;;;;;;;13:3:-1;8;5:12;2:2;;;30:1;27;20:12;2:2;892:1545:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;19:11:-1;11:20;;8:2;;;44:1;41;34:12;8:2;62:21;;123:4;114:14;;138:31;;;135:2;;;182:1;179;172:12;135:2;219:3;213:10;331:9;325:2;311:12;307:21;289:16;285:44;282:59;261:11;247:12;244:29;233:116;230:2;;;362:1;359;352:12;230:2;-1:-1;;892:1545:3;;;;;1093:5;:14;;-1:-1:-1;;;;;1093:14:3;;-1:-1:-1;;;;;;1093:14:3;;;;;;892:1545;1141:38;;;;;;;;;;;;;;;892:1545;;-1:-1:-1;892:1545:3;;-1:-1:-1;1093:5:3;1141:38;1218:50;;1141:38;1218:50;;;;;;;;;;;;1186:83;;1275:14;1299:34;;;;;;;;;;;;;;;;;;;1275:59;;1387:4;1341:14;:30;1356:14;-1:-1:-1;;;;;1341:30:3;-1:-1:-1;;;;;1341:30:3;;;;;;;;;;;;:43;1372:11;-1:-1:-1;;;;;1341:43:3;;-1:-1:-1;;;;;1341:43:3;;;;;;;;;;;;;;:50;;;;;;;;;;;;;;;;;;1498:4;1448:14;:30;1463:14;-1:-1:-1;;;;;1448:30:3;-1:-1:-1;;;;;1448:30:3;;;;;;;;;;;;:47;1479:15;-1:-1:-1;;;;;1448:47:3;;-1:-1:-1;;;;;1448:47:3;;;;;;;;;;;;;;:54;;;;;;;;;;;;;;;;;;1552:4;1509:14;:27;1524:11;-1:-1:-1;;;;;1509:27:3;-1:-1:-1;;;;;1509:27:3;;;;;;;;;;;;:40;1537:11;-1:-1:-1;;;;;1509:40:3;;-1:-1:-1;;;;;1509:40:3;;;;;;;;;;;;;;:47;;;;;;;;;;;;;;;;;;1770:4;1731:14;:27;1746:11;-1:-1:-1;;;;;1731:27:3;-1:-1:-1;;;;;1731:27:3;;;;;;;;;;;;:36;1759:7;-1:-1:-1;;;;;1731:36:3;;-1:-1:-1;;;;;1731:36:3;;;;;;;;;;;;;;:43;;;;;;;;;;;;;;;;;;1883:4;1838:14;:29;1853:13;-1:-1:-1;;;;;1838:29:3;-1:-1:-1;;;;;1838:29:3;;;;;;;;;;;;:42;1868:11;-1:-1:-1;;;;;1838:42:3;;-1:-1:-1;;;;;1838:42:3;;;;;;;;;;;;;;:49;;;;;;;;;;;;;;;;;;1981:4;1932:14;:29;1947:13;-1:-1:-1;;;;;1932:29:3;-1:-1:-1;;;;;1932:29:3;;;;;;;;;;;;:46;1962:15;-1:-1:-1;;;;;1932:46:3;;-1:-1:-1;;;;;1932:46:3;;;;;;;;;;;;;;:53;;;;;;;;;;;;;;;;;;2066:4;2026:14;:24;2041:8;-1:-1:-1;;;;;2026:24:3;-1:-1:-1;;;;;2026:24:3;;;;;;;;;;;;:37;2051:11;-1:-1:-1;;;;;2026:37:3;;-1:-1:-1;;;;;2026:37:3;;;;;;;;;;;;;;:44;;;;;;;;;;;;;;;;;;2120:4;2076:14;:24;2091:8;-1:-1:-1;;;;;2076:24:3;-1:-1:-1;;;;;2076:24:3;;;;;;;;;;;;:41;2101:15;-1:-1:-1;;;;;2076:41:3;;-1:-1:-1;;;;;2076:41:3;;;;;;;;;;;;;;:48;;;;;;;;;;;;;;;;;;2250:6;2259:1;2250:10;;2245:130;2266:6;:13;2262:1;:17;2245:130;;;2294:13;2310:6;2317:1;2310:9;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;2327:21:3;;;;;2364:4;2327:21;;;;;;;:34;;;;;;;;;;;:41;;-1:-1:-1;;2327:41:3;;;;;2281:3;;;;;-1:-1:-1;2245:130:3;;;-1:-1:-1;;;;;;;2381:26:3;;;;;;;2427:4;2381:26;;;;;;;;:43;;;;;;;;;;;;:50;;-1:-1:-1;;2381:50:3;;;;;;;-1:-1:-1;;;;;;;762:2054:3;;;;;;",
-  "deployedSourceMap": "762:2054:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;762:2054:3;;;;;;;;;;;;;;;;;;;;;;;;2441:373;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2441:373:3;;;;;;;;;;;;;;;;;;-1:-1:-1;;2441:373:3;;:::i;:::-;;;;;;;;;;;;;;;;;;805:20;;;:::i;:::-;;;;;;;;;;;;;;;;;;;2441:373;2553:34;;;;;;;;;;;;;;;;2517:4;;-1:-1:-1;;2598:14:3;;;;;;;2594:127;;;2710:4;2703:11;;;;;2594:127;2738:5;;;2731:12;;;2738:5;;2731:12;2727:45;;2760:5;2753:12;;;;;2727:45;-1:-1:-1;;2785:19:3;;;;;;;:14;:19;;;;;;;;-1:-1:-1;;2785:24:3;;;;;;;;;;;;2441:373;;;;;;:::o;805:20::-;;;;;;:::o",
-  "source": "/*\n  This file is part of The Colony Network.\n\n  The Colony Network is free software: you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation, either version 3 of the License, or\n  (at your option) any later version.\n\n  The Colony Network is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License\n  along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.\n*/\n\npragma solidity >=0.5.3;\n\nimport \"../lib/dappsys/auth.sol\";\n\n\ncontract TokenAuthority is DSAuthority {\n  address public token;\n  mapping(address => mapping(bytes4 => bool)) authorizations;\n\n  constructor(\n    address _token,\n    address _colonyNetwork,\n    address _metaColony,\n    address _tokenLocking,\n    address _vesting,\n    address[] memory miners,\n    address _regulator) public {\n    token = _token;\n    bytes4 transferSig = bytes4(keccak256(\"transfer(address,uint256)\"));\n    bytes4 transferFromSig = bytes4(keccak256(\"transferFrom(address,address,uint256)\"));\n    bytes4 mintSig = bytes4(keccak256(\"mint(address,uint256)\"));\n\n    authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers\n    authorizations[_colonyNetwork][transferFromSig] = true;\n\n    authorizations[_metaColony][transferSig] = true;        // Used in IColony: bootstrapColony, mintTokensForColonyNetwork,\n                                                            // claimPayout and claimRewardPayout\n    authorizations[_metaColony][mintSig] = true;            // Used in IColony.mintTokensForColonyNetwork\n\n    authorizations[_tokenLocking][transferSig] = true;      // Used in ITokenLocking.withdraw\n    authorizations[_tokenLocking][transferFromSig] = true;  // Used in ITokenLocking.deposit\n\n    authorizations[_vesting][transferSig] = true;\n    authorizations[_vesting][transferFromSig] = true;\n\n    // Allow passing in of multiple reputation miner accounts although potentially one will be used in production\n    for (uint i = 0; i < miners.length; i++) {\n      address miner = miners[i];\n      authorizations[miner][transferSig] = true;\n    }\n\n    authorizations[_regulator][transferFromSig] = true; \n  }\n\n  function canCall(address src, address dst, bytes4 sig) public view returns (bool) {\n    bytes4 burnSig = bytes4(keccak256(\"burn(address,uint256)\"));\n    if (sig == burnSig) {\n      // We allow anyone to burn their own tokens even when CLNY is still locked\n      return true;\n    }\n\n    if (dst != token) {\n      return false;\n    }\n\n    return authorizations[src][sig];\n  }\n}\n",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516107a83803806107a8833981018060405260e081101561003357600080fd5b8151602083015160408401516060850151608086015160a0870180519597949693959294919382019264010000000081111561006e57600080fd5b8201602081018481111561008157600080fd5b815185602082028301116401000000008211171561009e57600080fd5b505060209091015160008054600160a060020a038b16600160a060020a0319909116178155604080517f7472616e7366657228616464726573732c75696e74323536290000000000000081529051908190036019018120939550919350908060256107838239602501905060405180910390209050600060405180807f6d696e7428616464726573732c75696e7432353629000000000000000000000081525060150190506040518091039020905060018060008b600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008b600160a060020a0316600160a060020a03168152602001908152602001600020600084600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008a600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008a600160a060020a0316600160a060020a03168152602001908152602001600020600083600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600089600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600089600160a060020a0316600160a060020a03168152602001908152602001600020600084600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600088600160a060020a0316600160a060020a03168152602001908152602001600020600085600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff021916908315150217905550600180600088600160a060020a0316600160a060020a03168152602001908152602001600020600084600160e060020a031916600160e060020a031916815260200190815260200160002060006101000a81548160ff02191690831515021790555060008090505b85518110156104de57600086828151811061047a57fe5b602090810291909101810151600160a060020a03166000908152600180835260408083207fffffffff000000000000000000000000000000000000000000000000000000008a168452909352919020805460ff191682179055919091019050610463565b5050600160a060020a0390921660009081526001602081815260408084207fffffffff000000000000000000000000000000000000000000000000000000009096168452949052929020805460ff1916909217909155505050505050506102398061054a6000396000f3fe608060405234801561001057600080fd5b5060043610610052577c01000000000000000000000000000000000000000000000000000000006000350463b70096138114610057578063fc0c546a146100ce575b600080fd5b6100ba6004803603606081101561006d57600080fd5b50803573ffffffffffffffffffffffffffffffffffffffff90811691602081013590911690604001357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166100ff565b604080519115158252519081900360200190f35b6100d66101f1565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b604080517f6275726e28616464726573732c75696e74323536290000000000000000000000815290519081900360150190206000907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1983811690821614156101685760019150506101ea565b60005473ffffffffffffffffffffffffffffffffffffffff8581169116146101945760009150506101ea565b505073ffffffffffffffffffffffffffffffffffffffff831660009081526001602090815260408083207bffffffffffffffffffffffffffffffffffffffffffffffffffffffff198516845290915290205460ff165b9392505050565b60005473ffffffffffffffffffffffffffffffffffffffff168156fea165627a7a72305820c2fa1181de25153cfa445e35633aca9366d79cdf071cf1923daad1c78b8ce13300297472616e7366657246726f6d28616464726573732c616464726573732c75696e7432353629",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b5060043610610052577c01000000000000000000000000000000000000000000000000000000006000350463b70096138114610057578063fc0c546a146100ce575b600080fd5b6100ba6004803603606081101561006d57600080fd5b50803573ffffffffffffffffffffffffffffffffffffffff90811691602081013590911690604001357bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166100ff565b604080519115158252519081900360200190f35b6100d66101f1565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b604080517f6275726e28616464726573732c75696e74323536290000000000000000000000815290519081900360150190206000907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1983811690821614156101685760019150506101ea565b60005473ffffffffffffffffffffffffffffffffffffffff8581169116146101945760009150506101ea565b505073ffffffffffffffffffffffffffffffffffffffff831660009081526001602090815260408083207bffffffffffffffffffffffffffffffffffffffffffffffffffffffff198516845290915290205460ff165b9392505050565b60005473ffffffffffffffffffffffffffffffffffffffff168156fea165627a7a72305820c2fa1181de25153cfa445e35633aca9366d79cdf071cf1923daad1c78b8ce1330029",
+  "sourceMap": "762:2053:3:-;;;892:1544;8:9:-1;5:2;;;30:1;27;20:12;5:2;892:1544:3;;;;;;;;;;;;;;;13:3:-1;8;5:12;2:2;;;30:1;27;20:12;2:2;892:1544:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;19:11:-1;11:20;;8:2;;;44:1;41;34:12;8:2;62:21;;123:4;114:14;;138:31;;;135:2;;;182:1;179;172:12;135:2;219:3;213:10;331:9;325:2;311:12;307:21;289:16;285:44;282:59;261:11;247:12;244:29;233:116;230:2;;;362:1;359;352:12;230:2;-1:-1;;892:1544:3;;;;;1093:5;:14;;-1:-1:-1;;;;;1093:14:3;;-1:-1:-1;;;;;;1093:14:3;;;;;;892:1544;1141:38;;;;;;;;;;;;;;;892:1544;;-1:-1:-1;892:1544:3;;-1:-1:-1;1093:5:3;1141:38;1218:50;;1141:38;1218:50;;;;;;;;;;;;1186:83;;1275:14;1299:34;;;;;;;;;;;;;;;;;;;1275:59;;1387:4;1341:14;:30;1356:14;-1:-1:-1;;;;;1341:30:3;-1:-1:-1;;;;;1341:30:3;;;;;;;;;;;;:43;1372:11;-1:-1:-1;;;;;1341:43:3;;-1:-1:-1;;;;;1341:43:3;;;;;;;;;;;;;;:50;;;;;;;;;;;;;;;;;;1498:4;1448:14;:30;1463:14;-1:-1:-1;;;;;1448:30:3;-1:-1:-1;;;;;1448:30:3;;;;;;;;;;;;:47;1479:15;-1:-1:-1;;;;;1448:47:3;;-1:-1:-1;;;;;1448:47:3;;;;;;;;;;;;;;:54;;;;;;;;;;;;;;;;;;1552:4;1509:14;:27;1524:11;-1:-1:-1;;;;;1509:27:3;-1:-1:-1;;;;;1509:27:3;;;;;;;;;;;;:40;1537:11;-1:-1:-1;;;;;1509:40:3;;-1:-1:-1;;;;;1509:40:3;;;;;;;;;;;;;;:47;;;;;;;;;;;;;;;;;;1770:4;1731:14;:27;1746:11;-1:-1:-1;;;;;1731:27:3;-1:-1:-1;;;;;1731:27:3;;;;;;;;;;;;:36;1759:7;-1:-1:-1;;;;;1731:36:3;;-1:-1:-1;;;;;1731:36:3;;;;;;;;;;;;;;:43;;;;;;;;;;;;;;;;;;1883:4;1838:14;:29;1853:13;-1:-1:-1;;;;;1838:29:3;-1:-1:-1;;;;;1838:29:3;;;;;;;;;;;;:42;1868:11;-1:-1:-1;;;;;1838:42:3;;-1:-1:-1;;;;;1838:42:3;;;;;;;;;;;;;;:49;;;;;;;;;;;;;;;;;;1981:4;1932:14;:29;1947:13;-1:-1:-1;;;;;1932:29:3;-1:-1:-1;;;;;1932:29:3;;;;;;;;;;;;:46;1962:15;-1:-1:-1;;;;;1932:46:3;;-1:-1:-1;;;;;1932:46:3;;;;;;;;;;;;;;:53;;;;;;;;;;;;;;;;;;2066:4;2026:14;:24;2041:8;-1:-1:-1;;;;;2026:24:3;-1:-1:-1;;;;;2026:24:3;;;;;;;;;;;;:37;2051:11;-1:-1:-1;;;;;2026:37:3;;-1:-1:-1;;;;;2026:37:3;;;;;;;;;;;;;;:44;;;;;;;;;;;;;;;;;;2120:4;2076:14;:24;2091:8;-1:-1:-1;;;;;2076:24:3;-1:-1:-1;;;;;2076:24:3;;;;;;;;;;;;:41;2101:15;-1:-1:-1;;;;;2076:41:3;;-1:-1:-1;;;;;2076:41:3;;;;;;;;;;;;;;:48;;;;;;;;;;;;;;;;;;2250:6;2259:1;2250:10;;2245:130;2266:6;:13;2262:1;:17;2245:130;;;2294:13;2310:6;2317:1;2310:9;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;2327:21:3;;;;;2364:4;2327:21;;;;;;;:34;;;;;;;;;;;:41;;-1:-1:-1;;2327:41:3;;;;;2281:3;;;;;-1:-1:-1;2245:130:3;;;-1:-1:-1;;;;;;;2381:26:3;;;;;;;2427:4;2381:26;;;;;;;;:43;;;;;;;;;;;;:50;;-1:-1:-1;;2381:50:3;;;;;;;-1:-1:-1;;;;;;;762:2053:3;;;;;;",
+  "deployedSourceMap": "762:2053:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;762:2053:3;;;;;;;;;;;;;;;;;;;;;;;;2440:373;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2440:373:3;;;;;;;;;;;;;;;;;;-1:-1:-1;;2440:373:3;;:::i;:::-;;;;;;;;;;;;;;;;;;805:20;;;:::i;:::-;;;;;;;;;;;;;;;;;;;2440:373;2552:34;;;;;;;;;;;;;;;;2516:4;;-1:-1:-1;;2597:14:3;;;;;;;2593:127;;;2709:4;2702:11;;;;;2593:127;2737:5;;;2730:12;;;2737:5;;2730:12;2726:45;;2759:5;2752:12;;;;;2726:45;-1:-1:-1;;2784:19:3;;;;;;;:14;:19;;;;;;;;-1:-1:-1;;2784:24:3;;;;;;;;;;;;2440:373;;;;;;:::o;805:20::-;;;;;;:::o",
+  "source": "/*\n  This file is part of The Colony Network.\n\n  The Colony Network is free software: you can redistribute it and/or modify\n  it under the terms of the GNU General Public License as published by\n  the Free Software Foundation, either version 3 of the License, or\n  (at your option) any later version.\n\n  The Colony Network is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n  GNU General Public License for more details.\n\n  You should have received a copy of the GNU General Public License\n  along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.\n*/\n\npragma solidity >=0.5.3;\n\nimport \"../lib/dappsys/auth.sol\";\n\n\ncontract TokenAuthority is DSAuthority {\n  address public token;\n  mapping(address => mapping(bytes4 => bool)) authorizations;\n\n  constructor(\n    address _token,\n    address _colonyNetwork,\n    address _metaColony,\n    address _tokenLocking,\n    address _vesting,\n    address[] memory miners,\n    address _regulator) public {\n    token = _token;\n    bytes4 transferSig = bytes4(keccak256(\"transfer(address,uint256)\"));\n    bytes4 transferFromSig = bytes4(keccak256(\"transferFrom(address,address,uint256)\"));\n    bytes4 mintSig = bytes4(keccak256(\"mint(address,uint256)\"));\n\n    authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers\n    authorizations[_colonyNetwork][transferFromSig] = true;\n\n    authorizations[_metaColony][transferSig] = true;        // Used in IColony: bootstrapColony, mintTokensForColonyNetwork,\n                                                            // claimPayout and claimRewardPayout\n    authorizations[_metaColony][mintSig] = true;            // Used in IColony.mintTokensForColonyNetwork\n\n    authorizations[_tokenLocking][transferSig] = true;      // Used in ITokenLocking.withdraw\n    authorizations[_tokenLocking][transferFromSig] = true;  // Used in ITokenLocking.deposit\n\n    authorizations[_vesting][transferSig] = true;\n    authorizations[_vesting][transferFromSig] = true;\n\n    // Allow passing in of multiple reputation miner accounts although potentially one will be used in production\n    for (uint i = 0; i < miners.length; i++) {\n      address miner = miners[i];\n      authorizations[miner][transferSig] = true;\n    }\n\n    authorizations[_regulator][transferFromSig] = true;\n  }\n\n  function canCall(address src, address dst, bytes4 sig) public view returns (bool) {\n    bytes4 burnSig = bytes4(keccak256(\"burn(address,uint256)\"));\n    if (sig == burnSig) {\n      // We allow anyone to burn their own tokens even when CLNY is still locked\n      return true;\n    }\n\n    if (dst != token) {\n      return false;\n    }\n\n    return authorizations[src][sig];\n  }\n}\n",
   "sourcePath": "/Users/Elena/colonyToken/contracts/TokenAuthority.sol",
   "ast": {
     "absolutePath": "/Users/Elena/colonyToken/contracts/TokenAuthority.sol",
@@ -249,7 +249,7 @@
             "body": {
               "id": 360,
               "nodeType": "Block",
-              "src": "1087:1350:3",
+              "src": "1087:1349:3",
               "statements": [
                 {
                   "expression": {
@@ -2191,7 +2191,7 @@
               "src": "1087:0:3"
             },
             "scope": 402,
-            "src": "892:1545:3",
+            "src": "892:1544:3",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
@@ -2200,7 +2200,7 @@
             "body": {
               "id": 400,
               "nodeType": "Block",
-              "src": "2523:291:3",
+              "src": "2522:291:3",
               "statements": [
                 {
                   "assignments": [
@@ -2213,7 +2213,7 @@
                       "name": "burnSig",
                       "nodeType": "VariableDeclaration",
                       "scope": 400,
-                      "src": "2529:14:3",
+                      "src": "2528:14:3",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
@@ -2224,7 +2224,7 @@
                         "id": 372,
                         "name": "bytes4",
                         "nodeType": "ElementaryTypeName",
-                        "src": "2529:6:3",
+                        "src": "2528:6:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
                           "typeString": "bytes4"
@@ -2251,7 +2251,7 @@
                             "kind": "string",
                             "lValueRequested": false,
                             "nodeType": "Literal",
-                            "src": "2563:23:3",
+                            "src": "2562:23:3",
                             "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_stringliteral_9dc29fac0ba6d4fc521c69c2b0c636d612e3343bc39ed934429b8876b0d12cba",
@@ -2272,7 +2272,7 @@
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 2271,
-                          "src": "2553:9:3",
+                          "src": "2552:9:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
                             "typeString": "function (bytes memory) pure returns (bytes32)"
@@ -2286,7 +2286,7 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "2553:34:3",
+                        "src": "2552:34:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
                           "typeString": "bytes32"
@@ -2306,7 +2306,7 @@
                       "isPure": true,
                       "lValueRequested": false,
                       "nodeType": "ElementaryTypeNameExpression",
-                      "src": "2546:6:3",
+                      "src": "2545:6:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_type$_t_bytes4_$",
                         "typeString": "type(bytes4)"
@@ -2321,14 +2321,14 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "2546:42:3",
+                    "src": "2545:42:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes4",
                       "typeString": "bytes4"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "2529:59:3"
+                  "src": "2528:59:3"
                 },
                 {
                   "condition": {
@@ -2349,7 +2349,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 367,
-                      "src": "2598:3:3",
+                      "src": "2597:3:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes4",
                         "typeString": "bytes4"
@@ -2364,13 +2364,13 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 373,
-                      "src": "2605:7:3",
+                      "src": "2604:7:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes4",
                         "typeString": "bytes4"
                       }
                     },
-                    "src": "2598:14:3",
+                    "src": "2597:14:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -2379,11 +2379,11 @@
                   "falseBody": null,
                   "id": 386,
                   "nodeType": "IfStatement",
-                  "src": "2594:127:3",
+                  "src": "2593:127:3",
                   "trueBody": {
                     "id": 385,
                     "nodeType": "Block",
-                    "src": "2614:107:3",
+                    "src": "2613:107:3",
                     "statements": [
                       {
                         "expression": {
@@ -2396,7 +2396,7 @@
                           "kind": "bool",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "2710:4:3",
+                          "src": "2709:4:3",
                           "subdenomination": null,
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
@@ -2407,7 +2407,7 @@
                         "functionReturnParameters": 371,
                         "id": 384,
                         "nodeType": "Return",
-                        "src": "2703:11:3"
+                        "src": "2702:11:3"
                       }
                     ]
                   }
@@ -2431,7 +2431,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 365,
-                      "src": "2731:3:3",
+                      "src": "2730:3:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
@@ -2446,13 +2446,13 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 209,
-                      "src": "2738:5:3",
+                      "src": "2737:5:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "src": "2731:12:3",
+                    "src": "2730:12:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -2461,11 +2461,11 @@
                   "falseBody": null,
                   "id": 393,
                   "nodeType": "IfStatement",
-                  "src": "2727:45:3",
+                  "src": "2726:45:3",
                   "trueBody": {
                     "id": 392,
                     "nodeType": "Block",
-                    "src": "2745:27:3",
+                    "src": "2744:27:3",
                     "statements": [
                       {
                         "expression": {
@@ -2478,7 +2478,7 @@
                           "kind": "bool",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "2760:5:3",
+                          "src": "2759:5:3",
                           "subdenomination": null,
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
@@ -2489,7 +2489,7 @@
                         "functionReturnParameters": 371,
                         "id": 391,
                         "nodeType": "Return",
-                        "src": "2753:12:3"
+                        "src": "2752:12:3"
                       }
                     ]
                   }
@@ -2506,7 +2506,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 215,
-                        "src": "2785:14:3",
+                        "src": "2784:14:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_mapping$_t_bytes4_$_t_bool_$_$",
                           "typeString": "mapping(address => mapping(bytes4 => bool))"
@@ -2520,7 +2520,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 363,
-                        "src": "2800:3:3",
+                        "src": "2799:3:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -2531,7 +2531,7 @@
                       "isPure": false,
                       "lValueRequested": false,
                       "nodeType": "IndexAccess",
-                      "src": "2785:19:3",
+                      "src": "2784:19:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                         "typeString": "mapping(bytes4 => bool)"
@@ -2545,7 +2545,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 367,
-                      "src": "2805:3:3",
+                      "src": "2804:3:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes4",
                         "typeString": "bytes4"
@@ -2556,7 +2556,7 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "IndexAccess",
-                    "src": "2785:24:3",
+                    "src": "2784:24:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -2565,7 +2565,7 @@
                   "functionReturnParameters": 371,
                   "id": 399,
                   "nodeType": "Return",
-                  "src": "2778:31:3"
+                  "src": "2777:31:3"
                 }
               ]
             },
@@ -2586,7 +2586,7 @@
                   "name": "src",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2458:11:3",
+                  "src": "2457:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2597,7 +2597,7 @@
                     "id": 362,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2458:7:3",
+                    "src": "2457:7:3",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2613,7 +2613,7 @@
                   "name": "dst",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2471:11:3",
+                  "src": "2470:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2624,7 +2624,7 @@
                     "id": 364,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2471:7:3",
+                    "src": "2470:7:3",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2640,7 +2640,7 @@
                   "name": "sig",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2484:10:3",
+                  "src": "2483:10:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2651,7 +2651,7 @@
                     "id": 366,
                     "name": "bytes4",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2484:6:3",
+                    "src": "2483:6:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes4",
                       "typeString": "bytes4"
@@ -2661,7 +2661,7 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2457:38:3"
+              "src": "2456:38:3"
             },
             "returnParameters": {
               "id": 371,
@@ -2673,7 +2673,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2517:4:3",
+                  "src": "2516:4:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2684,7 +2684,7 @@
                     "id": 369,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2517:4:3",
+                    "src": "2516:4:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -2694,20 +2694,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2516:6:3"
+              "src": "2515:6:3"
             },
             "scope": 402,
-            "src": "2441:373:3",
+            "src": "2440:373:3",
             "stateMutability": "view",
             "superFunction": 1084,
             "visibility": "public"
           }
         ],
         "scope": 403,
-        "src": "762:2054:3"
+        "src": "762:2053:3"
       }
     ],
-    "src": "700:2117:3"
+    "src": "700:2116:3"
   },
   "legacyAST": {
     "absolutePath": "/Users/Elena/colonyToken/contracts/TokenAuthority.sol",
@@ -2871,7 +2871,7 @@
             "body": {
               "id": 360,
               "nodeType": "Block",
-              "src": "1087:1350:3",
+              "src": "1087:1349:3",
               "statements": [
                 {
                   "expression": {
@@ -4813,7 +4813,7 @@
               "src": "1087:0:3"
             },
             "scope": 402,
-            "src": "892:1545:3",
+            "src": "892:1544:3",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
@@ -4822,7 +4822,7 @@
             "body": {
               "id": 400,
               "nodeType": "Block",
-              "src": "2523:291:3",
+              "src": "2522:291:3",
               "statements": [
                 {
                   "assignments": [
@@ -4835,7 +4835,7 @@
                       "name": "burnSig",
                       "nodeType": "VariableDeclaration",
                       "scope": 400,
-                      "src": "2529:14:3",
+                      "src": "2528:14:3",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
@@ -4846,7 +4846,7 @@
                         "id": 372,
                         "name": "bytes4",
                         "nodeType": "ElementaryTypeName",
-                        "src": "2529:6:3",
+                        "src": "2528:6:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
                           "typeString": "bytes4"
@@ -4873,7 +4873,7 @@
                             "kind": "string",
                             "lValueRequested": false,
                             "nodeType": "Literal",
-                            "src": "2563:23:3",
+                            "src": "2562:23:3",
                             "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_stringliteral_9dc29fac0ba6d4fc521c69c2b0c636d612e3343bc39ed934429b8876b0d12cba",
@@ -4894,7 +4894,7 @@
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 2271,
-                          "src": "2553:9:3",
+                          "src": "2552:9:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
                             "typeString": "function (bytes memory) pure returns (bytes32)"
@@ -4908,7 +4908,7 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "2553:34:3",
+                        "src": "2552:34:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
                           "typeString": "bytes32"
@@ -4928,7 +4928,7 @@
                       "isPure": true,
                       "lValueRequested": false,
                       "nodeType": "ElementaryTypeNameExpression",
-                      "src": "2546:6:3",
+                      "src": "2545:6:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_type$_t_bytes4_$",
                         "typeString": "type(bytes4)"
@@ -4943,14 +4943,14 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "2546:42:3",
+                    "src": "2545:42:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes4",
                       "typeString": "bytes4"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "2529:59:3"
+                  "src": "2528:59:3"
                 },
                 {
                   "condition": {
@@ -4971,7 +4971,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 367,
-                      "src": "2598:3:3",
+                      "src": "2597:3:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes4",
                         "typeString": "bytes4"
@@ -4986,13 +4986,13 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 373,
-                      "src": "2605:7:3",
+                      "src": "2604:7:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes4",
                         "typeString": "bytes4"
                       }
                     },
-                    "src": "2598:14:3",
+                    "src": "2597:14:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -5001,11 +5001,11 @@
                   "falseBody": null,
                   "id": 386,
                   "nodeType": "IfStatement",
-                  "src": "2594:127:3",
+                  "src": "2593:127:3",
                   "trueBody": {
                     "id": 385,
                     "nodeType": "Block",
-                    "src": "2614:107:3",
+                    "src": "2613:107:3",
                     "statements": [
                       {
                         "expression": {
@@ -5018,7 +5018,7 @@
                           "kind": "bool",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "2710:4:3",
+                          "src": "2709:4:3",
                           "subdenomination": null,
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
@@ -5029,7 +5029,7 @@
                         "functionReturnParameters": 371,
                         "id": 384,
                         "nodeType": "Return",
-                        "src": "2703:11:3"
+                        "src": "2702:11:3"
                       }
                     ]
                   }
@@ -5053,7 +5053,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 365,
-                      "src": "2731:3:3",
+                      "src": "2730:3:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
@@ -5068,13 +5068,13 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 209,
-                      "src": "2738:5:3",
+                      "src": "2737:5:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "src": "2731:12:3",
+                    "src": "2730:12:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -5083,11 +5083,11 @@
                   "falseBody": null,
                   "id": 393,
                   "nodeType": "IfStatement",
-                  "src": "2727:45:3",
+                  "src": "2726:45:3",
                   "trueBody": {
                     "id": 392,
                     "nodeType": "Block",
-                    "src": "2745:27:3",
+                    "src": "2744:27:3",
                     "statements": [
                       {
                         "expression": {
@@ -5100,7 +5100,7 @@
                           "kind": "bool",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "2760:5:3",
+                          "src": "2759:5:3",
                           "subdenomination": null,
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
@@ -5111,7 +5111,7 @@
                         "functionReturnParameters": 371,
                         "id": 391,
                         "nodeType": "Return",
-                        "src": "2753:12:3"
+                        "src": "2752:12:3"
                       }
                     ]
                   }
@@ -5128,7 +5128,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 215,
-                        "src": "2785:14:3",
+                        "src": "2784:14:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_mapping$_t_bytes4_$_t_bool_$_$",
                           "typeString": "mapping(address => mapping(bytes4 => bool))"
@@ -5142,7 +5142,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 363,
-                        "src": "2800:3:3",
+                        "src": "2799:3:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -5153,7 +5153,7 @@
                       "isPure": false,
                       "lValueRequested": false,
                       "nodeType": "IndexAccess",
-                      "src": "2785:19:3",
+                      "src": "2784:19:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                         "typeString": "mapping(bytes4 => bool)"
@@ -5167,7 +5167,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 367,
-                      "src": "2805:3:3",
+                      "src": "2804:3:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes4",
                         "typeString": "bytes4"
@@ -5178,7 +5178,7 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "IndexAccess",
-                    "src": "2785:24:3",
+                    "src": "2784:24:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -5187,7 +5187,7 @@
                   "functionReturnParameters": 371,
                   "id": 399,
                   "nodeType": "Return",
-                  "src": "2778:31:3"
+                  "src": "2777:31:3"
                 }
               ]
             },
@@ -5208,7 +5208,7 @@
                   "name": "src",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2458:11:3",
+                  "src": "2457:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -5219,7 +5219,7 @@
                     "id": 362,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2458:7:3",
+                    "src": "2457:7:3",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -5235,7 +5235,7 @@
                   "name": "dst",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2471:11:3",
+                  "src": "2470:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -5246,7 +5246,7 @@
                     "id": 364,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2471:7:3",
+                    "src": "2470:7:3",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -5262,7 +5262,7 @@
                   "name": "sig",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2484:10:3",
+                  "src": "2483:10:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -5273,7 +5273,7 @@
                     "id": 366,
                     "name": "bytes4",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2484:6:3",
+                    "src": "2483:6:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes4",
                       "typeString": "bytes4"
@@ -5283,7 +5283,7 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2457:38:3"
+              "src": "2456:38:3"
             },
             "returnParameters": {
               "id": 371,
@@ -5295,7 +5295,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 401,
-                  "src": "2517:4:3",
+                  "src": "2516:4:3",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -5306,7 +5306,7 @@
                     "id": 369,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2517:4:3",
+                    "src": "2516:4:3",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -5316,20 +5316,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2516:6:3"
+              "src": "2515:6:3"
             },
             "scope": 402,
-            "src": "2441:373:3",
+            "src": "2440:373:3",
             "stateMutability": "view",
             "superFunction": 1084,
             "visibility": "public"
           }
         ],
         "scope": 403,
-        "src": "762:2054:3"
+        "src": "762:2053:3"
       }
     ],
-    "src": "700:2117:3"
+    "src": "700:2116:3"
   },
   "compiler": {
     "name": "solc",
@@ -5377,10 +5377,40 @@
       "links": {},
       "address": "0xa3900Bda397CBa78265dA539948Fd7E1493BF4E2",
       "transactionHash": "0x7f9f3f6ae502b87cfaf14515ac621260832ff7ca4054ad2dce8238e67ea29e83"
+    },
+    "1553166356723": {
+      "events": {},
+      "links": {},
+      "address": "0x716F900181dDD3148017dfEFE351477899528186",
+      "transactionHash": "0x2dceacc51ddd57b71bc44c8a421eb01922c6832f5a31f46a627bae4c3b5dbba3"
+    },
+    "1553166424259": {
+      "events": {},
+      "links": {},
+      "address": "0x76D508Fa65654654Ffdb334a3023353587112e09",
+      "transactionHash": "0xc76a1bd8007c74a7222bbda15853d86f5d485255ea8aeb56c764c6a0cc853581"
+    },
+    "1553166638083": {
+      "events": {},
+      "links": {},
+      "address": "0x76D508Fa65654654Ffdb334a3023353587112e09",
+      "transactionHash": "0xc76a1bd8007c74a7222bbda15853d86f5d485255ea8aeb56c764c6a0cc853581"
+    },
+    "1553166735500": {
+      "events": {},
+      "links": {},
+      "address": "0x76D508Fa65654654Ffdb334a3023353587112e09",
+      "transactionHash": "0xc76a1bd8007c74a7222bbda15853d86f5d485255ea8aeb56c764c6a0cc853581"
+    },
+    "1553167714702": {
+      "events": {},
+      "links": {},
+      "address": "0x75D2df345Aef0f97c40B4eABAC4eA9dCAa15C423",
+      "transactionHash": "0x80fa45a4f88c2acb7cbdd6e6e03f978d1d8db2dd50d0ab91bd67b374332f9735"
     }
   },
   "schemaVersion": "3.0.3",
-  "updatedAt": "2019-03-21T10:52:54.883Z",
+  "updatedAt": "2019-03-21T11:37:01.481Z",
   "devdoc": {
     "methods": {}
   },

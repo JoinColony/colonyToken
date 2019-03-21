@@ -1,7 +1,9 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, no-unused-expressions */
 import shortid from "shortid";
-import { assert } from "chai";
 import { sha3 } from "web3-utils";
+import chai from "chai";
+
+const { expect } = chai;
 
 export function web3GetNetwork() {
   return new Promise((resolve, reject) => {
@@ -66,7 +68,7 @@ export function web3GetCode(a) {
   });
 }
 
-async function checkError(promise, isAssert) {
+export async function checkErrorRevert(promise, errorMessage) {
   // There is a discrepancy between how ganache-cli handles errors
   // (throwing an exception all the way up to these tests) and how geth/parity handle them
   // (still making a valid transaction and returning a txid). For the explanation of why
@@ -74,39 +76,26 @@ async function checkError(promise, isAssert) {
   //
   // Obviously, we want our tests to pass on all, so this is a bit of a problem.
   // We have to have this special function that we use to catch the error.
-  let tx;
   let receipt;
+  let reason;
   try {
-    tx = await promise;
-    ({ receipt } = tx);
-  } catch (err) {
-    ({ tx, receipt } = err);
-  }
-
-  // Check the receipt `status` to ensure transaction failed.
-  assert.equal(receipt.status, 0x00);
-
-  if (isAssert) {
-    const network = await web3GetNetwork();
-    const transaction = await web3GetTransaction(tx);
-    if (network !== "coverage") {
-      // When a transaction `throws`, all the gas sent is spent. So let's check that we spent all the gas that we sent.
-      // When using EtherRouter not all sent gas is spent, it is 73000 gas less than the total.
-      assert.closeTo(transaction.gas, receipt.gasUsed, 73000, "didnt fail - didn't throw and use all gas");
+    ({ receipt } = await promise);
+    // If the promise is from Truffle, then we have the receipt already.
+    // If this tx has come from the mining client, the promise has just resolved to a tx hash and we need to do the following
+    if (!receipt) {
+      const txid = await promise;
+      receipt = await web3GetTransactionReceipt(txid);
     }
+  } catch (err) {
+    ({ receipt, reason } = err);
+    expect(reason).to.equal(errorMessage);
   }
-}
-
-export async function checkErrorRevert(promise) {
-  return checkError(promise, false);
-}
-
-export async function checkErrorAssert(promise) {
-  return checkError(promise, true);
+  // Check the receipt `status` to ensure transaction failed.
+  expect(receipt.status, `Transaction succeeded, but expected error ${errorMessage}`).to.be.false;
 }
 
 export function checkErrorNonPayableFunction(tx) {
-  assert.equal(tx, "Error: Cannot send value to non-payable function");
+  expect(tx).to.equal("Error: Cannot send value to non-payable function");
 }
 
 export function getRandomString(_length) {
@@ -152,7 +141,7 @@ export async function getBlockTime(blockNumber) {
 export async function expectEvent(tx, eventName) {
   const { logs } = await tx;
   const event = logs.find(e => e.event === eventName);
-  return assert.exists(event);
+  return expect(event).to.exist;
 }
 
 export function getFunctionSignature(sig) {

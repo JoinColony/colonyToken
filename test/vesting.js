@@ -96,7 +96,7 @@ contract("Vesting", accounts => {
     it("should fail with 0 address for Token", async () => {
       let vestingContract = "";
       try {
-        vestingContract = await Vesting.new(0x0, colonyMultiSig.address);
+        vestingContract = await Vesting.new(ZERO_ADDRESS, colonyMultiSig.address);
       } catch (err) {} // eslint-disable-line no-empty
       assert.equal(vestingContract, "");
     });
@@ -104,7 +104,7 @@ contract("Vesting", accounts => {
     it("should fail with 0 address for MultiSig", async () => {
       let vestingContract = "";
       try {
-        vestingContract = await Vesting.new(token.address, 0x0);
+        vestingContract = await Vesting.new(token.address, ZERO_ADDRESS);
       } catch (err) {} // eslint-disable-line no-empty
       assert.equal(vestingContract, "");
     });
@@ -164,7 +164,7 @@ contract("Vesting", accounts => {
       });
 
       it("should error if called by anyone but the Colony multisig", async () => {
-        await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 0, 1000, 24, 6), { from: OTHER_ACCOUNT });
+        await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 0, 1000, 24, 6, { from: OTHER_ACCOUNT }), "colony-vesting-unauthorized");
       });
 
       it("should error if there is an existing grant for user", async () => {
@@ -315,7 +315,7 @@ contract("Vesting", accounts => {
       });
 
       it("should error if called by anyone but the Colony multisig", async () => {
-        await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1), { from: OTHER_ACCOUNT });
+        await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1, { from: OTHER_ACCOUNT }), "colony-vesting-unauthorized");
       });
     });
 
@@ -327,7 +327,7 @@ contract("Vesting", accounts => {
         const balanceBefore = await token.balanceOf(ACCOUNT_1);
         assert(balanceBefore.isZero());
 
-        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }));
+        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }), "colony-token-zero-amount-vested");
 
         const balanceAfter = await token.balanceOf(ACCOUNT_1);
         assert(balanceAfter.isZero());
@@ -340,14 +340,14 @@ contract("Vesting", accounts => {
         const balanceBefore = await token.balanceOf(ACCOUNT_1);
         assert(balanceBefore.isZero());
 
-        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }));
+        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }), "colony-token-zero-amount-vested");
 
         const balanceAfter = await token.balanceOf(ACCOUNT_1);
         assert(balanceAfter.isZero());
       });
 
       it("should NOT be able to claim a non-existent grant", async () => {
-        await checkErrorRevert(vesting.claimVestedTokens({ from: OTHER_ACCOUNT }));
+        await checkErrorRevert(vesting.claimVestedTokens({ from: OTHER_ACCOUNT }), "colony-token-zero-amount-vested");
         const balanceAfter = await token.balanceOf(OTHER_ACCOUNT);
         assert.equal(balanceAfter.toNumber(), 0);
       });

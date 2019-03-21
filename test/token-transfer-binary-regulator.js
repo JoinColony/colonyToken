@@ -34,7 +34,7 @@ contract("Binary Regulator", accounts => {
       const a2BalanceBefore = await token.balanceOf(ADDRESS_2);
 
       // Confirm we cannot send directly
-      await checkErrorRevert(token.transfer(ADDRESS_2, 500, { from: ADDRESS_1 }));
+      await checkErrorRevert(token.transfer(ADDRESS_2, 500, { from: ADDRESS_1 }), "colony-token-unauthorised");
 
       // Make request to regulator
       await token.approve(regulator.address, 500, { from: ADDRESS_1 });
@@ -56,6 +56,18 @@ contract("Binary Regulator", accounts => {
 
     it("shouldn't allow me to propose a transfer of someone else's tokens", async () => {
       await checkErrorRevert(regulator.requestTransfer(ADDRESS_2, ADDRESS_1, 500, { from: ADDRESS_1 }), "colony-token-regulator-not-from-address");
+    });
+
+    it("should't allow anyone but the owner to execute transfer", async () => {
+      const txData = await token.contract.methods.mint(ADDRESS_1, 1000).encodeABI();
+      await colonyMultiSig.submitTransaction(token.address, 0, txData);
+
+      // Make request to regulator
+      await token.approve(regulator.address, 1000, { from: ADDRESS_1 });
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
+
+      const transferCount = await regulator.transferCount();
+      await checkErrorRevert(regulator.executeTransfer(transferCount.toNumber()), "colony-token-regulator-only-owner-can-execute");
     });
 
     it("shouldn't allow me to cancel someone else's transfer", async () => {
@@ -124,7 +136,7 @@ contract("Binary Regulator", accounts => {
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       // Confirm we cannot send directly
-      await checkErrorRevert(token.transfer(ADDRESS_2, 500, { from: ADDRESS_1 }));
+      await checkErrorRevert(token.transfer(ADDRESS_2, 500, { from: ADDRESS_1 }), "colony-token-unauthorised");
 
       // Make 2 separate requests to regulator totalling the entire amount
       await token.approve(regulator.address, 500, { from: ADDRESS_1 });

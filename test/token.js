@@ -54,7 +54,7 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to transfer more tokens than they have", async () => {
-      await checkErrorRevert(token.transfer(ACCOUNT_TWO, 1500001, { from: COLONY_ACCOUNT }));
+      await checkErrorRevert(token.transfer(ACCOUNT_TWO, 1500001, { from: COLONY_ACCOUNT }), "ds-token-insufficient-balance");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
     });
@@ -74,14 +74,14 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to transfer tokens from another address if NOT pre-approved", async () => {
-      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "ds-token-insufficient-approval");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
     });
 
     it("should NOT be able to transfer from another address more tokens than pre-approved", async () => {
       await token.approve(ACCOUNT_TWO, 300000);
-      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300001, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300001, { from: ACCOUNT_TWO }), "ds-token-insufficient-approval");
 
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
@@ -91,7 +91,7 @@ contract("Token", accounts => {
       await token.approve(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT });
       await token.transfer(ACCOUNT_THREE, 1500000, { from: COLONY_ACCOUNT });
 
-      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "ds-token-insufficient-balance");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       assert.equal(0, balanceAccount2.toNumber());
     });
@@ -113,7 +113,7 @@ contract("Token", accounts => {
     });
 
     it("shouldn't be able to transfer tokens from own address", async () => {
-      await checkErrorRevert(token.transfer(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO }));
+      await checkErrorRevert(token.transfer(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO }), "colony-token-unauthorised");
 
       const balanceAccount1 = await token.balanceOf(ACCOUNT_TWO);
       assert.equal(1500000, balanceAccount1.toNumber());
@@ -123,7 +123,7 @@ contract("Token", accounts => {
 
     it("shouldn't be able to transfer pre-approved tokens", async () => {
       await token.approve(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO });
-      await checkErrorRevert(token.transferFrom(ACCOUNT_TWO, ACCOUNT_THREE, 300000, { from: ACCOUNT_THREE }));
+      await checkErrorRevert(token.transferFrom(ACCOUNT_TWO, ACCOUNT_THREE, 300000, { from: ACCOUNT_THREE }), "colony-token-unauthorised");
 
       const balanceAccount1 = await token.balanceOf(ACCOUNT_TWO);
       assert.equal(1500000, balanceAccount1.toNumber());
@@ -190,7 +190,7 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to mint new tokens, when called by anyone NOT the Token owner", async () => {
-      await checkErrorRevert(token.mint(COLONY_ACCOUNT, 1500000, { from: ACCOUNT_THREE }));
+      await checkErrorRevert(token.mint(COLONY_ACCOUNT, 1500000, { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
       const totalSupply = await token.totalSupply();
       assert.equal(0, totalSupply.toNumber());
     });
@@ -238,8 +238,8 @@ contract("Token", accounts => {
     });
 
     it("shouldn't be able to unlock token by non-owner", async () => {
-      await checkErrorRevert(token.unlock({ from: ACCOUNT_THREE }));
-      await checkErrorRevert(dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000", { from: ACCOUNT_THREE }));
+      await checkErrorRevert(token.unlock({ from: ACCOUNT_THREE }), "ds-auth-unauthorized");
+      await checkErrorRevert(dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000", { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
 
       const locked = await token.locked();
       assert.isTrue(locked);

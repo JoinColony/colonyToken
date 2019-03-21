@@ -43,7 +43,7 @@ contract Vesting is DSMath {
   mapping (address => Grant) public tokenGrants;
 
   modifier onlyColonyMultiSig {
-    require(msg.sender == colonyMultiSig, "colony-token-not-colony-multisig");
+    require(msg.sender == colonyMultiSig, "colony-vesting-unauthorized");
     _;
   }
 
