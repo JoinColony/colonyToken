@@ -13486,12 +13486,24 @@
     "1553167714702": {
       "events": {},
       "links": {},
-      "address": "0xC2a005eCc4c0f088D3978802B47333f8D2c78C2e",
-      "transactionHash": "0x14984e5c06644e7a8d58c3e2fa78e3514ec20e209270066ad6069a4c7b3e2d1c"
+      "address": "0x6AD987a3d24D81ED4253E9f86c695B2F1743be32",
+      "transactionHash": "0x96244967bf8556f78e564c4a62a4bea666aabbdbc1d3017d1ffb399cc449d666"
+    },
+    "1553169652351": {
+      "events": {},
+      "links": {},
+      "address": "0xBB7D94848437B7d975Fc9A12d1785669d98B563B",
+      "transactionHash": "0xd712ed7ad8c10ca81393319c3efba51dcd575d4705cb518afa0fa7a2df3a4d90"
+    },
+    "1553171827250": {
+      "events": {},
+      "links": {},
+      "address": "0xB4C4c360c1a7e88a0Bee1E6e6C737daCe6798D09",
+      "transactionHash": "0x113e204accc199895192735bc61162ae86e47a85c65295814b643834efca4d07"
     }
   },
   "schemaVersion": "3.0.3",
-  "updatedAt": "2019-03-21T11:37:01.490Z",
+  "updatedAt": "2019-03-21T12:59:45.087Z",
   "devdoc": {
     "methods": {
       "addTokenGrant(address,uint256,uint128,uint16,uint16)": {

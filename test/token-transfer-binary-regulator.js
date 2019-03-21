@@ -1,8 +1,12 @@
 /* globals artifacts */
 
-import { assert } from "chai";
+import chai from "chai";
+import bnChai from "bn-chai";
 
 import { checkErrorRevert, expectEvent } from "../helpers/test-helper";
+
+const { expect } = chai;
+chai.use(bnChai(web3.utils.BN));
 
 const TokenTransferBinaryRegulator = artifacts.require("TokenTransferBinaryRegulator");
 const Token = artifacts.require("Token");
@@ -48,10 +52,10 @@ contract("Binary Regulator", accounts => {
 
       // Check it worked
       const a1BalanceAfter = await token.balanceOf(ADDRESS_1);
-      assert.equal(a1BalanceBefore.sub(a1BalanceAfter).toString(), "500");
+      expect(a1BalanceBefore.sub(a1BalanceAfter)).to.eq.BN(500);
 
       const a2BalanceAfter = await token.balanceOf(ADDRESS_2);
-      assert.equal(a2BalanceAfter.sub(a2BalanceBefore).toString(), "500");
+      expect(a2BalanceAfter.sub(a2BalanceBefore)).to.eq.BN(500);
     });
 
     it("shouldn't allow me to propose a transfer of someone else's tokens", async () => {
@@ -81,7 +85,7 @@ contract("Binary Regulator", accounts => {
       const transferCount = await regulator.transferCount();
       await regulator.invalidateRequest(transferCount, { from: ADDRESS_1 });
       const transfer = await regulator.transfers(transferCount);
-      assert.equal(transfer.valid, false);
+      expect(transfer.valid).to.be.false;
     });
 
     it("should allow an admin to decline a transfer", async () => {
@@ -90,13 +94,13 @@ contract("Binary Regulator", accounts => {
       transferCount = transferCount.toNumber();
 
       let transfer = await regulator.transfers(transferCount);
-      assert.equal(transfer.valid, true);
+      expect(transfer.valid).to.be.true;
 
       const txData = await regulator.contract.methods.invalidateRequest(transferCount).encodeABI();
       await colonyMultiSig.submitTransaction(regulator.address, 0, txData);
 
       transfer = await regulator.transfers(transferCount);
-      assert.equal(transfer.valid, false);
+      expect(transfer.valid).to.be.false;
     });
 
     it("should not allow a transfer to be approved more than once", async () => {
@@ -125,8 +129,8 @@ contract("Binary Regulator", accounts => {
       const a1BalanceAfter = await token.balanceOf(ADDRESS_1);
       const a2BalanceAfter = await token.balanceOf(ADDRESS_2);
 
-      assert.equal(a1BalanceAfter.toString(), a1BalanceBefore.toString());
-      assert.equal(a2BalanceAfter.toString(), a2BalanceBefore.toString());
+      expect(a1BalanceAfter).to.eq.BN(a1BalanceBefore);
+      expect(a2BalanceAfter).to.eq.BN(a2BalanceBefore);
     });
 
     it("should allow transfer approvals to work with cumulative approvals of token tranfers", async () => {
@@ -153,9 +157,9 @@ contract("Binary Regulator", accounts => {
       await colonyMultiSig.submitTransaction(regulator.address, 0, txData);
       // Check it worked
       let a1BalanceAfter = await token.balanceOf(ADDRESS_1);
-      assert.equal(a1BalanceBefore.sub(a1BalanceAfter).toString(), "100");
+      expect(a1BalanceBefore.sub(a1BalanceAfter)).to.eq.BN(100);
       const a2BalanceAfter = await token.balanceOf(ADDRESS_2);
-      assert.equal(a2BalanceAfter.sub(a2BalanceBefore).toString(), "100");
+      expect(a2BalanceAfter.sub(a2BalanceBefore)).to.eq.BN(100);
 
       a1BalanceBefore = await token.balanceOf(ADDRESS_1);
       const a3BalanceBefore = await token.balanceOf(ADDRESS_3);
@@ -164,9 +168,9 @@ contract("Binary Regulator", accounts => {
       await colonyMultiSig.submitTransaction(regulator.address, 0, txData);
       // Check it worked
       a1BalanceAfter = await token.balanceOf(ADDRESS_1);
-      assert.equal(a1BalanceBefore.sub(a1BalanceAfter).toString(), "400");
+      expect(a1BalanceBefore.sub(a1BalanceAfter)).to.eq.BN(400);
       const a3BalanceAfter = await token.balanceOf(ADDRESS_3);
-      assert.equal(a3BalanceAfter.sub(a3BalanceBefore).toString(), "400");
+      expect(a3BalanceAfter.sub(a3BalanceBefore)).to.eq.BN(400);
     });
   });
 });

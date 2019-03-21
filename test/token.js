@@ -1,11 +1,17 @@
 /* globals artifacts */
 
-import { assert } from "chai";
+import chai from "chai";
+import bnChai from "bn-chai";
+
 import { asciiToHex } from "web3-utils";
 import { expectEvent, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
 
+const { expect } = chai;
+chai.use(bnChai(web3.utils.BN));
+
 const Token = artifacts.require("Token");
 const DSAuth = artifacts.require("DSAuth");
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 contract("Token", accounts => {
   const COLONY_ACCOUNT = accounts[5];
@@ -28,55 +34,55 @@ contract("Token", accounts => {
 
     it("should be able to get total supply", async () => {
       const total = await token.totalSupply();
-      assert.equal(1500000, total.toNumber());
+      expect(total).to.eq.BN(1500000);
     });
 
     it("should be able to get token balance", async () => {
       const balance = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1500000, balance.toNumber());
+      expect(balance).to.eq.BN(1500000);
     });
 
     it("should be able to get allowance for address", async () => {
       await token.approve(ACCOUNT_TWO, 200000, { from: COLONY_ACCOUNT });
       const allowance = await token.allowance(COLONY_ACCOUNT, ACCOUNT_TWO);
-      assert.equal(200000, allowance.toNumber());
+      expect(allowance).to.eq.BN(200000);
     });
 
     it("should be able to transfer tokens from own address", async () => {
       const success = await token.transfer.call(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT });
-      assert.equal(true, success);
+      expect(success).to.be.true;
 
       await expectEvent(token.transfer(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT }), "Transfer");
       const balanceAccount1 = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1200000, balanceAccount1.toNumber());
+      expect(balanceAccount1).to.eq.BN(1200000);
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(300000, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.eq.BN(300000);
     });
 
     it("should NOT be able to transfer more tokens than they have", async () => {
       await checkErrorRevert(token.transfer(ACCOUNT_TWO, 1500001, { from: COLONY_ACCOUNT }), "ds-token-insufficient-balance");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(0, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.be.zero;
     });
 
     it("should be able to transfer pre-approved tokens from address different than own", async () => {
       await token.approve(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT });
       const success = await token.transferFrom.call(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO });
-      assert.equal(true, success);
+      expect(success).to.be.true;
 
       await expectEvent(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "Transfer");
       const balanceAccount1 = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1200000, balanceAccount1.toNumber());
+      expect(balanceAccount1).to.eq.BN(1200000);
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(300000, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.eq.BN(300000);
       const allowance = await token.allowance(COLONY_ACCOUNT, ACCOUNT_TWO);
-      assert.equal(0, allowance.toNumber());
+      expect(allowance).to.be.zero;
     });
 
     it("should NOT be able to transfer tokens from another address if NOT pre-approved", async () => {
       await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "ds-token-insufficient-approval");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(0, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.be.zero;
     });
 
     it("should NOT be able to transfer from another address more tokens than pre-approved", async () => {
@@ -84,7 +90,7 @@ contract("Token", accounts => {
       await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300001, { from: ACCOUNT_TWO }), "ds-token-insufficient-approval");
 
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(0, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.be.zero;
     });
 
     it("should NOT be able to transfer from another address more tokens than the source balance", async () => {
@@ -93,16 +99,16 @@ contract("Token", accounts => {
 
       await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "ds-token-insufficient-balance");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(0, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.be.zero;
     });
 
     it("should be able to approve token transfer for other accounts", async () => {
       const success = await token.approve.call(ACCOUNT_TWO, 200000, { from: COLONY_ACCOUNT });
-      assert.equal(true, success);
+      expect(success).to.be.true;
 
       await expectEvent(token.approve(ACCOUNT_TWO, 200000, { from: COLONY_ACCOUNT }), "Approval");
       const allowance = await token.allowance(COLONY_ACCOUNT, ACCOUNT_TWO);
-      assert.equal(200000, allowance.toNumber());
+      expect(allowance).to.eq.BN(200000);
     });
   });
 
@@ -116,9 +122,9 @@ contract("Token", accounts => {
       await checkErrorRevert(token.transfer(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO }), "colony-token-unauthorised");
 
       const balanceAccount1 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(1500000, balanceAccount1.toNumber());
+      expect(balanceAccount1).to.eq.BN(1500000);
       const balanceAccount2 = await token.balanceOf(ACCOUNT_THREE);
-      assert.equal(0, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.be.zero;
     });
 
     it("shouldn't be able to transfer pre-approved tokens", async () => {
@@ -126,46 +132,46 @@ contract("Token", accounts => {
       await checkErrorRevert(token.transferFrom(ACCOUNT_TWO, ACCOUNT_THREE, 300000, { from: ACCOUNT_THREE }), "colony-token-unauthorised");
 
       const balanceAccount1 = await token.balanceOf(ACCOUNT_TWO);
-      assert.equal(1500000, balanceAccount1.toNumber());
+      expect(balanceAccount1).to.eq.BN(1500000);
       const balanceAccount2 = await token.balanceOf(ACCOUNT_THREE);
-      assert.equal(0, balanceAccount2.toNumber());
+      expect(balanceAccount2).to.be.zero;
       const allowance = await token.allowance(ACCOUNT_TWO, ACCOUNT_THREE);
-      assert.equal(300000, allowance.toNumber());
+      expect(allowance).to.eq.BN(300000);
     });
   });
 
   describe("when working with additional functions", () => {
     it("should be able to get the token decimals", async () => {
       const decimals = await token.decimals();
-      assert.equal(decimals.toNumber(), 18);
+      expect(decimals).to.eq.BN(18);
     });
 
     it("should be able to get the token symbol", async () => {
       const symbol = await token.symbol();
-      assert.equal(symbol, asciiToHex("CLNY"));
+      expect(symbol).to.equal(asciiToHex("CLNY"));
     });
 
     it("should be able to get the token name", async () => {
       const name = await token.name();
-      assert.equal(name, asciiToHex("Colony token"));
+      expect(name).to.equal(asciiToHex("Colony token"));
     });
 
     it("should be able to mint new tokens, when called by the Token owner", async () => {
       await token.mint(COLONY_ACCOUNT, 1500000, { from: COLONY_ACCOUNT });
 
       let totalSupply = await token.totalSupply();
-      assert.equal(1500000, totalSupply.toNumber());
+      expect(totalSupply).to.eq.BN(1500000);
 
       let balance = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1500000, balance.toNumber());
+      expect(balance).to.eq.BN(1500000);
 
       // Mint some more tokens
       await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Mint");
       totalSupply = await token.totalSupply();
-      assert.equal(1500001, totalSupply.toNumber());
+      expect(totalSupply).to.eq.BN(1500001);
 
       balance = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1500001, balance.toNumber());
+      expect(balance).to.eq.BN(1500001);
     });
 
     it("should be able to mint new tokens directly to sender, when called by the Token owner", async () => {
@@ -173,10 +179,10 @@ contract("Token", accounts => {
       await token.methods["mint(uint256)"](1500000, { from: COLONY_ACCOUNT });
 
       const totalSupply = await token.totalSupply();
-      assert.equal(1500000, totalSupply.toNumber());
+      expect(totalSupply).to.eq.BN(1500000);
 
       const balance = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1500000, balance.toNumber());
+      expect(balance).to.eq.BN(1500000);
     });
 
     it("should emit a Mint event when minting tokens", async () => {
@@ -192,7 +198,7 @@ contract("Token", accounts => {
     it("should NOT be able to mint new tokens, when called by anyone NOT the Token owner", async () => {
       await checkErrorRevert(token.mint(COLONY_ACCOUNT, 1500000, { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
       const totalSupply = await token.totalSupply();
-      assert.equal(0, totalSupply.toNumber());
+      expect(totalSupply).to.be.zero;
     });
 
     it("should be able to burn tokens", async () => {
@@ -200,10 +206,10 @@ contract("Token", accounts => {
       await token.burn(500000, { from: COLONY_ACCOUNT });
 
       const totalSupply = await token.totalSupply();
-      assert.equal(1000000, totalSupply.toNumber());
+      expect(totalSupply).to.eq.BN(1000000);
 
       const balance = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1000000, balance.toNumber());
+      expect(balance).to.eq.BN(1000000);
     });
 
     it("should be able to burn sender tokens", async () => {
@@ -212,10 +218,10 @@ contract("Token", accounts => {
       await token.methods["burn(uint256)"](500000, { from: COLONY_ACCOUNT });
 
       const totalSupply = await token.totalSupply();
-      assert.equal(1000000, totalSupply.toNumber());
+      expect(totalSupply).to.eq.BN(1000000);
 
       const balance = await token.balanceOf(COLONY_ACCOUNT);
-      assert.equal(1000000, balance.toNumber());
+      expect(balance).to.eq.BN(1000000);
     });
 
     it("should emit a Burn event when burning tokens", async () => {
@@ -228,21 +234,21 @@ contract("Token", accounts => {
       // So change the owner to coinbase so we are able to call it without params
       await dsAuthToken.setOwner(accounts[0], { from: COLONY_ACCOUNT });
       await token.unlock();
-      await dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000");
+      await dsAuthToken.setAuthority(ZERO_ADDRESS);
 
       const locked = await token.locked();
-      assert.isFalse(locked);
+      expect(locked).to.be.false;
 
       const tokenAuthorityLocal = await token.authority();
-      assert.equal(tokenAuthorityLocal, "0x0000000000000000000000000000000000000000");
+      expect(tokenAuthorityLocal).to.equal(ZERO_ADDRESS);
     });
 
     it("shouldn't be able to unlock token by non-owner", async () => {
       await checkErrorRevert(token.unlock({ from: ACCOUNT_THREE }), "ds-auth-unauthorized");
-      await checkErrorRevert(dsAuthToken.setAuthority("0x0000000000000000000000000000000000000000", { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
+      await checkErrorRevert(dsAuthToken.setAuthority(ZERO_ADDRESS, { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
 
       const locked = await token.locked();
-      assert.isTrue(locked);
+      expect(locked).to.be.true;
     });
   });
 
@@ -250,7 +256,7 @@ contract("Token", accounts => {
     it("should NOT accept eth", async () => {
       await checkErrorRevert(token.send(2));
       const tokenBalance = await web3GetBalance(token.address);
-      assert.equal(0, tokenBalance);
+      expect(tokenBalance).to.be.zero;
     });
   });
 });
