@@ -10,6 +10,7 @@ const { expect } = chai;
 chai.use(bnChai(web3.utils.BN));
 
 const Token = artifacts.require("Token");
+const TokenAuthority = artifacts.require("TokenAuthority");
 const DSAuth = artifacts.require("DSAuth");
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -24,6 +25,18 @@ contract("Token", accounts => {
   beforeEach(async () => {
     token = await Token.new(asciiToHex("Colony token"), asciiToHex("CLNY"), 18, { from: COLONY_ACCOUNT });
     dsAuthToken = await DSAuth.at(token.address);
+
+    const tokenAuthority = await TokenAuthority.new(
+      token.address,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      [ZERO_ADDRESS],
+      ZERO_ADDRESS,
+      { from: COLONY_ACCOUNT }
+    );
+    await token.setAuthority(tokenAuthority.address, { from: COLONY_ACCOUNT });
   });
 
   describe("when working with ERC20 functions and token is unlocked", () => {
@@ -201,31 +214,34 @@ contract("Token", accounts => {
       expect(totalSupply).to.be.zero;
     });
 
-    it("should be able to burn tokens", async () => {
-      await token.mint(COLONY_ACCOUNT, 1500000, { from: COLONY_ACCOUNT });
-      await token.burn(500000, { from: COLONY_ACCOUNT });
+    it("should be able to burn others' tokens when they have approved them to do so", async () => {
+      await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
+      await token.methods["approve(address,uint256)"](ACCOUNT_THREE, 500000, { from: ACCOUNT_TWO });
+      // await token.approve(ACCOUNT_THREE, 500000, { FROM: ACCOUNT_TWO });
+      // await token.burn(ACCOUNT_TWO, 500000, { from: ACCOUNT_THREE });
+      await token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500000, { from: ACCOUNT_THREE });
 
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1000000);
 
-      const balance = await token.balanceOf(COLONY_ACCOUNT);
+      const balance = await token.balanceOf(ACCOUNT_TWO);
       expect(balance).to.eq.BN(1000000);
     });
 
-    it("should be able to burn sender tokens", async () => {
+    it("should be able to burn own tokens", async () => {
       // How truffle supports function overloads apparently
-      await token.methods["mint(uint256)"](1500000, { from: COLONY_ACCOUNT });
-      await token.methods["burn(uint256)"](500000, { from: COLONY_ACCOUNT });
+      await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
+      await token.methods["burn(uint256)"](500000, { from: ACCOUNT_TWO });
 
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1000000);
 
-      const balance = await token.balanceOf(COLONY_ACCOUNT);
+      const balance = await token.balanceOf(ACCOUNT_TWO);
       expect(balance).to.eq.BN(1000000);
     });
 
     it("should emit a Burn event when burning tokens", async () => {
-      await token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT });
+      await token.methods["mint(uint256)"](1, { from: COLONY_ACCOUNT });
       await expectEvent(token.burn(1, { from: COLONY_ACCOUNT }), "Burn");
     });
 

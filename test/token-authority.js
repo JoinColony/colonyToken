@@ -38,7 +38,7 @@ contract("TokenAuthority", () => {
       expect(check).to.be.false;
     });
 
-    it("calls to burn functionality return true", async () => {
+    it("calls to burn functionality should return true", async () => {
       const burnFunctionSig = getFunctionSignature("burn(address,uint256)");
       const check = await tokenAuthority.canCall(ZERO_ADDRESS, ZERO_ADDRESS, burnFunctionSig);
       expect(check).to.be.true;
