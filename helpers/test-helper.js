@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import shortid from "shortid";
 import { assert } from "chai";
+import { sha3 } from "web3-utils";
 
 export function web3GetNetwork() {
   return new Promise((resolve, reject) => {
@@ -152,6 +153,10 @@ export async function expectEvent(tx, eventName) {
   const { logs } = await tx;
   const event = logs.find(e => e.event === eventName);
   return assert.exists(event);
+}
+
+export function getFunctionSignature(sig) {
+  return sha3(sig).slice(0, 10);
 }
 
 export async function forwardTime(seconds, test) {

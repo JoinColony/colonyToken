@@ -1,11 +1,13 @@
 /* globals artifacts */
 
 import { assert } from "chai";
+import { getFunctionSignature } from "../helpers/test-helper";
 
 const TokenAuthority = artifacts.require("TokenAuthority");
 const Token = artifacts.require("Token");
 const Vesting = artifacts.require("Vesting");
 const MultiSigWallet = artifacts.require("MultiSigWallet");
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 contract("TokenAuthority", () => {
   let tokenAuthority;
@@ -31,6 +33,12 @@ contract("TokenAuthority", () => {
       assert.isFalse(check);
     });
 
+    it("calls to burn functionality return true", async () => {
+      const burnFunctionSig = getFunctionSignature("burn(address,uint256)");
+      const check = await tokenAuthority.canCall(ZERO_ADDRESS, ZERO_ADDRESS, burnFunctionSig);
+      assert.isTrue(check);
+    });
+
     it("vesting contract can transfer", async () => {
       const check = await tokenAuthority.canCall(vesting.address, token.address, "0xa9059cbb");
       assert.isTrue(check);
@@ -46,7 +54,7 @@ contract("TokenAuthority", () => {
       assert.isFalse(check);
     });
 
-    it("vesting contract cannnot mint", async () => {
+    it("vesting contract cannot mint", async () => {
       const check = await tokenAuthority.canCall(vesting.address, token.address, "0xa0712d68");
       assert.isFalse(check);
     });

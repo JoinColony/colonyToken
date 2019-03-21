@@ -60,6 +60,12 @@ contract TokenAuthority is DSAuthority {
   }
 
   function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
+    bytes4 burnSig = bytes4(keccak256("burn(address,uint256)"));
+    if (sig == burnSig) {
+      // We allow anyone to burn their own tokens even when CLNY is still locked
+      return true;
+    }
+
     if (dst != token) {
       return false;
     }

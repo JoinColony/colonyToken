@@ -181,6 +181,12 @@ contract("Token", accounts => {
 
     it("should emit a Mint event when minting tokens", async () => {
       await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Mint");
+      await expectEvent(token.methods["mint(uint256)"](1, { from: COLONY_ACCOUNT }), "Mint");
+    });
+
+    it("should emit a Transfer event when minting tokens", async () => {
+      await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Transfer");
+      await expectEvent(token.methods["mint(uint256)"](1, { from: COLONY_ACCOUNT }), "Transfer");
     });
 
     it("should NOT be able to mint new tokens, when called by anyone NOT the Token owner", async () => {
