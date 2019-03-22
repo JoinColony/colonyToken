@@ -231,13 +231,20 @@ contract("Token", accounts => {
     it("should be able to burn own tokens", async () => {
       // How truffle supports function overloads apparently
       await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
-      await token.methods["burn(uint256)"](500000, { from: ACCOUNT_TWO });
+      await token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500000, { from: ACCOUNT_TWO });
 
-      const totalSupply = await token.totalSupply();
+      let totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1000000);
 
-      const balance = await token.balanceOf(ACCOUNT_TWO);
+      let balance = await token.balanceOf(ACCOUNT_TWO);
       expect(balance).to.eq.BN(1000000);
+
+      await token.methods["burn(uint256)"](1000000, { from: ACCOUNT_TWO });
+      totalSupply = await token.totalSupply();
+      expect(totalSupply).to.be.zero;
+
+      balance = await token.balanceOf(ACCOUNT_TWO);
+      expect(balance).to.be.zero;
     });
 
     it("should emit a Burn event when burning tokens", async () => {

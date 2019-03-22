@@ -20,6 +20,11 @@ contract("TokenAuthority", () => {
   let vesting;
   let colonyMultiSig;
 
+  const transferFunctionSig = getFunctionSignature("transfer(address,uint256)");
+  const transferFromFunctionSig = getFunctionSignature("transferFrom(address,address,uint256)");
+  const mintFunctionSig = getFunctionSignature("mint(address,uint256)");
+  const burnFunctionSig = getFunctionSignature("burn(address,uint256)");
+
   before(async () => {
     token = await Token.deployed();
     colonyMultiSig = await MultiSigWallet.deployed();
@@ -34,33 +39,27 @@ contract("TokenAuthority", () => {
     });
 
     it("calls to contracts other than token return false", async () => {
-      const check = await tokenAuthority.canCall(vesting.address, colonyMultiSig.address, "0xa9059cbb");
+      const check = await tokenAuthority.canCall(vesting.address, colonyMultiSig.address, mintFunctionSig);
       expect(check).to.be.false;
     });
 
-    it("calls to burn functionality should return true", async () => {
-      const burnFunctionSig = getFunctionSignature("burn(address,uint256)");
+    it("calls to burn functionality should always return true", async () => {
       const check = await tokenAuthority.canCall(ZERO_ADDRESS, ZERO_ADDRESS, burnFunctionSig);
       expect(check).to.be.true;
     });
 
     it("vesting contract can transfer", async () => {
-      const check = await tokenAuthority.canCall(vesting.address, token.address, "0xa9059cbb");
+      const check = await tokenAuthority.canCall(vesting.address, token.address, transferFunctionSig);
       expect(check).to.be.true;
     });
 
     it("vesting contract can transferFrom", async () => {
-      const check = await tokenAuthority.canCall(vesting.address, token.address, "0x23b872dd");
+      const check = await tokenAuthority.canCall(vesting.address, token.address, transferFromFunctionSig);
       expect(check).to.be.true;
     });
 
     it("vesting contract cannot mint", async () => {
-      const check = await tokenAuthority.canCall(vesting.address, token.address, "0xa0712d68");
-      expect(check).to.be.false;
-    });
-
-    it("vesting contract cannot mint", async () => {
-      const check = await tokenAuthority.canCall(vesting.address, token.address, "0xa0712d68");
+      const check = await tokenAuthority.canCall(vesting.address, token.address, mintFunctionSig);
       expect(check).to.be.false;
     });
   });

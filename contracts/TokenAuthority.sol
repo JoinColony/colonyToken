@@ -35,7 +35,8 @@ contract TokenAuthority is DSAuthority {
     token = _token;
     bytes4 transferSig = bytes4(keccak256("transfer(address,uint256)"));
     bytes4 transferFromSig = bytes4(keccak256("transferFrom(address,address,uint256)"));
-    bytes4 mintSig = bytes4(keccak256("mint(address,uint256)"));
+    bytes4 mintSig = bytes4(keccak256("mint(uint256)"));
+    bytes4 mintSigOverload = bytes4(keccak256("mint(address,uint256)"));
 
     authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers
     authorizations[_colonyNetwork][transferFromSig] = true;
@@ -43,6 +44,7 @@ contract TokenAuthority is DSAuthority {
     authorizations[_metaColony][transferSig] = true;        // Used in IColony: bootstrapColony, mintTokensForColonyNetwork,
                                                             // claimPayout and claimRewardPayout
     authorizations[_metaColony][mintSig] = true;            // Used in IColony.mintTokensForColonyNetwork
+    authorizations[_metaColony][mintSigOverload] = true;            // Used in IColony.mintTokensForColonyNetwork
 
     authorizations[_tokenLocking][transferSig] = true;      // Used in ITokenLocking.withdraw
     authorizations[_tokenLocking][transferFromSig] = true;  // Used in ITokenLocking.deposit
@@ -60,10 +62,10 @@ contract TokenAuthority is DSAuthority {
   }
 
   function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
-    bytes4 burnSig1 = bytes4(keccak256("burn(address,uint256)"));
-    bytes4 burnSig2 = bytes4(keccak256("burn(uint256)"));
-    
-    if (sig == burnSig1 || sig == burnSig2) {
+    bytes4 burnSig = bytes4(keccak256("burn(uint256)"));
+    bytes4 burnSigOverload = bytes4(keccak256("burn(address,uint256)"));
+
+    if (sig == burnSig || sig == burnSigOverload) {
       // We allow anyone to burn their own tokens even when CLNY is still locked
       return true;
     }

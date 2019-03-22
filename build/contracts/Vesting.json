@@ -13512,10 +13512,16 @@
       "links": {},
       "address": "0xBB7D94848437B7d975Fc9A12d1785669d98B563B",
       "transactionHash": "0xf800dbfd8b3046e69e4d972bb524190620cf36b54052d6ceac7d57243367a657"
+    },
+    "1553260534603": {
+      "events": {},
+      "links": {},
+      "address": "0x8Dc8CC87D5326e99E38B42E91d244a56D5B34d39",
+      "transactionHash": "0x59027c0d82a8eecf7d91a345d237209fce57e1dfaf6a1e327db019d009540e84"
     }
   },
   "schemaVersion": "3.0.5",
-  "updatedAt": "2019-03-21T21:05:55.448Z",
+  "updatedAt": "2019-03-22T13:46:09.017Z",
   "devdoc": {
     "methods": {
       "addTokenGrant(address,uint256,uint128,uint16,uint16)": {
