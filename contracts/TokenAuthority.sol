@@ -24,6 +24,9 @@ contract TokenAuthority is DSAuthority {
   address public token;
   mapping(address => mapping(bytes4 => bool)) authorizations;
 
+  bytes4 constant BURN_FUNC_SIG = bytes4(keccak256("burn(uint256)"));
+  bytes4 constant BURN_OVERLOAD_FUNC_SIG = bytes4(keccak256("burn(address,uint256)"));
+
   constructor(
     address _token,
     address _colonyNetwork,
@@ -62,10 +65,7 @@ contract TokenAuthority is DSAuthority {
   }
 
   function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
-    bytes4 burnSig = bytes4(keccak256("burn(uint256)"));
-    bytes4 burnSigOverload = bytes4(keccak256("burn(address,uint256)"));
-
-    if (sig == burnSig || sig == burnSigOverload) {
+    if (sig == BURN_FUNC_SIG || sig == BURN_OVERLOAD_FUNC_SIG) {
       // We allow anyone to burn their own tokens even when CLNY is still locked
       return true;
     }
