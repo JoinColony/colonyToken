@@ -1,7 +1,7 @@
 /* globals artifacts */
 
 import BN from "bn.js";
-import { asciiToHex, toWei } from "web3-utils";
+import { toWei } from "web3-utils";
 import { forwardTime } from "../helpers/test-helper";
 
 const Token = artifacts.require("Token");
@@ -21,7 +21,7 @@ contract("Vesting", accounts => {
   let vesting;
 
   beforeEach(async () => {
-    token = await Token.new(asciiToHex("Colony token"), asciiToHex("CLNY"), 18);
+    token = await Token.new("Colony token", "CLNY", 18);
     await token.mint(ACCOUNT_1_GRANT_AMOUNT);
 
     vesting = await Vesting.new(token.address, COLONY_ACCOUNT);

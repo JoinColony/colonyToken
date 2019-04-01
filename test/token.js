@@ -3,7 +3,6 @@
 import chai from "chai";
 import bnChai from "bn-chai";
 
-import { asciiToHex } from "web3-utils";
 import { expectEvent, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
 
 const { expect } = chai;
@@ -23,7 +22,7 @@ contract("Token", accounts => {
   let dsAuthToken;
 
   beforeEach(async () => {
-    token = await Token.new(asciiToHex("Colony token"), asciiToHex("CLNY"), 18, { from: COLONY_ACCOUNT });
+    token = await Token.new("Colony token", "CLNY", 18, { from: COLONY_ACCOUNT });
     dsAuthToken = await DSAuth.at(token.address);
 
     const tokenAuthority = await TokenAuthority.new(
@@ -161,12 +160,12 @@ contract("Token", accounts => {
 
     it("should be able to get the token symbol", async () => {
       const symbol = await token.symbol();
-      expect(symbol).to.equal(asciiToHex("CLNY"));
+      expect(symbol).to.equal("CLNY");
     });
 
     it("should be able to get the token name", async () => {
       const name = await token.name();
-      expect(name).to.equal(asciiToHex("Colony token"));
+      expect(name).to.equal("Colony token");
     });
 
     it("should be able to mint new tokens, when called by the Token owner", async () => {

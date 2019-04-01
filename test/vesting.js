@@ -3,7 +3,7 @@
 import chai from "chai";
 import bnChai from "bn-chai";
 import BN from "bn.js";
-import { asciiToHex, toWei } from "web3-utils";
+import { toWei } from "web3-utils";
 import { currentBlockTime, forwardTime, expectEvent, checkErrorRevert } from "../helpers/test-helper";
 
 const { expect } = chai;
@@ -60,7 +60,7 @@ contract("Vesting", accounts => {
   });
 
   beforeEach(async () => {
-    token = await Token.new(asciiToHex("Colony token"), asciiToHex("CLNY"), 18);
+    token = await Token.new("Colony token", "CLNY", 18);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
 
     const tokenAuthority = await TokenAuthority.new(

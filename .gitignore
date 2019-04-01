@@ -6,4 +6,3 @@ test-results.xml
 coverage.json
 /coverage
 /flattened/*
-/build

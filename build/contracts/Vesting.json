@@ -13524,10 +13524,16 @@
       "links": {},
       "address": "0xBB7D94848437B7d975Fc9A12d1785669d98B563B",
       "transactionHash": "0x89080dc1d69d2027d68771bd657ad7375d34e4e5405c0e63dbf4ea063eff43e6"
+    },
+    "1554122288214": {
+      "events": {},
+      "links": {},
+      "address": "0xBB7D94848437B7d975Fc9A12d1785669d98B563B",
+      "transactionHash": "0x89080dc1d69d2027d68771bd657ad7375d34e4e5405c0e63dbf4ea063eff43e6"
     }
   },
   "schemaVersion": "3.0.5",
-  "updatedAt": "2019-04-01T12:28:56.949Z",
+  "updatedAt": "2019-04-01T12:38:16.439Z",
   "devdoc": {
     "methods": {
       "addTokenGrant(address,uint256,uint128,uint16,uint16)": {
