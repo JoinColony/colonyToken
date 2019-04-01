@@ -17,10 +17,16 @@
 
 pragma solidity >=0.5.3;
 
-import "../lib/dappsys/token.sol";
+import "../lib/dappsys/auth.sol";
+import "../lib/dappsys/base.sol";
+import "./ERC20Extended.sol";
 
 
-contract Token is DSToken {
+contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
+  uint8 public decimals;
+  string public symbol;
+  string public name;
+
   bool public locked;
 
   modifier unlocked {
@@ -30,11 +36,11 @@ contract Token is DSToken {
     _;
   }
 
-  constructor(bytes32 _name, bytes32 _symbol, uint8 _decimals)  DSToken(_symbol) public {
-    locked = true;
-
+  constructor(string memory _name, string memory _symbol, uint8 _decimals) public {
     name = _name;
+    symbol = _symbol;
     decimals = _decimals;
+    locked = true;
   }
 
   function transferFrom(address src, address dst, uint wad) public 
@@ -44,9 +50,31 @@ contract Token is DSToken {
     return super.transferFrom(src, dst, wad);
   }
 
-  function mint(address guy, uint wad) public {
-    super.mint(guy, wad);
+  function mint(uint wad) public auth {
+    mint(msg.sender, wad);
+  }
+
+  function burn(uint wad) public {
+    burn(msg.sender, wad);
+  }
+
+  function mint(address guy, uint wad) public auth {
+    _balances[guy] = add(_balances[guy], wad);
+    _supply = add(_supply, wad);
+    emit Mint(guy, wad);
     emit Transfer(address(0x0), guy, wad);
+  }
+
+  function burn(address guy, uint wad) public {
+    if (guy != msg.sender) {
+      require(_approvals[guy][msg.sender] >= wad, "ds-token-insufficient-approval");
+      _approvals[guy][msg.sender] = sub(_approvals[guy][msg.sender], wad);
+    }
+
+    require(_balances[guy] >= wad, "ds-token-insufficient-balance");
+    _balances[guy] = sub(_balances[guy], wad);
+    _supply = sub(_supply, wad);
+    emit Burn(guy, wad);
   }
 
   function unlock() public
