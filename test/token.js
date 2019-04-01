@@ -227,6 +227,18 @@ contract("Token", accounts => {
       expect(balance).to.eq.BN(1000000);
     });
 
+    it("should NOT be able to burn others' tokens when the approved amount is less", async () => {
+      await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
+      await token.methods["approve(address,uint256)"](ACCOUNT_THREE, 500000, { from: ACCOUNT_TWO });
+      await checkErrorRevert(token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500001, { from: ACCOUNT_THREE }), "ds-token-insufficient-approval");
+
+      const totalSupply = await token.totalSupply();
+      expect(totalSupply).to.eq.BN(1500000);
+
+      const balance = await token.balanceOf(ACCOUNT_TWO);
+      expect(balance).to.eq.BN(1500000);
+    });
+
     it("should be able to burn own tokens", async () => {
       // How truffle supports function overloads apparently
       await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
@@ -244,6 +256,14 @@ contract("Token", accounts => {
 
       balance = await token.balanceOf(ACCOUNT_TWO);
       expect(balance).to.be.zero;
+    });
+
+    it("should NOT be able to burn tokens if there's insufficient balance", async () => {
+      await token.mint(ACCOUNT_TWO, 5, { from: COLONY_ACCOUNT });
+      await checkErrorRevert(token.burn(6, { from: ACCOUNT_TWO }), "ds-token-insufficient-balance");
+
+      const balance = await token.balanceOf(ACCOUNT_TWO);
+      expect(balance).to.eq.BN(5);
     });
 
     it("should emit a Burn event when burning tokens", async () => {
