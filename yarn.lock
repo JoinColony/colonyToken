@@ -6119,10 +6119,26 @@ web3-shh@1.0.0-beta.50:
     web3-providers "1.0.0-beta.50"
     web3-utils "1.0.0-beta.50"
 
-web3-utils@1.0.0-beta.50, web3-utils@^1.0.0-beta.50:
+web3-utils@1.0.0-beta.50:
   version "1.0.0-beta.50"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.50.tgz#ed12454d3d2727d3b77695c1899ad3abbef303af"
   integrity sha512-xGhM/YkepK2x0iMYUl/sws58LzTbodjMGlhZxrCZLZxJ0DoaDyk3UdmZ6aCSCwVTFg4hlVj3doaIhWnwGfhhpQ==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    "@types/bn.js" "^4.11.4"
+    "@types/node" "^10.12.18"
+    bn.js "4.11.8"
+    eth-lib "0.2.8"
+    ethjs-unit "^0.1.6"
+    lodash "^4.17.11"
+    number-to-bn "1.7.0"
+    randomhex "0.1.5"
+    utf8 "2.1.1"
+
+web3-utils@^1.0.0-beta.51:
+  version "1.0.0-beta.51"
+  resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.51.tgz#6b0767289be4f27b14895b011bcb5fa6c707fca5"
+  integrity sha512-c9sRSscu0NIjD96X4ToDOgTxGyJevppuB+uHOgWkziaLGqlw/Li1l24nGkvr0Zqpt9SufvfPcWf8EEC92pnwKg==
   dependencies:
     "@babel/runtime" "^7.3.1"
     "@types/bn.js" "^4.11.4"
