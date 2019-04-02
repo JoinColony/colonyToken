@@ -15,8 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.23;
-pragma experimental "v0.5.0";
+pragma solidity >=0.5.3;
 
 import "./Token.sol";
 import "../lib/dappsys/math.sol";
@@ -44,17 +43,17 @@ contract Vesting is DSMath {
   mapping (address => Grant) public tokenGrants;
 
   modifier onlyColonyMultiSig {
-    require(msg.sender == colonyMultiSig);
+    require(msg.sender == colonyMultiSig, "colony-vesting-unauthorized");
     _;
   }
 
   modifier nonZeroAddress(address x) {
-    require(x != 0);
+    require(x != address(0), "colony-token-zero-address");
     _;
   }
 
   modifier noGrantExistsForUser(address _user) {
-    require(tokenGrants[_user].startTime == 0);
+    require(tokenGrants[_user].startTime == 0, "colony-token-user-grant-exists");
     _;
   }
 
@@ -79,10 +78,10 @@ contract Vesting is DSMath {
   onlyColonyMultiSig
   noGrantExistsForUser(_recipient)
   {
-    require(_vestingCliff > 0);
-    require(_vestingDuration > _vestingCliff);
+    require(_vestingCliff > 0, "coony-token-zero-vesting-cliff");
+    require(_vestingDuration > _vestingCliff, "colony-token-cliff-longer-than-duration");
     uint amountVestedPerMonth = _amount / _vestingDuration;
-    require(amountVestedPerMonth > 0);
+    require(amountVestedPerMonth > 0, "colony-token-zero-amount-vested-per-month");
 
     // Transfer the grant tokens under the control of the vesting contract
     token.transferFrom(colonyMultiSig, address(this), _amount);
@@ -113,8 +112,8 @@ contract Vesting is DSMath {
     (monthsVested, amountVested) = calculateGrantClaim(_recipient);
     uint128 amountNotVested = uint128(sub(sub(tokenGrant.amount, tokenGrant.totalClaimed), amountVested));
 
-    require(token.transfer(_recipient, amountVested));
-    require(token.transfer(colonyMultiSig, amountNotVested));
+    require(token.transfer(_recipient, amountVested), "colony-token-recipient-transfer-failed");
+    require(token.transfer(colonyMultiSig, amountNotVested), "colony-token-colony-multisig-transfer-failed");
 
     tokenGrant.startTime = 0;
     tokenGrant.amount = 0;
@@ -132,13 +131,13 @@ contract Vesting is DSMath {
     uint16 monthsVested;
     uint128 amountVested;
     (monthsVested, amountVested) = calculateGrantClaim(msg.sender);
-    require(amountVested > 0);
+    require(amountVested > 0, "colony-token-zero-amount-vested");
 
     Grant storage tokenGrant = tokenGrants[msg.sender];
     tokenGrant.monthsClaimed = uint16(add(tokenGrant.monthsClaimed, monthsVested));
     tokenGrant.totalClaimed = uint128(add(tokenGrant.totalClaimed, amountVested));
     
-    require(token.transfer(msg.sender, amountVested));
+    require(token.transfer(msg.sender, amountVested), "colony-token-sender-transfer-failed");
     emit GrantTokensClaimed(msg.sender, amountVested);
   }
 

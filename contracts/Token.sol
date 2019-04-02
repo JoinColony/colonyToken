@@ -15,9 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.23;
-pragma experimental "v0.5.0";
-
+pragma solidity >=0.5.3;
 
 import "../lib/dappsys/auth.sol";
 import "../lib/dappsys/base.sol";
@@ -33,12 +31,12 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
 
   modifier unlocked {
     if (locked) {
-      require(isAuthorized(msg.sender, msg.sig));
+      require(isAuthorized(msg.sender, msg.sig), "colony-token-unauthorised");
     }
     _;
   }
 
-  constructor(string _name, string _symbol, uint8 _decimals) public {
+  constructor(string memory _name, string memory _symbol, uint8 _decimals) public {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
@@ -52,20 +50,31 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
     return super.transferFrom(src, dst, wad);
   }
 
-  function mint(uint wad) public
-  auth
-  {
-    _balances[msg.sender] = add(_balances[msg.sender], wad);
-    _supply = add(_supply, wad);
-
-    emit Mint(msg.sender, wad);
+  function mint(uint wad) public auth {
+    mint(msg.sender, wad);
   }
 
   function burn(uint wad) public {
-    _balances[msg.sender] = sub(_balances[msg.sender], wad);
-    _supply = sub(_supply, wad);
+    burn(msg.sender, wad);
+  }
 
-    emit Burn(msg.sender, wad);
+  function mint(address guy, uint wad) public auth {
+    _balances[guy] = add(_balances[guy], wad);
+    _supply = add(_supply, wad);
+    emit Mint(guy, wad);
+    emit Transfer(address(0x0), guy, wad);
+  }
+
+  function burn(address guy, uint wad) public {
+    if (guy != msg.sender) {
+      require(_approvals[guy][msg.sender] >= wad, "ds-token-insufficient-approval");
+      _approvals[guy][msg.sender] = sub(_approvals[guy][msg.sender], wad);
+    }
+
+    require(_balances[guy] >= wad, "ds-token-insufficient-balance");
+    _balances[guy] = sub(_balances[guy], wad);
+    _supply = sub(_supply, wad);
+    emit Burn(guy, wad);
   }
 
   function unlock() public

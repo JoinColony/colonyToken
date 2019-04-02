@@ -1,4 +1,4 @@
-const MultiSigWallet = artifacts.require("./gnosis/MultiSigWallet");
+const MultiSigWallet = artifacts.require("./MultiSigWallet");
 const TokenAuthority = artifacts.require("./TokenAuthority");
 const Token = artifacts.require("./Token");
 const Vesting = artifacts.require("./Vesting");
@@ -6,7 +6,7 @@ const TokenTransferBinaryRegulator = artifacts.require("./TokenTransferBinaryReg
 
 module.exports = (deployer, network, accounts) => {
   const COLONY_ACCOUNT = accounts[0];
-  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
   deployer
     .deploy(MultiSigWallet, [COLONY_ACCOUNT], 1)
     .then(() => deployer.deploy(Token, "Colony Token", "CLNY", 18))

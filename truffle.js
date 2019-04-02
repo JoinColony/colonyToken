@@ -1,8 +1,5 @@
-require("babel-register");
-
-const HDWalletProvider = require("truffle-hdwallet-provider");
-
-const mnemonic = "";
+require("@babel/register");
+require("@babel/polyfill");
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -11,18 +8,16 @@ module.exports = {
     development: {
       host: "127.0.0.1",
       port: 8545,
-      network_id: "*" // Match any network id
+      network_id: "*", // Match any network id
+      gasPrice: 0,
+      skipDryRun: true
     },
     coverage: {
       host: "127.0.0.1",
       port: 8555,
-      network_id: "*" // Match any network id
-    },
-    kovan: {
-      provider() {
-        return new HDWalletProvider(mnemonic, "https://kovan.infura.io/OGfF4xYJ82HoyaJNFkla");
-      },
-      network_id: "42"
+      network_id: "1999",
+      gasPrice: 0x01, // <-- Use this low gas price
+      skipDryRun: true
     }
   },
   mocha: {
@@ -33,10 +28,17 @@ module.exports = {
       onlyCalledMethods: true
     }
   },
-  solc: {
-    optimizer: {
-      enabled: true,
-      runs: 200
+  compilers: {
+    solc: {
+      version: "0.5.6",
+      docker: true,
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200
+        },
+        evmVersion: "petersburg"
+      }
     }
   }
 };

@@ -1,13 +1,17 @@
 /* globals artifacts */
 
-import { assert } from "chai";
+import chai from "chai";
+import bnChai from "bn-chai";
 import BN from "bn.js";
-import web3Utils from "web3-utils";
+import { toWei } from "web3-utils";
 import { currentBlockTime, forwardTime, expectEvent, checkErrorRevert } from "../helpers/test-helper";
+
+const { expect } = chai;
+chai.use(bnChai(web3.utils.BN));
 
 const Token = artifacts.require("Token");
 const Vesting = artifacts.require("Vesting");
-const MultiSigWallet = artifacts.require("gnosis/MultiSigWallet.sol");
+const MultiSigWallet = artifacts.require("MultiSigWallet");
 const TokenAuthority = artifacts.require("TokenAuthority");
 const DSAuth = artifacts.require("DSAuth");
 
@@ -25,16 +29,17 @@ contract("Vesting", accounts => {
   const ACCOUNT_10 = accounts[10];
   const OTHER_ACCOUNT = accounts[11];
 
-  const ACCOUNT_1_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
-  const ACCOUNT_2_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_3_GRANT_AMOUNT = new BN(web3Utils.toWei("2", "ether"));
-  const ACCOUNT_4_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_5_GRANT_AMOUNT = new BN(web3Utils.toWei("20", "finney"));
-  const ACCOUNT_6_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_7_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
-  const ACCOUNT_8_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
-  const ACCOUNT_9_GRANT_AMOUNT = new BN(web3Utils.toWei("998", "finney"));
-  const ACCOUNT_10_GRANT_AMOUNT = new BN(web3Utils.toWei("10001", "szabo"));
+  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+  const ACCOUNT_1_GRANT_AMOUNT = new BN(toWei("998", "finney"));
+  const ACCOUNT_2_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_3_GRANT_AMOUNT = new BN(toWei("2", "ether"));
+  const ACCOUNT_4_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_5_GRANT_AMOUNT = new BN(toWei("20", "finney"));
+  const ACCOUNT_6_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_7_GRANT_AMOUNT = new BN(toWei("998", "finney"));
+  const ACCOUNT_8_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
+  const ACCOUNT_9_GRANT_AMOUNT = new BN(toWei("998", "finney"));
+  const ACCOUNT_10_GRANT_AMOUNT = new BN(toWei("10001", "szabo"));
 
   const TOTAL_SUPPLY = ACCOUNT_1_GRANT_AMOUNT.add(ACCOUNT_2_GRANT_AMOUNT)
     .add(ACCOUNT_3_GRANT_AMOUNT)
@@ -57,7 +62,6 @@ contract("Vesting", accounts => {
   beforeEach(async () => {
     token = await Token.new("Colony token", "CLNY", 18);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
-    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
     const tokenAuthority = await TokenAuthority.new(
       token.address,
@@ -75,7 +79,7 @@ contract("Vesting", accounts => {
     await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
     const totalBalance = await token.balanceOf(colonyMultiSig.address);
-    assert.equal(totalBalance.toString(), TOTAL_SUPPLY.toString());
+    expect(totalBalance).to.eq.BN(TOTAL_SUPPLY);
 
     // Approve the total balance to be tranferred by the vesting contract as part of the `addTokenGrant` call
     txData = await token.contract.methods.approve(vesting.address, TOTAL_SUPPLY.toString()).encodeABI();
@@ -85,28 +89,28 @@ contract("Vesting", accounts => {
   describe("when initialised", () => {
     it("should set the Token correctly", async () => {
       const tokenAddress = await vesting.token();
-      assert.equal(token.address, tokenAddress);
+      expect(token.address).to.equal(tokenAddress);
     });
 
     it("should set the MultiSig correctly", async () => {
       const multiSigAddress = await vesting.colonyMultiSig();
-      assert.equal(colonyMultiSig.address, multiSigAddress);
+      expect(colonyMultiSig.address).to.equal(multiSigAddress);
     });
 
     it("should fail with 0 address for Token", async () => {
       let vestingContract = "";
       try {
-        vestingContract = await Vesting.new(0x0, colonyMultiSig.address);
+        vestingContract = await Vesting.new(ZERO_ADDRESS, colonyMultiSig.address);
       } catch (err) {} // eslint-disable-line no-empty
-      assert.equal(vestingContract, "");
+      expect(vestingContract).to.equal("");
     });
 
     it("should fail with 0 address for MultiSig", async () => {
       let vestingContract = "";
       try {
-        vestingContract = await Vesting.new(token.address, 0x0);
+        vestingContract = await Vesting.new(token.address, ZERO_ADDRESS);
       } catch (err) {} // eslint-disable-line no-empty
-      assert.equal(vestingContract, "");
+      expect(vestingContract).to.equal("");
     });
   });
 
@@ -118,12 +122,12 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(grant[0].toNumber(), currentTime - SECONDS_PER_MONTH);
-        assert.equal(grant[1].toNumber(), 1000);
-        assert.equal(grant[2].toNumber(), 24);
-        assert.equal(grant[3].toNumber(), 6);
-        assert.equal(grant[4].toNumber(), 0);
-        assert.equal(grant[5].toNumber(), 0);
+        expect(grant.startTime.toNumber()).to.equal(currentTime - SECONDS_PER_MONTH);
+        expect(grant.amount).to.eq.BN(1000);
+        expect(grant.vestingDuration).to.eq.BN(24);
+        expect(grant.vestingCliff).to.eq.BN(6);
+        expect(grant.monthsClaimed).to.be.zero;
+        expect(grant.totalClaimed).to.be.zero;
       });
 
       it("should create grant correctly, when a startDate in the future is used", async () => {
@@ -132,16 +136,16 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(grant[0].toNumber(), currentTime + SECONDS_PER_MONTH);
-        assert.equal(grant[1].toNumber(), 1000);
-        assert.equal(grant[2].toNumber(), 24);
-        assert.equal(grant[3].toNumber(), 6);
-        assert.equal(grant[4].toNumber(), 0);
-        assert.equal(grant[5].toNumber(), 0);
+        expect(grant.startTime.toNumber()).to.equal(currentTime + SECONDS_PER_MONTH);
+        expect(grant.amount).to.eq.BN(1000);
+        expect(grant.vestingDuration).to.eq.BN(24);
+        expect(grant.vestingCliff).to.eq.BN(6);
+        expect(grant.monthsClaimed).to.be.zero;
+        expect(grant.totalClaimed).to.be.zero;
 
         const x = await vesting.calculateGrantClaim(ACCOUNT_1);
-        assert.isTrue(x[0].isZero());
-        assert.isTrue(x[1].isZero());
+        expect(x[0]).to.be.zero;
+        expect(x[1]).to.be.zero;
       });
 
       it("should create grant correctly, using the current time, when no startDate was passed", async () => {
@@ -150,12 +154,12 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.closeTo(grant[0].toNumber(), currentTime, 10);
-        assert.equal(grant[1].toNumber(), 1000);
-        assert.equal(grant[2].toNumber(), 24);
-        assert.equal(grant[3].toNumber(), 6);
-        assert.equal(grant[4].toNumber(), 0);
-        assert.equal(grant[5].toNumber(), 0);
+        expect(grant.startTime.toNumber()).to.be.closeTo(currentTime, 10);
+        expect(grant.amount).to.eq.BN(1000);
+        expect(grant.vestingDuration).to.eq.BN(24);
+        expect(grant.vestingCliff).to.eq.BN(6);
+        expect(grant.monthsClaimed).to.be.zero;
+        expect(grant.totalClaimed).to.be.zero;
       });
 
       it("should log correct event", async () => {
@@ -164,7 +168,7 @@ contract("Vesting", accounts => {
       });
 
       it("should error if called by anyone but the Colony multisig", async () => {
-        await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 0, 1000, 24, 6), { from: OTHER_ACCOUNT });
+        await checkErrorRevert(vesting.addTokenGrant(ACCOUNT_1, 0, 1000, 24, 6, { from: OTHER_ACCOUNT }), "colony-vesting-unauthorized");
       });
 
       it("should error if there is an existing grant for user", async () => {
@@ -194,7 +198,7 @@ contract("Vesting", accounts => {
         await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(0, grant[0]);
+        expect(grant.startTime).to.be.zero;
       });
 
       it("should error on grant duration overflow", async () => {
@@ -205,7 +209,7 @@ contract("Vesting", accounts => {
         await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(0, grant[0]);
+        expect(grant.startTime).to.be.zero;
       });
 
       it("should error if grant amount cannot be transferred", async () => {
@@ -217,7 +221,7 @@ contract("Vesting", accounts => {
         await expectEvent(colonyMultiSig.submitTransaction(vesting.address, 0, txData), "ExecutionFailure");
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(0, grant[0]);
+        expect(grant.startTime).to.be.zero;
       });
     });
 
@@ -232,12 +236,12 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(0, grant[0]);
-        assert.equal(0, grant[1]);
-        assert.equal(0, grant[2]);
-        assert.equal(0, grant[3]);
-        assert.equal(0, grant[4]);
-        assert.equal(0, grant[5]);
+        expect(grant.startTime).to.be.zero;
+        expect(grant.amount).to.be.zero;
+        expect(grant.vestingDuration).to.be.zero;
+        expect(grant.vestingCliff).to.be.zero;
+        expect(grant.monthsClaimed).to.be.zero;
+        expect(grant.totalClaimed).to.be.zero;
       });
 
       it("should return non-vested tokens to the Colony MultiSig", async () => {
@@ -252,7 +256,7 @@ contract("Vesting", accounts => {
         const balanceAfter = await token.balanceOf(colonyMultiSig.address);
 
         const balanceChange = balanceAfter.sub(balanceBefore).toString();
-        assert.equal(balanceChange, "706916666666666669");
+        expect(balanceChange).to.eq.BN(new BN("706916666666666669"));
       });
 
       it("should give grant recipient any vested amount", async () => {
@@ -265,7 +269,7 @@ contract("Vesting", accounts => {
 
         const balanceAfter = await token.balanceOf(ACCOUNT_1);
         const balanceChange = balanceAfter.sub(balanceBefore).toString();
-        assert.equal(balanceChange, "291083333333333331");
+        expect(balanceChange).to.eq.BN(new BN("291083333333333331"));
       });
 
       it("should return the correct amounts if there have been tokens claimed already", async () => {
@@ -280,7 +284,7 @@ contract("Vesting", accounts => {
         await vesting.claimVestedTokens({ from: ACCOUNT_1 });
         const balanceAfterClaimsRecipient = await token.balanceOf(ACCOUNT_1);
         const balanceChangeAfterClaimsRecipient = balanceAfterClaimsRecipient.sub(balanceBeforeRecipient).toString();
-        assert.equal(balanceChangeAfterClaimsRecipient, "540583333333333329");
+        expect(balanceChangeAfterClaimsRecipient).to.eq.BN(new BN("540583333333333329"));
 
         // Another 3 months vested but not claimed
         await forwardTime(SECONDS_PER_MONTH * 3, this);
@@ -293,14 +297,14 @@ contract("Vesting", accounts => {
         const balanceAfterRecipient = await token.balanceOf(ACCOUNT_1);
         const balanceChangeRecipient = balanceAfterRecipient.sub(balanceAfterClaimsRecipient).toString();
         // Expecting 3 months worth of vested unclaimed tokens here
-        assert.equal(balanceChangeRecipient, "124749999999999999");
+        expect(balanceChangeRecipient).to.eq.BN(new BN("124749999999999999"));
         // Expectingt their total balanace to be 16 months worth of vested tokens
-        assert.equal(balanceAfterRecipient.sub(balanceBeforeRecipient).toString(), "665333333333333328");
+        expect(balanceAfterRecipient.sub(balanceBeforeRecipient)).to.eq.BN(new BN("665333333333333328"));
 
         const balanceAfterMultiSig = await token.balanceOf(colonyMultiSig.address);
         const balanceChangeMultiSig = balanceAfterMultiSig.sub(balanceBeforeMultiSig).toString();
         // Expecting non-vested tokens here to = total grant amount - 16 months worth of vested tokens
-        assert.equal(balanceChangeMultiSig.toString(), "332666666666666672");
+        expect(balanceChangeMultiSig).to.eq.BN(new BN("332666666666666672"));
       });
 
       it("should be able to add a new grant for same recipient as one removed", async () => {
@@ -311,11 +315,11 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
 
         const grant = await vesting.tokenGrants(ACCOUNT_1);
-        assert.equal(1001, grant[1].toNumber());
+        expect(grant.amount).to.eq.BN(1001);
       });
 
       it("should error if called by anyone but the Colony multisig", async () => {
-        await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1), { from: OTHER_ACCOUNT });
+        await checkErrorRevert(vesting.removeTokenGrant(ACCOUNT_1, { from: OTHER_ACCOUNT }), "colony-vesting-unauthorized");
       });
     });
 
@@ -325,12 +329,12 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
         await forwardTime(3600);
         const balanceBefore = await token.balanceOf(ACCOUNT_1);
-        assert(balanceBefore.isZero());
+        expect(balanceBefore).to.be.zero;
 
-        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }));
+        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }), "colony-token-zero-amount-vested");
 
         const balanceAfter = await token.balanceOf(ACCOUNT_1);
-        assert(balanceAfter.isZero());
+        expect(balanceAfter).to.be.zero;
       });
 
       it("should NOT be able to claim before cliff reached", async () => {
@@ -338,18 +342,18 @@ contract("Vesting", accounts => {
         await colonyMultiSig.submitTransaction(vesting.address, 0, txData);
         await forwardTime(SECONDS_PER_MONTH * 6 - 3600);
         const balanceBefore = await token.balanceOf(ACCOUNT_1);
-        assert(balanceBefore.isZero());
+        expect(balanceBefore).to.be.zero;
 
-        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }));
+        await checkErrorRevert(vesting.claimVestedTokens({ from: ACCOUNT_1 }), "colony-token-zero-amount-vested");
 
         const balanceAfter = await token.balanceOf(ACCOUNT_1);
-        assert(balanceAfter.isZero());
+        expect(balanceAfter).to.be.zero;
       });
 
       it("should NOT be able to claim a non-existent grant", async () => {
-        await checkErrorRevert(vesting.claimVestedTokens({ from: OTHER_ACCOUNT }));
+        await checkErrorRevert(vesting.claimVestedTokens({ from: OTHER_ACCOUNT }), "colony-token-zero-amount-vested");
         const balanceAfter = await token.balanceOf(OTHER_ACCOUNT);
-        assert.equal(balanceAfter.toNumber(), 0);
+        expect(balanceAfter).to.be.zero;
       });
 
       const account1GrantProperties = [
@@ -394,7 +398,7 @@ contract("Vesting", accounts => {
           const timeToForward = SECONDS_PER_MONTH * grantProp.monthsElapsed;
           await forwardTime(timeToForward, this);
           const balanceBefore = await token.balanceOf(ACCOUNT_1);
-          assert(balanceBefore.isZero());
+          expect(balanceBefore).to.be.zero;
 
           await vesting.claimVestedTokens({ from: ACCOUNT_1 });
           const balanceAfter = await token.balanceOf(ACCOUNT_1);
@@ -408,11 +412,11 @@ contract("Vesting", accounts => {
             );
           }
 
-          assert.equal(balanceAfter.toString(), expectedClaimedAmount.toString());
+          expect(balanceAfter).to.eq.BN(expectedClaimedAmount);
 
           const tokenGrant = await vesting.tokenGrants(ACCOUNT_1);
-          assert.equal(tokenGrant[4].toNumber(), grantProp.monthsElapsed + grantProp.startTimeMonthsBeforeNow);
-          assert.equal(tokenGrant[5].toString(), expectedClaimedAmount.toString());
+          expect(tokenGrant.monthsClaimed).to.eq.BN(grantProp.monthsElapsed + grantProp.startTimeMonthsBeforeNow);
+          expect(tokenGrant.totalClaimed).to.eq.BN(expectedClaimedAmount);
         });
       });
 
@@ -447,12 +451,12 @@ contract("Vesting", accounts => {
         balanceBefore = await token.balanceOf(ACCOUNT_3);
         await vesting.claimVestedTokens({ from: ACCOUNT_3 });
         balanceAfter = await token.balanceOf(ACCOUNT_3);
-        assert.equal(balanceAfter.sub(balanceBefore).toString(), ACCOUNT_3_GRANT_AMOUNT.divn(12).toString());
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_3_GRANT_AMOUNT.divn(12));
 
         balanceBefore = await token.balanceOf(ACCOUNT_10);
         await vesting.claimVestedTokens({ from: ACCOUNT_10 });
         balanceAfter = await token.balanceOf(ACCOUNT_10);
-        assert.equal(balanceAfter.sub(balanceBefore).toString(), ACCOUNT_10_GRANT_AMOUNT.divn(6).toString());
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_10_GRANT_AMOUNT.divn(6));
 
         // Go forward another 1 month, to the end of month 2 since grants created
         await forwardTime(SECONDS_PER_MONTH, this);
@@ -460,12 +464,7 @@ contract("Vesting", accounts => {
         balanceBefore = await token.balanceOf(ACCOUNT_7);
         await vesting.claimVestedTokens({ from: ACCOUNT_7 });
         balanceAfter = await token.balanceOf(ACCOUNT_7);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_7_GRANT_AMOUNT.divn(20)
-            .muln(2)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_7_GRANT_AMOUNT.divn(20).muln(2));
 
         // Go forward another 1 month, to the end of month 3 since grants created
         await forwardTime(SECONDS_PER_MONTH, this);
@@ -473,12 +472,7 @@ contract("Vesting", accounts => {
         balanceBefore = await token.balanceOf(ACCOUNT_8);
         await vesting.claimVestedTokens({ from: ACCOUNT_8 });
         balanceAfter = await token.balanceOf(ACCOUNT_8);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_8_GRANT_AMOUNT.divn(12)
-            .muln(3)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_8_GRANT_AMOUNT.divn(12).muln(3));
 
         // Go forward another 1 month, to the end of month 4 since grants created
         await forwardTime(SECONDS_PER_MONTH, this);
@@ -486,12 +480,7 @@ contract("Vesting", accounts => {
         balanceBefore = await token.balanceOf(ACCOUNT_9);
         await vesting.claimVestedTokens({ from: ACCOUNT_9 });
         balanceAfter = await token.balanceOf(ACCOUNT_9);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_9_GRANT_AMOUNT.divn(16)
-            .muln(4)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_9_GRANT_AMOUNT.divn(16).muln(4));
 
         // Go forward another 2 months, to the end of month 6 since grants created
         await forwardTime(SECONDS_PER_MONTH * 2, this);
@@ -499,22 +488,12 @@ contract("Vesting", accounts => {
         balanceBefore = await token.balanceOf(ACCOUNT_1);
         await vesting.claimVestedTokens({ from: ACCOUNT_1 });
         balanceAfter = await token.balanceOf(ACCOUNT_1);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_1_GRANT_AMOUNT.divn(24)
-            .muln(6)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_1_GRANT_AMOUNT.divn(24).muln(6));
 
         balanceBefore = await token.balanceOf(ACCOUNT_2);
         await vesting.claimVestedTokens({ from: ACCOUNT_2 });
         balanceAfter = await token.balanceOf(ACCOUNT_2);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_2_GRANT_AMOUNT.divn(24)
-            .muln(6)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_2_GRANT_AMOUNT.divn(24).muln(6));
 
         // Go forward another 6 months, to the end of month 12 since grants created
         await forwardTime(SECONDS_PER_MONTH * 6, this);
@@ -522,168 +501,113 @@ contract("Vesting", accounts => {
         balanceBefore = await token.balanceOf(ACCOUNT_4);
         await vesting.claimVestedTokens({ from: ACCOUNT_4 });
         balanceAfter = await token.balanceOf(ACCOUNT_4);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_4_GRANT_AMOUNT.divn(36)
-            .muln(12)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_4_GRANT_AMOUNT.divn(36).muln(12));
 
         balanceBefore = await token.balanceOf(ACCOUNT_5);
         await vesting.claimVestedTokens({ from: ACCOUNT_5 });
         balanceAfter = await token.balanceOf(ACCOUNT_5);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_5_GRANT_AMOUNT.divn(33)
-            .muln(12)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_5_GRANT_AMOUNT.divn(33).muln(12));
 
         balanceBefore = await token.balanceOf(ACCOUNT_6);
         await vesting.claimVestedTokens({ from: ACCOUNT_6 });
         balanceAfter = await token.balanceOf(ACCOUNT_6);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_6_GRANT_AMOUNT.divn(28)
-            .muln(12)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_6_GRANT_AMOUNT.divn(28).muln(12));
 
         // Check account 3, 8 and 10 can claim their entire left grant
         await vesting.claimVestedTokens({ from: ACCOUNT_3 });
         balanceAfter = await token.balanceOf(ACCOUNT_3);
-        assert.equal(balanceAfter.toString(), ACCOUNT_3_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_3_GRANT_AMOUNT);
 
         await vesting.claimVestedTokens({ from: ACCOUNT_8 });
         balanceAfter = await token.balanceOf(ACCOUNT_8);
-        assert.equal(balanceAfter.toString(), ACCOUNT_8_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_8_GRANT_AMOUNT);
 
         await vesting.claimVestedTokens({ from: ACCOUNT_10 });
         balanceAfter = await token.balanceOf(ACCOUNT_10);
-        assert.equal(balanceAfter.toString(), ACCOUNT_10_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_10_GRANT_AMOUNT);
 
         // Go forward another 5 months, to the end of month 17 since grants created
         await forwardTime(SECONDS_PER_MONTH * 5, this);
         // Check account 9 can claim their entire left grant
         await vesting.claimVestedTokens({ from: ACCOUNT_9 });
         balanceAfter = await token.balanceOf(ACCOUNT_9);
-        assert.equal(balanceAfter.toString(), ACCOUNT_9_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_9_GRANT_AMOUNT);
 
         // Check account 7 can claim (15 months vested tokens) correctly
         balanceBefore = await token.balanceOf(ACCOUNT_7);
         await vesting.claimVestedTokens({ from: ACCOUNT_7 });
         balanceAfter = await token.balanceOf(ACCOUNT_7);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_7_GRANT_AMOUNT.divn(20)
-            .muln(17 - 2)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_7_GRANT_AMOUNT.divn(20).muln(17 - 2));
 
         // Go forward another 3 months, to the end of month 20 since grants created
         await forwardTime(SECONDS_PER_MONTH * 3, this);
         // Check account 7 can claim their entire left grant
         await vesting.claimVestedTokens({ from: ACCOUNT_7 });
         balanceAfter = await token.balanceOf(ACCOUNT_7);
-        assert.equal(balanceAfter.toString(), ACCOUNT_7_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_7_GRANT_AMOUNT);
 
         // Check accounts 1, 2, 4 and 5 can claim correctly
         balanceBefore = await token.balanceOf(ACCOUNT_1);
         await vesting.claimVestedTokens({ from: ACCOUNT_1 });
         balanceAfter = await token.balanceOf(ACCOUNT_1);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_1_GRANT_AMOUNT.divn(24)
-            .muln(20 - 6)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_1_GRANT_AMOUNT.divn(24).muln(20 - 6));
 
         balanceBefore = await token.balanceOf(ACCOUNT_2);
         await vesting.claimVestedTokens({ from: ACCOUNT_2 });
         balanceAfter = await token.balanceOf(ACCOUNT_2);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_2_GRANT_AMOUNT.divn(24)
-            .muln(20 - 6)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_2_GRANT_AMOUNT.divn(24).muln(20 - 6));
 
         balanceBefore = await token.balanceOf(ACCOUNT_4);
         await vesting.claimVestedTokens({ from: ACCOUNT_4 });
         balanceAfter = await token.balanceOf(ACCOUNT_4);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_4_GRANT_AMOUNT.divn(36)
-            .muln(20 - 12)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_4_GRANT_AMOUNT.divn(36).muln(20 - 12));
 
         balanceBefore = await token.balanceOf(ACCOUNT_5);
         await vesting.claimVestedTokens({ from: ACCOUNT_5 });
         balanceAfter = await token.balanceOf(ACCOUNT_5);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_5_GRANT_AMOUNT.divn(33)
-            .muln(20 - 12)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_5_GRANT_AMOUNT.divn(33).muln(20 - 12));
 
         // Go forward another 4 months, to the end of month 24 since grants created
         await forwardTime(SECONDS_PER_MONTH * 4, this);
         // Check account 1 and 2 can claim their entire left grant
         await vesting.claimVestedTokens({ from: ACCOUNT_1 });
         balanceAfter = await token.balanceOf(ACCOUNT_1);
-        assert.equal(balanceAfter.toString(), ACCOUNT_1_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_1_GRANT_AMOUNT);
 
         await vesting.claimVestedTokens({ from: ACCOUNT_2 });
         balanceAfter = await token.balanceOf(ACCOUNT_2);
-        assert.equal(balanceAfter.toString(), ACCOUNT_2_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_2_GRANT_AMOUNT);
 
         // Check accounts 4, 5 and 6 can claim correctly
         balanceBefore = await token.balanceOf(ACCOUNT_4);
         await vesting.claimVestedTokens({ from: ACCOUNT_4 });
         balanceAfter = await token.balanceOf(ACCOUNT_4);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_4_GRANT_AMOUNT.divn(36)
-            .muln(24 - 20)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_4_GRANT_AMOUNT.divn(36).muln(24 - 20));
 
         balanceBefore = await token.balanceOf(ACCOUNT_5);
         await vesting.claimVestedTokens({ from: ACCOUNT_5 });
         balanceAfter = await token.balanceOf(ACCOUNT_5);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_5_GRANT_AMOUNT.divn(33)
-            .muln(24 - 20)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_5_GRANT_AMOUNT.divn(33).muln(24 - 20));
 
         balanceBefore = await token.balanceOf(ACCOUNT_6);
         await vesting.claimVestedTokens({ from: ACCOUNT_6 });
         balanceAfter = await token.balanceOf(ACCOUNT_6);
-        assert.equal(
-          balanceAfter.sub(balanceBefore).toString(),
-          ACCOUNT_6_GRANT_AMOUNT.divn(28)
-            .muln(24 - 12)
-            .toString()
-        );
+        expect(balanceAfter.sub(balanceBefore)).to.eq.BN(ACCOUNT_6_GRANT_AMOUNT.divn(28).muln(24 - 12));
 
         // Go forward another 12 months, to the end of month 36 since grants created
         await forwardTime(SECONDS_PER_MONTH * 12, this);
         // Check account 4, 5 and 6 can claim their entire left grant
         await vesting.claimVestedTokens({ from: ACCOUNT_4 });
         balanceAfter = await token.balanceOf(ACCOUNT_4);
-        assert.equal(balanceAfter.toString(), ACCOUNT_4_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_4_GRANT_AMOUNT);
 
         await vesting.claimVestedTokens({ from: ACCOUNT_5 });
         balanceAfter = await token.balanceOf(ACCOUNT_5);
-        assert.equal(balanceAfter.toString(), ACCOUNT_5_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_5_GRANT_AMOUNT);
 
         await vesting.claimVestedTokens({ from: ACCOUNT_6 });
         balanceAfter = await token.balanceOf(ACCOUNT_6);
-        assert.equal(balanceAfter.toString(), ACCOUNT_6_GRANT_AMOUNT.toString());
+        expect(balanceAfter).to.eq.BN(ACCOUNT_6_GRANT_AMOUNT);
       });
     });
   }
@@ -698,11 +622,11 @@ contract("Vesting", accounts => {
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       const dsAuthToken = await DSAuth.at(token.address);
-      txData = await dsAuthToken.contract.methods.setAuthority("0x0").encodeABI();
+      txData = await dsAuthToken.contract.methods.setAuthority(ZERO_ADDRESS).encodeABI();
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       const locked = await token.locked();
-      assert.isFalse(locked);
+      expect(locked).to.be.false;
     });
 
     testSpecifications();

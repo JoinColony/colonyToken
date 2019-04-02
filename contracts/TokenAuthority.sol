@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.23;
+pragma solidity >=0.5.3;
 
 import "../lib/dappsys/auth.sol";
 
@@ -24,18 +24,22 @@ contract TokenAuthority is DSAuthority {
   address public token;
   mapping(address => mapping(bytes4 => bool)) authorizations;
 
+  bytes4 constant BURN_FUNC_SIG = bytes4(keccak256("burn(uint256)"));
+  bytes4 constant BURN_OVERLOAD_FUNC_SIG = bytes4(keccak256("burn(address,uint256)"));
+
   constructor(
     address _token,
     address _colonyNetwork,
     address _metaColony,
     address _tokenLocking,
     address _vesting,
-    address[] miners,
+    address[] memory miners,
     address _regulator) public {
     token = _token;
     bytes4 transferSig = bytes4(keccak256("transfer(address,uint256)"));
     bytes4 transferFromSig = bytes4(keccak256("transferFrom(address,address,uint256)"));
     bytes4 mintSig = bytes4(keccak256("mint(uint256)"));
+    bytes4 mintSigOverload = bytes4(keccak256("mint(address,uint256)"));
 
     authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers
     authorizations[_colonyNetwork][transferFromSig] = true;
@@ -43,6 +47,7 @@ contract TokenAuthority is DSAuthority {
     authorizations[_metaColony][transferSig] = true;        // Used in IColony: bootstrapColony, mintTokensForColonyNetwork,
                                                             // claimPayout and claimRewardPayout
     authorizations[_metaColony][mintSig] = true;            // Used in IColony.mintTokensForColonyNetwork
+    authorizations[_metaColony][mintSigOverload] = true;            // Used in IColony.mintTokensForColonyNetwork
 
     authorizations[_tokenLocking][transferSig] = true;      // Used in ITokenLocking.withdraw
     authorizations[_tokenLocking][transferFromSig] = true;  // Used in ITokenLocking.deposit
@@ -60,6 +65,11 @@ contract TokenAuthority is DSAuthority {
   }
 
   function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
+    if (sig == BURN_FUNC_SIG || sig == BURN_OVERLOAD_FUNC_SIG) {
+      // We allow anyone to burn their own tokens even when CLNY is still locked
+      return true;
+    }
+
     if (dst != token) {
       return false;
     }

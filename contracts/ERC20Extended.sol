@@ -15,8 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity ^0.4.23;
-pragma experimental "v0.5.0";
+pragma solidity >=0.5.3;
 
 import "../lib/dappsys/erc20.sol";
 
@@ -26,6 +25,7 @@ contract ERC20Extended is ERC20 {
   event Burn(address indexed guy, uint wad);
 
   function mint(uint wad) public;
-  
+  function mint(address guy, uint wad) public;
   function burn(uint wad) public;
+  function burn(address guy, uint wad) public;
 }

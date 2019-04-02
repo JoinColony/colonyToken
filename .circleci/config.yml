@@ -1,0 +1,68 @@
+version: 2
+
+job_common: &job_common
+  docker:
+    - image: circleci/node:10.12-stretch
+  working_directory: ~/colonyToken
+step_save_cache: &step_save_cache
+  save_cache:
+    paths:
+      - ~/.cache/yarn
+    key: node-modules-{{ checksum "yarn.lock" }}
+step_restore_cache: &step_restore_cache
+  restore_cache:
+    keys:
+      - node-modules-{{ checksum "yarn.lock" }}
+step_setup_global_packages: &step_setup_global_packages
+  run:
+    name: "Set up global packages"
+    command: |
+      yarn --pure-lockfile --network-concurrency 1
+      git submodule update --remote --init
+      yarn run provision:multisig:contract
+step_pull_solc_docker: &step_pull_solc_docker
+    run:
+      name: "Pull solc docker image"
+      command: docker pull ethereum/solc:0.5.6
+jobs:
+  lint-and-unit-test:
+    <<: *job_common
+    steps:
+      - checkout
+      - <<: *step_restore_cache
+      - setup_remote_docker
+      - <<: *step_pull_solc_docker
+      - <<: *step_setup_global_packages
+      - run:
+          name: "Install lsof"
+          command: |
+            sudo apt-get update
+            sudo apt-get install lsof
+      - run:
+          name: "Linting JavaScript"
+          command: yarn run eslint
+      - run:
+          name: "Linting Solidity"
+          command: yarn run solium
+      - run:
+          name: "Running unit tests"
+          command: yarn run test:contracts
+      - run:
+          name: "Running gas cost tests"
+          command: yarn run test:contracts:gasCosts
+      - run:
+          name: "Running unit tests with coverage"
+          command: yarn run test:contracts:coverage
+      - <<: *step_save_cache
+      # Save test results
+      - store_test_results:
+          path: test-results.xml
+      # Save coverage artifacts
+      - store_artifacts:
+          path: coverage
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - lint-and-unit-test

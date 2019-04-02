@@ -1,4 +1,4 @@
-const MultiSigWallet = artifacts.require("./gnosis/MultiSigWallet");
+const MultiSigWallet = artifacts.require("./MultiSigWallet");
 const TokenAuthority = artifacts.require("./TokenAuthority");
 const Token = artifacts.require("./Token");
 const Vesting = artifacts.require("./Vesting");
