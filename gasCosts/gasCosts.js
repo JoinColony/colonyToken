@@ -28,15 +28,7 @@ contract("Vesting", accounts => {
     // Approve the total balance to be tranferred by the vesting contract as part of the `addTokenGrant` call
     await token.approve(vesting.address, ACCOUNT_1_GRANT_AMOUNT);
 
-    const tokenAuthority = await TokenAuthority.new(
-      token.address,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      vesting.address,
-      [ZERO_ADDRESS],
-      ZERO_ADDRESS
-    );
+    const tokenAuthority = await TokenAuthority.new(token.address, ZERO_ADDRESS, [vesting.address]);
     const dsAuthToken = await DSAuth.at(token.address);
     await dsAuthToken.setAuthority(tokenAuthority.address);
   });

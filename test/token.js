@@ -25,16 +25,7 @@ contract("Token", accounts => {
     token = await Token.new("Colony token", "CLNY", 18, { from: COLONY_ACCOUNT });
     dsAuthToken = await DSAuth.at(token.address);
 
-    const tokenAuthority = await TokenAuthority.new(
-      token.address,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      [ZERO_ADDRESS],
-      ZERO_ADDRESS,
-      { from: COLONY_ACCOUNT }
-    );
+    const tokenAuthority = await TokenAuthority.new(token.address, ZERO_ADDRESS, [ZERO_ADDRESS], { from: COLONY_ACCOUNT });
     await token.setAuthority(tokenAuthority.address, { from: COLONY_ACCOUNT });
   });
 

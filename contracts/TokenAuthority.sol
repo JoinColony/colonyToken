@@ -27,46 +27,26 @@ contract TokenAuthority is DSAuthority {
   bytes4 constant BURN_FUNC_SIG = bytes4(keccak256("burn(uint256)"));
   bytes4 constant BURN_OVERLOAD_FUNC_SIG = bytes4(keccak256("burn(address,uint256)"));
 
-  constructor(
-    address _token,
-    address _colonyNetwork,
-    address _metaColony,
-    address _tokenLocking,
-    address _vesting,
-    address[] memory miners,
-    address _regulator) public {
+  constructor(address _token, address _colony, address[] memory allowedToTransfer) public {
     token = _token;
     bytes4 transferSig = bytes4(keccak256("transfer(address,uint256)"));
     bytes4 transferFromSig = bytes4(keccak256("transferFrom(address,address,uint256)"));
     bytes4 mintSig = bytes4(keccak256("mint(uint256)"));
     bytes4 mintSigOverload = bytes4(keccak256("mint(address,uint256)"));
 
-    authorizations[_colonyNetwork][transferSig] = true;      // Used in IColonyNetworkMining.rewardStakers
-    authorizations[_colonyNetwork][transferFromSig] = true;
+    authorizations[_colony][transferSig] = true;
+    authorizations[_colony][mintSig] = true;
+    authorizations[_colony][mintSigOverload] = true;
 
-    authorizations[_metaColony][transferSig] = true;        // Used in IColony: bootstrapColony, mintTokensForColonyNetwork,
-                                                            // claimPayout and claimRewardPayout
-    authorizations[_metaColony][mintSig] = true;            // Used in IColony.mintTokensForColonyNetwork
-    authorizations[_metaColony][mintSigOverload] = true;            // Used in IColony.mintTokensForColonyNetwork
-
-    authorizations[_tokenLocking][transferSig] = true;      // Used in ITokenLocking.withdraw
-    authorizations[_tokenLocking][transferFromSig] = true;  // Used in ITokenLocking.deposit
-
-    authorizations[_vesting][transferSig] = true;
-    authorizations[_vesting][transferFromSig] = true;
-
-    // Allow passing in of multiple reputation miner accounts although potentially one will be used in production
-    for (uint i = 0; i < miners.length; i++) {
-      address miner = miners[i];
-      authorizations[miner][transferSig] = true;
+    for (uint i = 0; i < allowedToTransfer.length; i++) {
+      authorizations[allowedToTransfer[i]][transferSig] = true;
+      authorizations[allowedToTransfer[i]][transferFromSig] = true;
     }
-
-    authorizations[_regulator][transferFromSig] = true;
   }
 
   function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
     if (sig == BURN_FUNC_SIG || sig == BURN_OVERLOAD_FUNC_SIG) {
-      // We allow anyone to burn their own tokens even when CLNY is still locked
+      // We allow anyone to burn their own tokens even when the token is still locked
       return true;
     }
 
