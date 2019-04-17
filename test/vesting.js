@@ -63,15 +63,7 @@ contract("Vesting", accounts => {
     token = await Token.new("Colony token", "CLNY", 18);
     vesting = await Vesting.new(token.address, colonyMultiSig.address);
 
-    const tokenAuthority = await TokenAuthority.new(
-      token.address,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      vesting.address,
-      [ZERO_ADDRESS],
-      ZERO_ADDRESS
-    );
+    const tokenAuthority = await TokenAuthority.new(token.address, ZERO_ADDRESS, [vesting.address]);
     await token.setAuthority(tokenAuthority.address);
     await token.setOwner(colonyMultiSig.address);
 
