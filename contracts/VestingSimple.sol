@@ -16,6 +16,7 @@
 */
 
 pragma solidity 0.5.8;
+pragma experimental ABIEncoderV2;
 
 import "./Token.sol";
 import "../lib/dappsys/auth.sol";
@@ -25,13 +26,15 @@ import "../lib/dappsys/erc20.sol";
 
 contract VestingSimple is DSMath, DSAuth {
 
-  event TokensClaimed(address grantee, uint256 amount);
+  uint256 constant BASE = 250000 * WAD; // 250,000
+  uint256 constant PERIOD = 365 days; // one year
+
+  event GrantAdded(address recipient, uint256 amount);
+  event GrantClaimed(address recipient, uint256 amount);
 
   Token public token;
-
-  constructor(address _token) public {
-    token = Token(_token);
-  }
+  bool isActive;
+  uint256 startTime;
 
   struct Grant {
     uint256 amount;
@@ -40,4 +43,60 @@ contract VestingSimple is DSMath, DSAuth {
 
   mapping (address => Grant) grants;
 
+  modifier inactive() {
+    require(!isActive, "vesting-simple-already-active");
+    _;
+  }
+
+  modifier active() {
+    require(isActive, "vesting-simple-not-active");
+    _;
+  }
+
+  constructor(address _token) public {
+    token = Token(_token);
+  }
+
+  function activate() public auth inactive {
+    isActive = true;
+    startTime = now;
+  }
+
+  // Public
+
+  function addGrant(address _recipient, uint256 _amount) public auth inactive {
+    grants[_recipient].amount = _amount;
+
+    emit GrantAdded(_recipient, _amount);
+  }
+
+  function claimGrant() public active {
+    Grant storage grant = grants[msg.sender];
+
+    uint256 amountClaimable = min(
+      sub(grant.amount, grant.claimed),
+      getAmountClaimable(grant.amount)
+    );
+
+    require(amountClaimable > 0, "vesting-simple-nothing-to-claim");
+
+    grant.claimed = add(grant.claimed, amountClaimable);
+    token.transfer(msg.sender, amountClaimable);
+
+    assert(grant.amount >= grant.claimed);
+
+    emit GrantClaimed(msg.sender, amountClaimable);
+  }
+
+  // View
+
+  function getGrant(address _recipient) public view returns (Grant memory grant) {
+    grant = grants[_recipient];
+  }
+
+  function getAmountClaimable(uint256 _amount) public view returns (uint256) {
+    uint256 fractionUnlocked = min(WAD, wdiv(now - startTime, PERIOD)); // Max 1
+    uint256 remainder = sub(max(BASE, _amount), BASE); // Avoid underflows for small grants
+    return min(_amount, add(BASE, wmul(fractionUnlocked, remainder)));
+  }
 }
