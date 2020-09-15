@@ -12,7 +12,7 @@ chai.use(bnChai(web3.utils.BN));
 const Token = artifacts.require("Token");
 const VestingSimple = artifacts.require("VestingSimple");
 
-contract("Vesting Simple", accounts => {
+contract.only("Vesting Simple", accounts => {
   let token;
   let vesting;
 
@@ -77,6 +77,10 @@ contract("Vesting Simple", accounts => {
       await vesting.activate();
     });
 
+    it("cannot set grants once active", async () => {
+      await checkErrorRevert(vesting.addGrant(USER1, WAD), "vesting-simple-already-active");
+    });
+
     it("can claim BASE number of tokens immediately", async () => {
       const balancePre = await token.balanceOf(USER1);
 
@@ -127,8 +131,29 @@ contract("Vesting Simple", accounts => {
       await checkErrorRevert(vesting.claimGrant({ from: USER1 }), "vesting-simple-nothing-to-claim");
     });
 
-    it("cannot set grants once active", async () => {
-      await checkErrorRevert(vesting.addGrant(USER1, WAD), "vesting-simple-already-active");
+    it("can claim the grant in phases", async () => {
+      const balance0 = await token.balanceOf(USER1);
+
+      await vesting.claimGrant({ from: USER1 });
+
+      const balance1 = await token.balanceOf(USER1);
+      expect(balance1.sub(balance0)).to.eq.BN(BASE);
+
+      await forwardTime(YEAR / 2, this);
+      await vesting.claimGrant({ from: USER1 });
+
+      const balance2 = await token.balanceOf(USER1);
+      expect(balance2.sub(balance1)).to.eq.BN(BASE.muln(2));
+
+      await forwardTime(YEAR / 2, this);
+      await vesting.claimGrant({ from: USER1 });
+
+      const balance3 = await token.balanceOf(USER1);
+      expect(balance3.sub(balance2)).to.eq.BN(BASE.muln(2));
+
+      await forwardTime(YEAR / 2, this);
+
+      await checkErrorRevert(vesting.claimGrant({ from: USER1 }), "vesting-simple-nothing-to-claim");
     });
   });
 });
