@@ -26,22 +26,23 @@ import "../lib/dappsys/erc20.sol";
 
 contract VestingSimple is DSMath, DSAuth {
 
-  uint256 constant BASE = 250000 * WAD; // 250,000
-  uint256 constant PERIOD = 365 days; // one year
-
   event GrantAdded(address recipient, uint256 amount);
   event GrantClaimed(address recipient, uint256 amount);
 
   Token public token;
-  bool isActive;
-  uint256 startTime;
+
+  uint256 public base;
+  uint256 public period;
+
+  bool public isActive;
+  uint256 public startTime;
 
   struct Grant {
     uint256 amount;
     uint256 claimed;
   }
 
-  mapping (address => Grant) grants;
+  mapping (address => Grant) public grants;
 
   modifier inactive() {
     require(!isActive, "vesting-simple-already-active");
@@ -53,8 +54,10 @@ contract VestingSimple is DSMath, DSAuth {
     _;
   }
 
-  constructor(address _token) public {
+  constructor(address _token, uint256 _base, uint256 _period) public {
     token = Token(_token);
+    base = _base;
+    period = _period;
   }
 
   function activate() public auth inactive {
@@ -73,11 +76,7 @@ contract VestingSimple is DSMath, DSAuth {
   function claimGrant() public active {
     Grant storage grant = grants[msg.sender];
 
-    uint256 amountClaimable = min(
-      sub(grant.amount, grant.claimed),
-      getAmountClaimable(grant.amount)
-    );
-
+    uint256 amountClaimable = sub(getTotalClaimable(grant.amount), grant.claimed);
     require(amountClaimable > 0, "vesting-simple-nothing-to-claim");
 
     grant.claimed = add(grant.claimed, amountClaimable);
@@ -90,13 +89,11 @@ contract VestingSimple is DSMath, DSAuth {
 
   // View
 
-  function getGrant(address _recipient) public view returns (Grant memory grant) {
-    grant = grants[_recipient];
-  }
+  uint256 constant FREQ = 60; // Minute-level frequency
 
-  function getAmountClaimable(uint256 _amount) public view returns (uint256) {
-    uint256 fractionUnlocked = min(WAD, wdiv(now - startTime, PERIOD)); // Max 1
-    uint256 remainder = sub(max(BASE, _amount), BASE); // Avoid underflows for small grants
-    return min(_amount, add(BASE, wmul(fractionUnlocked, remainder)));
+  function getTotalClaimable(uint256 _amount) public view returns (uint256) {
+    uint256 fractionUnlocked = min(WAD, wdiv((now - startTime) / FREQ, period / FREQ)); // Max 1
+    uint256 remainder = sub(max(base, _amount), base); // Avoid underflows for small grants
+    return min(_amount, add(base, wmul(fractionUnlocked, remainder)));
   }
 }

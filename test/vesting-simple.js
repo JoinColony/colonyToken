@@ -32,19 +32,28 @@ contract("Vesting Simple", accounts => {
   });
 
   beforeEach(async () => {
-    vesting = await VestingSimple.new(token.address, { from: USER0 });
+    vesting = await VestingSimple.new(token.address, BASE, YEAR, { from: USER0 });
   });
 
   describe("when initialised", () => {
-    it("should set the Token correctly", async () => {
+    it("can fetch the storage variables", async () => {
       const tokenAddress = await vesting.token();
+      const base = await vesting.base();
+      const period = await vesting.period();
+      const isActive = await vesting.isActive();
+      const startTime = await vesting.startTime();
+
       expect(token.address).to.equal(tokenAddress);
+      expect(base).to.eq.BN(BASE);
+      expect(period).to.eq.BN(YEAR);
+      expect(isActive).to.be.false;
+      expect(startTime).to.be.zero;
     });
 
     it("can set and view grants", async () => {
       await vesting.addGrant(USER1, WAD);
 
-      const grant = await vesting.getGrant(USER1);
+      const grant = await vesting.grants(USER1);
       expect(grant.amount).to.eq.BN(WAD);
       expect(grant.claimed).to.be.zero;
     });
@@ -105,6 +114,21 @@ contract("Vesting Simple", accounts => {
 
       const balancePost = await token.balanceOf(USER1);
       expect(balancePost.sub(balancePre)).to.eq.BN(GRANT);
+    });
+
+    it("cannot claim more tokens than they should", async () => {
+      const balancePre = await token.balanceOf(USER1);
+
+      await vesting.claimGrant({ from: USER1 });
+
+      const balancePost = await token.balanceOf(USER1);
+      expect(balancePost.sub(balancePre)).to.eq.BN(BASE);
+
+      await checkErrorRevert(vesting.claimGrant({ from: USER1 }), "vesting-simple-nothing-to-claim");
+    });
+
+    it("cannot set grants once active", async () => {
+      await checkErrorRevert(vesting.addGrant(USER1, WAD), "vesting-simple-already-active");
     });
   });
 });
