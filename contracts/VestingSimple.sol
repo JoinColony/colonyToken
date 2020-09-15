@@ -65,6 +65,10 @@ contract VestingSimple is DSMath, DSAuth {
     startTime = now;
   }
 
+  function withdraw(uint256 _amount) public auth {
+    token.transfer(msg.sender, _amount);
+  }
+
   // Public
 
   function addGrant(address _recipient, uint256 _amount) public auth inactive {

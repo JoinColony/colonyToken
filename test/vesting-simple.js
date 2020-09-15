@@ -67,6 +67,16 @@ contract.only("Vesting Simple", accounts => {
 
       await checkErrorRevert(vesting.claimGrant({ from: USER1 }), "vesting-simple-not-active");
     });
+
+    it("can withdraw tokens if owner", async () => {
+      await token.mint(vesting.address, WAD);
+      const balancePre = await token.balanceOf(USER0);
+
+      await vesting.withdraw(WAD);
+
+      const balancePost = await token.balanceOf(USER0);
+      expect(balancePost.sub(balancePre)).to.eq.BN(WAD);
+    });
   });
 
   describe("when active", () => {
