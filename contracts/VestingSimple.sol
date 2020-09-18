@@ -93,10 +93,8 @@ contract VestingSimple is DSMath, DSAuth {
 
   // View
 
-  uint256 constant FREQ = 60; // Minute-level frequency
-
   function getTotalClaimable(uint256 _amount) public view returns (uint256) {
-    uint256 fractionUnlocked = min(WAD, wdiv((now - startTime) / FREQ, period / FREQ)); // Max 1
+    uint256 fractionUnlocked = min(WAD, wdiv((now - startTime), period)); // Max 1
     uint256 remainder = sub(max(base, _amount), base); // Avoid underflows for small grants
     return min(_amount, add(base, wmul(fractionUnlocked, remainder)));
   }
