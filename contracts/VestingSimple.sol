@@ -60,16 +60,14 @@ contract VestingSimple is DSMath, DSAuth {
     period = _period;
   }
 
-  function activate() public auth inactive {
-    isActive = true;
-    startTime = now;
-  }
-
   function withdraw(uint256 _amount) public auth {
     token.transfer(msg.sender, _amount);
   }
 
-  // Public
+  function activate() public auth inactive {
+    isActive = true;
+    startTime = now;
+  }
 
   function addGrant(address _recipient, uint256 _amount) public auth inactive {
     grants[_recipient].amount = _amount;
@@ -90,8 +88,6 @@ contract VestingSimple is DSMath, DSAuth {
 
     emit GrantClaimed(msg.sender, amountClaimable);
   }
-
-  // View
 
   function getTotalClaimable(uint256 _amount) public view returns (uint256) {
     uint256 fractionUnlocked = min(WAD, wdiv((now - startTime), period)); // Max 1

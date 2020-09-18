@@ -80,16 +80,28 @@ contract("Vesting Simple", accounts => {
   });
 
   describe("when active", () => {
+    let startBlockTime;
+
     beforeEach(async () => {
       await token.mint(vesting.address, GRANT);
 
       await vesting.addGrant(USER1, GRANT);
-      await vesting.activate();
+
+      startBlockTime = await currentBlockTime();
+      await makeTxAtTimestamp(vesting.activate, [], startBlockTime, this);
     });
 
     afterEach(async () => {
       // In case of errors
       await startMining();
+    });
+
+    it("can set the correct activation values", async () => {
+      const isActive = await vesting.isActive();
+      const startTime = await vesting.startTime();
+
+      expect(isActive).to.be.true;
+      expect(startTime).to.eq.BN(startBlockTime);
     });
 
     it("cannot set grants once active", async () => {
