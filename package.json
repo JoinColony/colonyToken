@@ -57,7 +57,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eth-gas-reporter": "0.1.10",
     "ethlint": "^1.2.3",
-    "ganache-cli": "^6.4.1",
+    "ganache-cli": "^6.10.2",
     "istanbul": "^0.4.5",
     "mocha": "^6.0.2",
     "mocha-circleci-reporter": "^0.0.3",
