@@ -3,6 +3,9 @@ version: 2
 job_common: &job_common
   docker:
     - image: circleci/node:10.12-stretch
+      auth:
+        username: colonyci
+        password: $COLONYCI_DOCKERHUB_PASSWORD
   working_directory: ~/colonyToken
 step_save_cache: &step_save_cache
   save_cache:
@@ -66,3 +69,4 @@ workflows:
   commit:
     jobs:
       - lint-and-unit-test
+          context: dockerhub-credentials
