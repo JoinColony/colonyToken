@@ -68,5 +68,5 @@ workflows:
   version: 2
   commit:
     jobs:
-      - lint-and-unit-test
+      - lint-and-unit-test:
           context: dockerhub-credentials
