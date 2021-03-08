@@ -17,35 +17,28 @@
 
 pragma solidity 0.5.8;
 
-import "../lib/dappsys/auth.sol";
 import "../lib/dappsys/base.sol";
 import "./ERC20Extended.sol";
+import "./Lockable.sol";
 
 
-contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
+contract Token is DSTokenBase(0), ERC20Extended, Lockable {
   uint8 public decimals;
   string public symbol;
   string public name;
 
-  bool public locked;
-
-  modifier unlocked {
-    if (locked) {
-      require(isAuthorized(msg.sender, msg.sig), "colony-token-unauthorised");
-    }
-    _;
-  }
-
-  constructor(string memory _name, string memory _symbol, uint8 _decimals) public {
+  constructor(string memory _name, string memory _symbol, uint8 _decimals)
+    public
+  {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
-    locked = true;
   }
 
-  function transferFrom(address src, address dst, uint wad) public 
-  unlocked
-  returns (bool)
+  function transferFrom(address src, address dst, uint wad)
+    public
+    unlocked
+    returns (bool)
   {
     return super.transferFrom(src, dst, wad);
   }
@@ -75,11 +68,5 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
     _balances[guy] = sub(_balances[guy], wad);
     _supply = sub(_supply, wad);
     emit Burn(guy, wad);
-  }
-
-  function unlock() public
-  auth
-  {
-    locked = false;
   }
 }
