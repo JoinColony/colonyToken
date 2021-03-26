@@ -31,7 +31,7 @@ contract WrappedToken is DSTokenBase(0), Lockable {
     token = _token;
   }
 
-  function deposit(uint256 wad) public {
+  function deposit(uint256 wad) public unlocked {
     _balances[msg.sender] = add(_balances[msg.sender], wad);
     _supply = add(_supply, wad);
 
