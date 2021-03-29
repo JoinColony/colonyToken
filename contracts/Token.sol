@@ -43,7 +43,7 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
     locked = true;
   }
 
-  function transferFrom(address src, address dst, uint wad) public 
+  function transferFrom(address src, address dst, uint wad) public
   unlocked
   returns (bool)
   {
