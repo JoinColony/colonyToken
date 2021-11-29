@@ -26,15 +26,13 @@ import "../lib/dappsys/erc20.sol";
 
 contract VestingSimple is DSMath, DSAuth {
 
-  event GrantAdded(address recipient, uint256 amount);
-  event GrantClaimed(address recipient, uint256 amount);
+  event GrantSet(address recipient, uint256 amount);
+  event GrantClaimed(address recipient, uint256 claimed);
 
   Token public token;
 
-  uint256 public base;
-  uint256 public period;
-
-  bool public isActive;
+  uint256 public initialClaimable;
+  uint256 public vestingDuration;
   uint256 public startTime;
 
   struct Grant {
@@ -45,19 +43,19 @@ contract VestingSimple is DSMath, DSAuth {
   mapping (address => Grant) public grants;
 
   modifier inactive() {
-    require(!isActive, "vesting-simple-already-active");
+    require(startTime == 0, "vesting-simple-already-active");
     _;
   }
 
   modifier active() {
-    require(isActive, "vesting-simple-not-active");
+    require(startTime > 0, "vesting-simple-not-active");
     _;
   }
 
-  constructor(address _token, uint256 _base, uint256 _period) public {
+  constructor(address _token, uint256 _initialClaimable, uint256 _vestingDuration) public {
     token = Token(_token);
-    base = _base;
-    period = _period;
+    initialClaimable = _initialClaimable;
+    vestingDuration = _vestingDuration;
   }
 
   function withdraw(uint256 _amount) public auth {
@@ -65,33 +63,42 @@ contract VestingSimple is DSMath, DSAuth {
   }
 
   function activate() public auth inactive {
-    isActive = true;
     startTime = now;
   }
 
-  function addGrant(address _recipient, uint256 _amount) public auth inactive {
+  function setGrant(address _recipient, uint256 _amount) public auth {
+    require(grants[_recipient].claimed <= _amount, "vesting-simple-bad-amount");
+
     grants[_recipient].amount = _amount;
 
-    emit GrantAdded(_recipient, _amount);
+    emit GrantSet(_recipient, _amount);
+  }
+
+  function setGrants(address[] memory _recipients, uint256[] memory _amounts) public auth {
+    require(_recipients.length == _amounts.length, "vesting-simple-bad-inputs");
+
+    for (uint256 i; i < _recipients.length; i++) {
+      setGrant(_recipients[i], _amounts[i]);
+    }
   }
 
   function claimGrant() public active {
     Grant storage grant = grants[msg.sender];
 
-    uint256 amountClaimable = sub(getTotalClaimable(grant.amount), grant.claimed);
-    require(amountClaimable > 0, "vesting-simple-nothing-to-claim");
+    uint256 claimable = sub(getClaimable(grant.amount), grant.claimed);
+    require(claimable > 0, "vesting-simple-nothing-to-claim");
 
-    grant.claimed = add(grant.claimed, amountClaimable);
-    token.transfer(msg.sender, amountClaimable);
+    grant.claimed = add(grant.claimed, claimable);
+    token.transfer(msg.sender, claimable);
 
     assert(grant.amount >= grant.claimed);
 
-    emit GrantClaimed(msg.sender, amountClaimable);
+    emit GrantClaimed(msg.sender, claimable);
   }
 
-  function getTotalClaimable(uint256 _amount) public view returns (uint256) {
-    uint256 fractionUnlocked = min(WAD, wdiv((now - startTime), period)); // Max 1
-    uint256 remainder = sub(max(base, _amount), base); // Avoid underflows for small grants
-    return min(_amount, add(base, wmul(fractionUnlocked, remainder)));
+  function getClaimable(uint256 _amount) public view returns (uint256) {
+    uint256 fractionUnlocked = min(WAD, wdiv((now - startTime), vestingDuration)); // Max 1
+    uint256 remainder = sub(max(initialClaimable, _amount), initialClaimable); // Avoid underflows for small grants
+    return min(_amount, add(initialClaimable, wmul(fractionUnlocked, remainder)));
   }
 }
