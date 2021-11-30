@@ -34,6 +34,20 @@ contract("Wrapped Token", accounts => {
   });
 
   describe("wrapping tokens", () => {
+    it("can be unlocked by owner", async () => {
+      let locked;
+
+      locked = await wrappedToken.locked();
+      expect(locked).to.be.true;
+
+      await checkErrorRevert(wrappedToken.unlock({ from: USER1 }), "ds-auth-unauthorized");
+
+      await wrappedToken.unlock();
+
+      locked = await wrappedToken.locked();
+      expect(locked).to.be.false;
+    });
+
     it("should be able to wrap and unwrap tokens", async () => {
       await wrappedToken.unlock();
 
