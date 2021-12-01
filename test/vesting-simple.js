@@ -148,6 +148,12 @@ contract("Vesting Simple", accounts => {
       await checkErrorRevert(vesting.activate(), "vesting-simple-already-active");
     });
 
+    it("cannot claim a grant if the contract has no tokens", async () => {
+      await vesting.withdraw(GRANT);
+
+      await checkErrorRevert(vesting.claimGrant({ from: USER1 }), "ds-token-insufficient-balance");
+    });
+
     it("can claim BASE number of tokens immediately", async () => {
       const balancePre = await token.balanceOf(USER1);
 
