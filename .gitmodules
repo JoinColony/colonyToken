@@ -1,3 +1,4 @@
 [submodule "lib/dappsys"]
 	path = lib/dappsys
-	url = https://github.com/dapphub/dappsys-monolithic.git
+	url = https://github.com/JoinColony/dappsys-monolithic.git
+  branch = solidity070
