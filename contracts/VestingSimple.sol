@@ -84,6 +84,7 @@ contract VestingSimple is DSMath, DSAuth {
 
   function claimGrant() public active {
     Grant storage grant = grants[msg.sender];
+    require(grant.amount > 0, "vesting-simple-no-grant");
 
     uint256 claimable = sub(getClaimable(grant.amount), grant.claimed);
     require(claimable > 0, "vesting-simple-nothing-to-claim");
