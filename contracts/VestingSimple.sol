@@ -63,7 +63,7 @@ contract VestingSimple is DSMath, DSAuth {
   }
 
   function activate() public auth inactive {
-    startTime = now;
+    startTime = block.timestamp;
   }
 
   function setGrant(address _recipient, uint256 _amount) public auth {
@@ -97,7 +97,7 @@ contract VestingSimple is DSMath, DSAuth {
   }
 
   function getClaimable(uint256 _amount) public view returns (uint256) {
-    uint256 fractionUnlocked = min(WAD, wdiv((now - startTime), vestingDuration)); // Max 1
+    uint256 fractionUnlocked = min(WAD, wdiv((block.timestamp - startTime), vestingDuration)); // Max 1
     uint256 remainder = sub(max(initialClaimable, _amount), initialClaimable); // Avoid underflows for small grants
     return min(_amount, add(initialClaimable, wmul(fractionUnlocked, remainder)));
   }

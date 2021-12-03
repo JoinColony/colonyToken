@@ -20,12 +20,12 @@ pragma solidity 0.7.3;
 import "../lib/dappsys/erc20.sol";
 
 
-contract ERC20Extended is ERC20 {
+abstract contract ERC20Extended is ERC20 {
   event Mint(address indexed guy, uint wad);
   event Burn(address indexed guy, uint wad);
 
-  function mint(uint wad) public;
-  function mint(address guy, uint wad) public;
-  function burn(uint wad) public;
-  function burn(address guy, uint wad) public;
+  function mint(uint wad) virtual public;
+  function mint(address guy, uint wad) virtual public;
+  function burn(uint wad) virtual public;
+  function burn(address guy, uint wad) virtual public;
 }

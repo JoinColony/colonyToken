@@ -87,7 +87,7 @@ contract Vesting is DSMath {
     token.transferFrom(colonyMultiSig, address(this), _amount);
 
     Grant memory grant = Grant({
-      startTime: _startTime == 0 ? now : _startTime,
+      startTime: _startTime == 0 ? block.timestamp : _startTime,
       amount: _amount,
       vestingDuration: _vestingDuration,
       vestingCliff: _vestingCliff,
@@ -148,12 +148,12 @@ contract Vesting is DSMath {
     Grant storage tokenGrant = tokenGrants[_recipient];
 
     // For grants created with a future start date, that hasn't been reached, return 0, 0
-    if (now < tokenGrant.startTime) {
+    if (block.timestamp < tokenGrant.startTime) {
       return (0, 0);
     }
 
     // Check cliff was reached
-    uint elapsedTime = sub(now, tokenGrant.startTime);
+    uint elapsedTime = sub(block.timestamp, tokenGrant.startTime);
     uint elapsedMonths = elapsedTime / SECONDS_PER_MONTH;
     
     if (elapsedMonths < tokenGrant.vestingCliff) {

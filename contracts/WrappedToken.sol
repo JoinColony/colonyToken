@@ -53,6 +53,7 @@ contract WrappedToken is DSTokenBase(0), Lockable {
   // Note that transfer() calls this internally, so it's also lockable
   function transferFrom(address src, address dst, uint wad)
     public
+    override
     unlocked
     returns (bool)
   {
