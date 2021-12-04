@@ -32,6 +32,7 @@ module.exports = {
     solc: {
       version: "0.7.3",
       docker: true,
+      parser: "solcjs",
       settings: {
         optimizer: {
           enabled: true,

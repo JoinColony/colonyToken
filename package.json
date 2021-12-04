@@ -7,10 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "solium-staged": "bash ./scripts/solium.sh",
+    "solhint-staged": "bash ./scripts/solhint.sh",
     "eslint-staged": "bash ./scripts/eslint.sh",
     "eslint": "eslint .",
-    "solium": "solium --dir .",
+    "solhint": "solhint ./contracts/**/*.sol",
     "clean:contracts": "rimraf ./build/contracts/*",
     "provision:multisig:contract": "truffle compile && bash ./scripts/provision-multisig-contract.sh",
     "start:blockchain:client": "bash ./scripts/start-blockchain-client.sh",
@@ -27,7 +27,7 @@
   },
   "pre-commit": [
     "eslint-staged",
-    "solium-staged"
+    "solhint-staged"
   ],
   "repository": {
     "type": "git",
@@ -56,7 +56,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eth-gas-reporter": "0.1.10",
-    "ethlint": "^1.2.3",
+    "ethlint": "^1.2.5",
     "ganache-cli": "^6.10.2",
     "istanbul": "^0.4.5",
     "mocha": "^6.0.2",
@@ -65,6 +65,7 @@
     "prettier": "^1.14.2",
     "rimraf": "^2.6.3",
     "shortid": "^2.2.14",
+    "solhint": "^3.2.2",
     "solidity-coverage": "^0.6.0-beta.4",
     "solidity-steamroller": "^1.1.0",
     "truffle": "^5.1.48",
