@@ -3,9 +3,9 @@
 import chai from "chai";
 import bnChai from "bn-chai";
 
-import { getFunctionSignature } from "../helpers/test-helper";
+import {getFunctionSignature} from "../helpers/test-helper";
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(bnChai(web3.utils.BN));
 
 const TokenAuthority = artifacts.require("TokenAuthority");

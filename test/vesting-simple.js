@@ -4,9 +4,9 @@ import chai from "chai";
 import bnChai from "bn-chai";
 import BN from "bn.js";
 
-import { checkErrorRevert, currentBlockTime, makeTxAtTimestamp, startMining } from "../helpers/test-helper";
+import {checkErrorRevert, currentBlockTime, makeTxAtTimestamp, startMining} from "../helpers/test-helper";
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(bnChai(web3.utils.BN));
 
 const Token = artifacts.require("Token");
@@ -31,7 +31,7 @@ contract("Vesting Simple", accounts => {
   });
 
   beforeEach(async () => {
-    vesting = await VestingSimple.new(token.address, BASE, YEAR, { from: USER0 });
+    vesting = await VestingSimple.new(token.address, BASE, YEAR, {from: USER0});
   });
 
   describe("when initialised", () => {
@@ -102,13 +102,13 @@ contract("Vesting Simple", accounts => {
     });
 
     it("cannot set grants if not owner", async () => {
-      await checkErrorRevert(vesting.setGrant(USER1, WAD, { from: USER1 }), "ds-auth-unauthorized");
+      await checkErrorRevert(vesting.setGrant(USER1, WAD, {from: USER1}), "ds-auth-unauthorized");
     });
 
     it("cannot claim grants if not active", async () => {
       await vesting.setGrant(USER1, WAD);
 
-      await checkErrorRevert(vesting.claimGrant({ from: USER1 }), "vesting-simple-not-active");
+      await checkErrorRevert(vesting.claimGrant({from: USER1}), "vesting-simple-not-active");
     });
 
     it("can withdraw tokens if owner", async () => {
@@ -152,7 +152,7 @@ contract("Vesting Simple", accounts => {
       const balancePre = await token.balanceOf(USER1);
 
       const timestamp = await currentBlockTime();
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balancePost = await token.balanceOf(USER1);
       expect(balancePost.sub(balancePre)).to.eq.BN(BASE);
@@ -163,7 +163,7 @@ contract("Vesting Simple", accounts => {
 
       let timestamp = await currentBlockTime();
       timestamp += YEAR / 2;
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balancePost = await token.balanceOf(USER1);
       expect(balancePost.sub(balancePre)).to.eq.BN(GRANT.divn(5).muln(3));
@@ -174,7 +174,7 @@ contract("Vesting Simple", accounts => {
 
       let timestamp = await currentBlockTime();
       timestamp += YEAR;
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balancePost = await token.balanceOf(USER1);
       expect(balancePost.sub(balancePre)).to.eq.BN(GRANT);
@@ -185,7 +185,7 @@ contract("Vesting Simple", accounts => {
 
       let timestamp = await currentBlockTime();
       timestamp += YEAR * 2;
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balancePost = await token.balanceOf(USER1);
       expect(balancePost.sub(balancePre)).to.eq.BN(GRANT);
@@ -196,43 +196,43 @@ contract("Vesting Simple", accounts => {
 
       const timestamp = await currentBlockTime();
 
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balancePost = await token.balanceOf(USER1);
       expect(balancePost.sub(balancePre)).to.eq.BN(BASE);
 
-      await checkErrorRevert(makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this), "vesting-simple-nothing-to-claim");
+      await checkErrorRevert(makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this), "vesting-simple-nothing-to-claim");
     });
 
     it("can claim the grant in phases", async () => {
       const balance0 = await token.balanceOf(USER1);
 
       let timestamp = await currentBlockTime();
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balance1 = await token.balanceOf(USER1);
       expect(balance1.sub(balance0)).to.eq.BN(BASE);
 
       timestamp += YEAR / 2;
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balance2 = await token.balanceOf(USER1);
       expect(balance2.sub(balance1)).to.eq.BN(BASE.muln(2));
 
       timestamp += YEAR / 2;
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const balance3 = await token.balanceOf(USER1);
       expect(balance3.sub(balance2)).to.eq.BN(BASE.muln(2));
 
       timestamp += YEAR / 2;
 
-      await checkErrorRevert(makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this), "vesting-simple-nothing-to-claim");
+      await checkErrorRevert(makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this), "vesting-simple-nothing-to-claim");
     });
 
     it("cannot set an amount below what has already been claimed", async () => {
       const timestamp = await currentBlockTime();
-      await makeTxAtTimestamp(vesting.claimGrant, [{ from: USER1 }], timestamp, this);
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
 
       const grant = await vesting.grants(USER1);
       expect(grant.claimed).to.eq.BN(BASE);

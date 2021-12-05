@@ -3,9 +3,9 @@
 import chai from "chai";
 import bnChai from "bn-chai";
 
-import { expectEvent, checkErrorRevert, web3GetBalance } from "../helpers/test-helper";
+import {expectEvent, checkErrorRevert, web3GetBalance} from "../helpers/test-helper";
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(bnChai(web3.utils.BN));
 
 const Token = artifacts.require("Token");
@@ -22,17 +22,17 @@ contract("Token", accounts => {
   let dsAuthToken;
 
   beforeEach(async () => {
-    token = await Token.new("Colony token", "CLNY", 18, { from: COLONY_ACCOUNT });
+    token = await Token.new("Colony token", "CLNY", 18, {from: COLONY_ACCOUNT});
     dsAuthToken = await DSAuth.at(token.address);
 
-    const tokenAuthority = await TokenAuthority.new(token.address, ZERO_ADDRESS, [ZERO_ADDRESS], { from: COLONY_ACCOUNT });
-    await token.setAuthority(tokenAuthority.address, { from: COLONY_ACCOUNT });
+    const tokenAuthority = await TokenAuthority.new(token.address, ZERO_ADDRESS, [ZERO_ADDRESS], {from: COLONY_ACCOUNT});
+    await token.setAuthority(tokenAuthority.address, {from: COLONY_ACCOUNT});
   });
 
   describe("when working with ERC20 functions and token is unlocked", () => {
     beforeEach("mint 1500000 tokens", async () => {
-      await token.unlock({ from: COLONY_ACCOUNT });
-      await token.mint(COLONY_ACCOUNT, 1500000, { from: COLONY_ACCOUNT });
+      await token.unlock({from: COLONY_ACCOUNT});
+      await token.mint(COLONY_ACCOUNT, 1500000, {from: COLONY_ACCOUNT});
     });
 
     it("should be able to get total supply", async () => {
@@ -46,16 +46,16 @@ contract("Token", accounts => {
     });
 
     it("should be able to get allowance for address", async () => {
-      await token.approve(ACCOUNT_TWO, 200000, { from: COLONY_ACCOUNT });
+      await token.approve(ACCOUNT_TWO, 200000, {from: COLONY_ACCOUNT});
       const allowance = await token.allowance(COLONY_ACCOUNT, ACCOUNT_TWO);
       expect(allowance).to.eq.BN(200000);
     });
 
     it("should be able to transfer tokens from own address", async () => {
-      const success = await token.transfer.call(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT });
+      const success = await token.transfer.call(ACCOUNT_TWO, 300000, {from: COLONY_ACCOUNT});
       expect(success).to.be.true;
 
-      await expectEvent(token.transfer(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT }), "Transfer");
+      await expectEvent(token.transfer(ACCOUNT_TWO, 300000, {from: COLONY_ACCOUNT}), "Transfer");
       const balanceAccount1 = await token.balanceOf(COLONY_ACCOUNT);
       expect(balanceAccount1).to.eq.BN(1200000);
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
@@ -63,17 +63,17 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to transfer more tokens than they have", async () => {
-      await checkErrorRevert(token.transfer(ACCOUNT_TWO, 1500001, { from: COLONY_ACCOUNT }), "ds-token-insufficient-balance");
+      await checkErrorRevert(token.transfer(ACCOUNT_TWO, 1500001, {from: COLONY_ACCOUNT}), "ds-token-insufficient-balance");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       expect(balanceAccount2).to.be.zero;
     });
 
     it("should be able to transfer pre-approved tokens from address different than own", async () => {
-      await token.approve(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT });
-      const success = await token.transferFrom.call(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO });
+      await token.approve(ACCOUNT_TWO, 300000, {from: COLONY_ACCOUNT});
+      const success = await token.transferFrom.call(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, {from: ACCOUNT_TWO});
       expect(success).to.be.true;
 
-      await expectEvent(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "Transfer");
+      await expectEvent(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, {from: ACCOUNT_TWO}), "Transfer");
       const balanceAccount1 = await token.balanceOf(COLONY_ACCOUNT);
       expect(balanceAccount1).to.eq.BN(1200000);
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
@@ -83,33 +83,33 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to transfer tokens from another address if NOT pre-approved", async () => {
-      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "ds-token-insufficient-approval");
+      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, {from: ACCOUNT_TWO}), "ds-token-insufficient-approval");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       expect(balanceAccount2).to.be.zero;
     });
 
     it("should NOT be able to transfer from another address more tokens than pre-approved", async () => {
       await token.approve(ACCOUNT_TWO, 300000);
-      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300001, { from: ACCOUNT_TWO }), "ds-token-insufficient-approval");
+      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300001, {from: ACCOUNT_TWO}), "ds-token-insufficient-approval");
 
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       expect(balanceAccount2).to.be.zero;
     });
 
     it("should NOT be able to transfer from another address more tokens than the source balance", async () => {
-      await token.approve(ACCOUNT_TWO, 300000, { from: COLONY_ACCOUNT });
-      await token.transfer(ACCOUNT_THREE, 1500000, { from: COLONY_ACCOUNT });
+      await token.approve(ACCOUNT_TWO, 300000, {from: COLONY_ACCOUNT});
+      await token.transfer(ACCOUNT_THREE, 1500000, {from: COLONY_ACCOUNT});
 
-      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, { from: ACCOUNT_TWO }), "ds-token-insufficient-balance");
+      await checkErrorRevert(token.transferFrom(COLONY_ACCOUNT, ACCOUNT_TWO, 300000, {from: ACCOUNT_TWO}), "ds-token-insufficient-balance");
       const balanceAccount2 = await token.balanceOf(ACCOUNT_TWO);
       expect(balanceAccount2).to.be.zero;
     });
 
     it("should be able to approve token transfer for other accounts", async () => {
-      const success = await token.approve.call(ACCOUNT_TWO, 200000, { from: COLONY_ACCOUNT });
+      const success = await token.approve.call(ACCOUNT_TWO, 200000, {from: COLONY_ACCOUNT});
       expect(success).to.be.true;
 
-      await expectEvent(token.approve(ACCOUNT_TWO, 200000, { from: COLONY_ACCOUNT }), "Approval");
+      await expectEvent(token.approve(ACCOUNT_TWO, 200000, {from: COLONY_ACCOUNT}), "Approval");
       const allowance = await token.allowance(COLONY_ACCOUNT, ACCOUNT_TWO);
       expect(allowance).to.eq.BN(200000);
     });
@@ -117,12 +117,12 @@ contract("Token", accounts => {
 
   describe("when working with ERC20 functions and token is locked", () => {
     beforeEach(async () => {
-      await token.mint(COLONY_ACCOUNT, 1500000, { from: COLONY_ACCOUNT });
-      await token.transfer(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
+      await token.mint(COLONY_ACCOUNT, 1500000, {from: COLONY_ACCOUNT});
+      await token.transfer(ACCOUNT_TWO, 1500000, {from: COLONY_ACCOUNT});
     });
 
     it("shouldn't be able to transfer tokens from own address", async () => {
-      await checkErrorRevert(token.transfer(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO }), "colony-token-unauthorised");
+      await checkErrorRevert(token.transfer(ACCOUNT_THREE, 300000, {from: ACCOUNT_TWO}), "colony-token-unauthorised");
 
       const balanceAccount1 = await token.balanceOf(ACCOUNT_TWO);
       expect(balanceAccount1).to.eq.BN(1500000);
@@ -131,8 +131,8 @@ contract("Token", accounts => {
     });
 
     it("shouldn't be able to transfer pre-approved tokens", async () => {
-      await token.approve(ACCOUNT_THREE, 300000, { from: ACCOUNT_TWO });
-      await checkErrorRevert(token.transferFrom(ACCOUNT_TWO, ACCOUNT_THREE, 300000, { from: ACCOUNT_THREE }), "colony-token-unauthorised");
+      await token.approve(ACCOUNT_THREE, 300000, {from: ACCOUNT_TWO});
+      await checkErrorRevert(token.transferFrom(ACCOUNT_TWO, ACCOUNT_THREE, 300000, {from: ACCOUNT_THREE}), "colony-token-unauthorised");
 
       const balanceAccount1 = await token.balanceOf(ACCOUNT_TWO);
       expect(balanceAccount1).to.eq.BN(1500000);
@@ -160,7 +160,7 @@ contract("Token", accounts => {
     });
 
     it("should be able to mint new tokens, when called by the Token owner", async () => {
-      await token.mint(COLONY_ACCOUNT, 1500000, { from: COLONY_ACCOUNT });
+      await token.mint(COLONY_ACCOUNT, 1500000, {from: COLONY_ACCOUNT});
 
       let totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1500000);
@@ -169,7 +169,7 @@ contract("Token", accounts => {
       expect(balance).to.eq.BN(1500000);
 
       // Mint some more tokens
-      await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Mint");
+      await expectEvent(token.mint(COLONY_ACCOUNT, 1, {from: COLONY_ACCOUNT}), "Mint");
       totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1500001);
 
@@ -179,7 +179,7 @@ contract("Token", accounts => {
 
     it("should be able to mint new tokens directly to sender, when called by the Token owner", async () => {
       // How truffle supports function overloads apparently
-      await token.methods["mint(uint256)"](1500000, { from: COLONY_ACCOUNT });
+      await token.methods["mint(uint256)"](1500000, {from: COLONY_ACCOUNT});
 
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1500000);
@@ -189,27 +189,27 @@ contract("Token", accounts => {
     });
 
     it("should emit a Mint event when minting tokens", async () => {
-      await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Mint");
-      await expectEvent(token.methods["mint(uint256)"](1, { from: COLONY_ACCOUNT }), "Mint");
+      await expectEvent(token.mint(COLONY_ACCOUNT, 1, {from: COLONY_ACCOUNT}), "Mint");
+      await expectEvent(token.methods["mint(uint256)"](1, {from: COLONY_ACCOUNT}), "Mint");
     });
 
     it("should emit a Transfer event when minting tokens", async () => {
-      await expectEvent(token.mint(COLONY_ACCOUNT, 1, { from: COLONY_ACCOUNT }), "Transfer");
-      await expectEvent(token.methods["mint(uint256)"](1, { from: COLONY_ACCOUNT }), "Transfer");
+      await expectEvent(token.mint(COLONY_ACCOUNT, 1, {from: COLONY_ACCOUNT}), "Transfer");
+      await expectEvent(token.methods["mint(uint256)"](1, {from: COLONY_ACCOUNT}), "Transfer");
     });
 
     it("should NOT be able to mint new tokens, when called by anyone NOT the Token owner", async () => {
-      await checkErrorRevert(token.mint(COLONY_ACCOUNT, 1500000, { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
+      await checkErrorRevert(token.mint(COLONY_ACCOUNT, 1500000, {from: ACCOUNT_THREE}), "ds-auth-unauthorized");
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.be.zero;
     });
 
     it("should be able to burn others' tokens when they have approved them to do so", async () => {
-      await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
-      await token.methods["approve(address,uint256)"](ACCOUNT_THREE, 500000, { from: ACCOUNT_TWO });
+      await token.mint(ACCOUNT_TWO, 1500000, {from: COLONY_ACCOUNT});
+      await token.methods["approve(address,uint256)"](ACCOUNT_THREE, 500000, {from: ACCOUNT_TWO});
       // await token.approve(ACCOUNT_THREE, 500000, { FROM: ACCOUNT_TWO });
       // await token.burn(ACCOUNT_TWO, 500000, { from: ACCOUNT_THREE });
-      await token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500000, { from: ACCOUNT_THREE });
+      await token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500000, {from: ACCOUNT_THREE});
 
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1000000);
@@ -219,9 +219,9 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to burn others' tokens when the approved amount is less", async () => {
-      await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
-      await token.methods["approve(address,uint256)"](ACCOUNT_THREE, 500000, { from: ACCOUNT_TWO });
-      await checkErrorRevert(token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500001, { from: ACCOUNT_THREE }), "ds-token-insufficient-approval");
+      await token.mint(ACCOUNT_TWO, 1500000, {from: COLONY_ACCOUNT});
+      await token.methods["approve(address,uint256)"](ACCOUNT_THREE, 500000, {from: ACCOUNT_TWO});
+      await checkErrorRevert(token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500001, {from: ACCOUNT_THREE}), "ds-token-insufficient-approval");
 
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1500000);
@@ -232,8 +232,8 @@ contract("Token", accounts => {
 
     it("should be able to burn own tokens", async () => {
       // How truffle supports function overloads apparently
-      await token.mint(ACCOUNT_TWO, 1500000, { from: COLONY_ACCOUNT });
-      await token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500000, { from: ACCOUNT_TWO });
+      await token.mint(ACCOUNT_TWO, 1500000, {from: COLONY_ACCOUNT});
+      await token.methods["burn(address,uint256)"](ACCOUNT_TWO, 500000, {from: ACCOUNT_TWO});
 
       let totalSupply = await token.totalSupply();
       expect(totalSupply).to.eq.BN(1000000);
@@ -241,7 +241,7 @@ contract("Token", accounts => {
       let balance = await token.balanceOf(ACCOUNT_TWO);
       expect(balance).to.eq.BN(1000000);
 
-      await token.methods["burn(uint256)"](1000000, { from: ACCOUNT_TWO });
+      await token.methods["burn(uint256)"](1000000, {from: ACCOUNT_TWO});
       totalSupply = await token.totalSupply();
       expect(totalSupply).to.be.zero;
 
@@ -250,22 +250,22 @@ contract("Token", accounts => {
     });
 
     it("should NOT be able to burn tokens if there's insufficient balance", async () => {
-      await token.mint(ACCOUNT_TWO, 5, { from: COLONY_ACCOUNT });
-      await checkErrorRevert(token.burn(6, { from: ACCOUNT_TWO }), "ds-token-insufficient-balance");
+      await token.mint(ACCOUNT_TWO, 5, {from: COLONY_ACCOUNT});
+      await checkErrorRevert(token.burn(6, {from: ACCOUNT_TWO}), "ds-token-insufficient-balance");
 
       const balance = await token.balanceOf(ACCOUNT_TWO);
       expect(balance).to.eq.BN(5);
     });
 
     it("should emit a Burn event when burning tokens", async () => {
-      await token.methods["mint(uint256)"](1, { from: COLONY_ACCOUNT });
-      await expectEvent(token.burn(1, { from: COLONY_ACCOUNT }), "Burn");
+      await token.methods["mint(uint256)"](1, {from: COLONY_ACCOUNT});
+      await expectEvent(token.burn(1, {from: COLONY_ACCOUNT}), "Burn");
     });
 
     it("should be able to unlock token by owner", async () => {
       // Note: due to an apparent bug, we cannot call a parameterless function with transaction params, e.g. { from: senderAccount }
       // So change the owner to coinbase so we are able to call it without params
-      await dsAuthToken.setOwner(accounts[0], { from: COLONY_ACCOUNT });
+      await dsAuthToken.setOwner(accounts[0], {from: COLONY_ACCOUNT});
       await token.unlock();
       await dsAuthToken.setAuthority(ZERO_ADDRESS);
 
@@ -277,8 +277,8 @@ contract("Token", accounts => {
     });
 
     it("shouldn't be able to unlock token by non-owner", async () => {
-      await checkErrorRevert(token.unlock({ from: ACCOUNT_THREE }), "ds-auth-unauthorized");
-      await checkErrorRevert(dsAuthToken.setAuthority(ZERO_ADDRESS, { from: ACCOUNT_THREE }), "ds-auth-unauthorized");
+      await checkErrorRevert(token.unlock({from: ACCOUNT_THREE}), "ds-auth-unauthorized");
+      await checkErrorRevert(dsAuthToken.setAuthority(ZERO_ADDRESS, {from: ACCOUNT_THREE}), "ds-auth-unauthorized");
 
       const locked = await token.locked();
       expect(locked).to.be.true;
