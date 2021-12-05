@@ -30,7 +30,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.7.3",
+      version: "0.8.10",
       docker: true,
       parser: "solcjs",
       settings: {
