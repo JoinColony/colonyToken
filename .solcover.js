@@ -1,8 +1,28 @@
+const { execSync } = require("child_process");
+const log = console.log;
+
+// Copies pre-built token artifacts to .coverage_artifacts/contracts
+function provisionMultisig(config){
+  let output;
+  const provisionMultisig = "yarn run provision:multisig:contract";
+
+  log('Provisioning ColonyToken contracts...')
+  output = execSync(provisionMultisig);
+  log(output.toString())
+}
+
 module.exports = {
     skipFiles: [
-      'Migrations.sol'
+      'Migrations.sol',
     ],
-    compileCommand: 'yarn run provision:multisig:contract',
-    testCommand: '../node_modules/.bin/truffle test --network coverage',
-    testrpcOptions: `--port 8555 -i 1999 --acctKeys="./coverageEnv/ganache-accounts.json" --noVMErrorsOnRPCResponse --accounts 12 --allowUnlimitedContractSize`
-};
+    providerOptions: {
+      port: 8555,
+      network_id: 1999,
+      account_keys_path: "./ganache-accounts.json",
+      vmErrorsOnRPCResponse: false,
+      total_accounts: 18
+    },
+    onCompileComplete: provisionMultisig,
+    istanbulFolder: "./coverage-contracts"
+}
+

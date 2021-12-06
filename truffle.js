@@ -20,6 +20,7 @@ module.exports = {
       skipDryRun: true
     }
   },
+  plugins: ["solidity-coverage"],
   mocha: {
     reporter: "mocha-circleci-reporter",
     reporterOptions: {
