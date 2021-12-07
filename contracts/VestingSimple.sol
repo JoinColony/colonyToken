@@ -29,14 +29,14 @@ contract VestingSimple is DSMath, DSAuth {
   event GrantSet(address recipient, uint256 amount);
   event GrantClaimed(address recipient, uint256 claimed);
 
-  Token public token;
+  Token public token; // The token being distributed
 
-  uint256 public initialClaimable;
-  uint256 public vestingDuration;
-  uint256 public startTime;
+  uint256 public initialClaimable; // The amount of tokens claimable upon activation
+  uint256 public vestingDuration; // The period of time (in seconds) over which the vesting occurs
+  uint256 public startTime; // The timestamp of activation, when vesting begins
 
-  uint256 public totalGrants;
-  uint256 public totalClaimed;
+  uint256 public totalGrants; // Sum of all grants
+  uint256 public totalClaimed; // Sum of all claimed tokens
 
   struct Grant {
     uint256 amount;
