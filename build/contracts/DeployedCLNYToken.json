@@ -1,5 +1,5 @@
 {
-  "contractName": "Token",
+  "contractName": "DeployedCLNYToken",
   "abi": [
     {
       "inputs": [
