@@ -4,7 +4,7 @@ import chai from "chai";
 import bnChai from "bn-chai";
 import BN from "bn.js";
 
-import {checkErrorRevert, currentBlockTime, makeTxAtTimestamp, startMining} from "../helpers/test-helper";
+import { checkErrorRevert, currentBlockTime, forwardTime, makeTxAtTimestamp, startMining } from "../helpers/test-helper";
 
 const {expect} = chai;
 chai.use(bnChai(web3.utils.BN));
@@ -108,7 +108,7 @@ contract("Vesting Simple", accounts => {
     it("cannot claim grants if not active", async () => {
       await vesting.setGrant(USER1, WAD);
 
-      await checkErrorRevert(vesting.claimGrant({from: USER1}), "vesting-simple-not-active");
+      await checkErrorRevert(vesting.claimGrant({from: USER1}), "vesting-simple-nothing-to-claim");
     });
 
     it("can withdraw tokens if owner", async () => {
@@ -248,6 +248,38 @@ contract("Vesting Simple", accounts => {
       expect(grant.claimed).to.eq.BN(BASE);
 
       await checkErrorRevert(vesting.setGrant(USER1, BASE.subn(1)), "vesting-simple-bad-amount");
+    });
+
+    it("can track the total amount of grants", async () => {
+      let totalGrants;
+
+      totalGrants = await vesting.totalGrants();
+      expect(totalGrants).to.eq.BN(GRANT);
+
+      await vesting.setGrant(USER0, WAD);
+      totalGrants = await vesting.totalGrants();
+      expect(totalGrants).to.eq.BN(GRANT.add(WAD));
+
+      await vesting.setGrant(USER0, 0);
+      totalGrants = await vesting.totalGrants();
+      expect(totalGrants).to.eq.BN(GRANT);
+    });
+
+    it("can track the total amount claimed", async () => {
+      await token.mint(vesting.address, GRANT);
+      await vesting.setGrant(USER0, GRANT);
+
+      await forwardTime(YEAR, this);
+
+      let totalClaimed;
+
+      await vesting.claimGrant({ from: USER0 });
+      totalClaimed = await vesting.totalClaimed();
+      expect(totalClaimed).to.eq.BN(GRANT);
+
+      await vesting.claimGrant({ from: USER1 });
+      totalClaimed = await vesting.totalClaimed();
+      expect(totalClaimed).to.eq.BN(GRANT.muln(2));
     });
   });
 });

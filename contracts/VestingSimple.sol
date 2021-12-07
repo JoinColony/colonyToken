@@ -35,6 +35,9 @@ contract VestingSimple is DSMath, DSAuth {
   uint256 public vestingDuration;
   uint256 public startTime;
 
+  uint256 public totalGrants;
+  uint256 public totalClaimed;
+
   struct Grant {
     uint256 amount;
     uint256 claimed;
@@ -42,39 +45,34 @@ contract VestingSimple is DSMath, DSAuth {
 
   mapping (address => Grant) public grants;
 
-  modifier inactive() {
-    require(startTime == 0, "vesting-simple-already-active");
-    _;
-  }
-
-  modifier active() {
-    require(startTime > 0, "vesting-simple-not-active");
-    _;
-  }
-
   constructor(address _token, uint256 _initialClaimable, uint256 _vestingDuration) public {
+    require(_token != address(0x0), "vesting-simple-invalid-token");
+
     token = Token(_token);
     initialClaimable = _initialClaimable;
     vestingDuration = _vestingDuration;
   }
 
-  function withdraw(uint256 _amount) public auth {
-    token.transfer(msg.sender, _amount);
+  function withdraw(uint256 _amount) external auth {
+    require(token.transfer(msg.sender, _amount), "vesting-simple-transfer-failed");
   }
 
-  function activate() public auth inactive {
+  function activate() external auth {
+    require(startTime == 0, "vesting-simple-already-active");
     startTime = block.timestamp;
   }
 
   function setGrant(address _recipient, uint256 _amount) public auth {
-    require(grants[_recipient].claimed <= _amount, "vesting-simple-bad-amount");
+    Grant storage grant = grants[_recipient];
+    require(grant.claimed <= _amount, "vesting-simple-bad-amount");
 
-    grants[_recipient].amount = _amount;
+    totalGrants = add(_amount, sub(totalGrants, grant.amount));
+    grant.amount = _amount;
 
     emit GrantSet(_recipient, _amount);
   }
 
-  function setGrants(address[] memory _recipients, uint256[] memory _amounts) public auth {
+  function setGrants(address[] calldata _recipients, uint256[] calldata _amounts) external auth {
     require(_recipients.length == _amounts.length, "vesting-simple-bad-inputs");
 
     for (uint256 i; i < _recipients.length; i++) {
@@ -82,21 +80,22 @@ contract VestingSimple is DSMath, DSAuth {
     }
   }
 
-  function claimGrant() public active {
+  function claimGrant() external {
     Grant storage grant = grants[msg.sender];
-
     uint256 claimable = sub(getClaimable(grant.amount), grant.claimed);
     require(claimable > 0, "vesting-simple-nothing-to-claim");
 
     grant.claimed = add(grant.claimed, claimable);
-    token.transfer(msg.sender, claimable);
-
+    totalClaimed = add(totalClaimed, claimable);
     assert(grant.amount >= grant.claimed);
+
+    require(token.transfer(msg.sender, claimable), "vesting-simple-transfer-failed");
 
     emit GrantClaimed(msg.sender, claimable);
   }
 
   function getClaimable(uint256 _amount) public view returns (uint256) {
+    if (startTime == 0) { return 0; }
     uint256 fractionUnlocked = min(WAD, wdiv((block.timestamp - startTime), vestingDuration)); // Max 1
     uint256 remainder = sub(max(initialClaimable, _amount), initialClaimable); // Avoid underflows for small grants
     return min(_amount, add(initialClaimable, wmul(fractionUnlocked, remainder)));
