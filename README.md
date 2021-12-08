@@ -30,20 +30,22 @@ CLNY Token contract based on an ERC20 token with `mint` and `burn` functionality
 [TokenAuthority.sol](./contracts/TokenAuthority.sol)
 Acts as the Token Authority while CLNY Token is locked for token transfers. Implements `DSAuthority` to allow Colony MultiSig, Vesting and other necessary contracts to be able to transfer tokens for the purposes of pre-allocating tokens and token grants as well as the general functioning of the Colony Network. This is an immutable set of permissions which can be reviewed in the contract itself.
 
-[Vesting.sol](./contracts/Vesting.sol) 
+[VestingSimple.sol](./contracts/VestingSimple.sol)
 Stores and manages the CLNY Token grants via the following functions:
 
-Secured to Colony MultiSig only:
-* `addTokenGrant` - Adds a new token grant for a given user. Only one grant per user is allowed. The amount of CLNY grant tokens here need to be preapproved by the Colony MultiSig (which mints and owns the tokens) for transfer by the `Vesting` contract before this call. There is an option to backdate the grant here if needed.
+Secured to contract owner only:
+* `setGrant` - Adds a new token grant for a given user. Only one grant per user is allowed. The grant may be increased or decreased after the fact, but not less than any amount already claimed. Grants may also be added after activation, with vesting calculated from the time of activation.
 
-* `removeTokenGrant` - Terminate token grant for a given user transferring all vested tokens to the user and returning all non-vested tokens to the Colony MultiSig.
+* `setGrants` - Call `setGrant` on an array of addresses and values. A convenience function.
+
+* `activate` - Allows users to begin claiming token grants, with vesting calculated from the timestamp of the activating transaction.
+
+* `withdraw` - Withdraw any excess tokens from the contract and return them to the contract owner.
 
 Public functions:
-* `claimVestedTokens` - Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested. Note that it is advised recipients check they are entitled to claim via `calculateGrantClaim` before calling this.
+* `claimGrant` - Allows a grant recipient to claim their vested tokens. Errors if no tokens have vested. Note that it is advised recipients check they are entitled to claim via `getClaimable` before calling this.
 
-* `calculateGrantClaim` - Calculates the vested and unclaimed months and tokens available for a given user to claim. Due to rounding errors once grant duration is reached, returns the entire left grant amount. Returns (0, 0) if cliff has not been reached.
-
-The Colony Multisignature contract is defined in gnosis-multisig/contracts/MultiSigWallet.sol and based on the [Gnosis MultiSig](https://github.com/gnosis/MultiSigWallet)
+* `getClaimable` - Calculates the amount of tokens currently claimable by a user.
 
 ## Testing
 

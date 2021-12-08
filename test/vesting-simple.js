@@ -4,7 +4,7 @@ import chai from "chai";
 import bnChai from "bn-chai";
 import BN from "bn.js";
 
-import {checkErrorRevert, currentBlockTime, makeTxAtTimestamp, startMining} from "../helpers/test-helper";
+import {checkErrorRevert, currentBlockTime, forwardTime, makeTxAtTimestamp, startMining} from "../helpers/test-helper";
 
 const {expect} = chai;
 chai.use(bnChai(web3.utils.BN));
@@ -108,7 +108,7 @@ contract("Vesting Simple", accounts => {
     it("cannot claim grants if not active", async () => {
       await vesting.setGrant(USER1, WAD);
 
-      await checkErrorRevert(vesting.claimGrant({from: USER1}), "vesting-simple-not-active");
+      await checkErrorRevert(vesting.claimGrant({from: USER1}), "vesting-simple-nothing-to-claim");
     });
 
     it("can withdraw tokens if owner", async () => {
@@ -146,6 +146,16 @@ contract("Vesting Simple", accounts => {
 
     it("cannot activate twice", async () => {
       await checkErrorRevert(vesting.activate(), "vesting-simple-already-active");
+    });
+
+    it("cannot claim a grant if the contract has no tokens", async () => {
+      await vesting.withdraw(GRANT);
+
+      await checkErrorRevert(vesting.claimGrant({from: USER1}), "ds-token-insufficient-balance");
+    });
+
+    it("cannot claim a non-existent grant", async () => {
+      await checkErrorRevert(vesting.claimGrant({from: USER0}), "vesting-simple-nothing-to-claim");
     });
 
     it("can claim BASE number of tokens immediately", async () => {
@@ -238,6 +248,38 @@ contract("Vesting Simple", accounts => {
       expect(grant.claimed).to.eq.BN(BASE);
 
       await checkErrorRevert(vesting.setGrant(USER1, BASE.subn(1)), "vesting-simple-bad-amount");
+    });
+
+    it("can track the total amount of grants", async () => {
+      let totalAmount;
+
+      totalAmount = await vesting.totalAmount();
+      expect(totalAmount).to.eq.BN(GRANT);
+
+      await vesting.setGrant(USER0, WAD);
+      totalAmount = await vesting.totalAmount();
+      expect(totalAmount).to.eq.BN(GRANT.add(WAD));
+
+      await vesting.setGrant(USER0, 0);
+      totalAmount = await vesting.totalAmount();
+      expect(totalAmount).to.eq.BN(GRANT);
+    });
+
+    it("can track the total amount claimed", async () => {
+      await token.mint(vesting.address, GRANT);
+      await vesting.setGrant(USER0, GRANT);
+
+      await forwardTime(YEAR, this);
+
+      let totalClaimed;
+
+      await vesting.claimGrant({from: USER0});
+      totalClaimed = await vesting.totalClaimed();
+      expect(totalClaimed).to.eq.BN(GRANT);
+
+      await vesting.claimGrant({from: USER1});
+      totalClaimed = await vesting.totalClaimed();
+      expect(totalClaimed).to.eq.BN(GRANT.muln(2));
     });
   });
 });
