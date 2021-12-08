@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity 0.5.8;
+pragma solidity 0.8.10;
 
 import "../lib/dappsys/base.sol";
 import "./Lockable.sol";
@@ -53,6 +53,7 @@ contract WrappedToken is DSTokenBase(0), Lockable {
   // Note that transfer() calls this internally, so it's also lockable
   function transferFrom(address src, address dst, uint wad)
     public
+    override
     unlocked
     returns (bool)
   {

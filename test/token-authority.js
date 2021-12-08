@@ -3,14 +3,14 @@
 import chai from "chai";
 import bnChai from "bn-chai";
 
-import { getFunctionSignature } from "../helpers/test-helper";
+import {getFunctionSignature} from "../helpers/test-helper";
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(bnChai(web3.utils.BN));
 
 const TokenAuthority = artifacts.require("TokenAuthority");
 const Token = artifacts.require("Token");
-const Vesting = artifacts.require("Vesting");
+const VestingSimple = artifacts.require("VestingSimple");
 const MultiSigWallet = artifacts.require("MultiSigWallet");
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -28,7 +28,7 @@ contract("TokenAuthority", () => {
   before(async () => {
     token = await Token.deployed();
     colonyMultiSig = await MultiSigWallet.deployed();
-    vesting = await Vesting.deployed();
+    vesting = await VestingSimple.deployed();
     tokenAuthority = await TokenAuthority.deployed();
   });
 

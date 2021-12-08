@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity 0.5.8;
+pragma solidity 0.8.10;
 
 import "../lib/dappsys/auth.sol";
 import "../lib/dappsys/base.sol";
@@ -44,28 +44,29 @@ contract Token is DSTokenBase(0), DSAuth, ERC20Extended {
   }
 
   function transferFrom(address src, address dst, uint wad) public
+  override(DSTokenBase, ERC20)
   unlocked
   returns (bool)
   {
     return super.transferFrom(src, dst, wad);
   }
 
-  function mint(uint wad) public auth {
+  function mint(uint wad) public override auth {
     mint(msg.sender, wad);
   }
 
-  function burn(uint wad) public {
+  function burn(uint wad) public override {
     burn(msg.sender, wad);
   }
 
-  function mint(address guy, uint wad) public auth {
+  function mint(address guy, uint wad) public override auth {
     _balances[guy] = add(_balances[guy], wad);
     _supply = add(_supply, wad);
     emit Mint(guy, wad);
     emit Transfer(address(0x0), guy, wad);
   }
 
-  function burn(address guy, uint wad) public {
+  function burn(address guy, uint wad) public override {
     if (guy != msg.sender) {
       require(_approvals[guy][msg.sender] >= wad, "ds-token-insufficient-approval");
       _approvals[guy][msg.sender] = sub(_approvals[guy][msg.sender], wad);

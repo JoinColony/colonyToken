@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity 0.5.8;
+pragma solidity 0.8.10;
 
 import "../lib/dappsys/auth.sol";
 
@@ -44,7 +44,7 @@ contract TokenAuthority is DSAuthority {
     }
   }
 
-  function canCall(address src, address dst, bytes4 sig) public view returns (bool) {
+  function canCall(address src, address dst, bytes4 sig) public override view returns (bool) {
     if (sig == BURN_FUNC_SIG || sig == BURN_OVERLOAD_FUNC_SIG) {
       // We allow anyone to burn their own tokens even when the token is still locked
       return true;

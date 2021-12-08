@@ -20,6 +20,7 @@ module.exports = {
       skipDryRun: true
     }
   },
+  plugins: ["solidity-coverage"],
   mocha: {
     reporter: "mocha-circleci-reporter",
     reporterOptions: {
@@ -30,8 +31,9 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.5.8",
+      version: "0.8.10",
       docker: true,
+      parser: "solcjs",
       settings: {
         optimizer: {
           enabled: true,

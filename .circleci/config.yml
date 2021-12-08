@@ -26,7 +26,7 @@ step_setup_global_packages: &step_setup_global_packages
 step_pull_solc_docker: &step_pull_solc_docker
     run:
       name: "Pull solc docker image"
-      command: docker pull ethereum/solc:0.5.8
+      command: docker pull ethereum/solc:0.8.10
 jobs:
   lint-and-unit-test:
     <<: *job_common
@@ -47,7 +47,7 @@ jobs:
           command: yarn run eslint
       - run:
           name: "Linting Solidity"
-          command: yarn run solium
+          command: yarn run solhint
       - run:
           name: "Running unit tests"
           command: yarn run test:contracts

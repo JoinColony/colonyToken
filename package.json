@@ -7,17 +7,17 @@
     "test": "test"
   },
   "scripts": {
-    "solium-staged": "bash ./scripts/solium.sh",
+    "solhint-staged": "bash ./scripts/solhint.sh",
     "eslint-staged": "bash ./scripts/eslint.sh",
     "eslint": "eslint .",
-    "solium": "solium --dir .",
+    "solhint": "solhint ./contracts/**/*.sol",
     "clean:contracts": "rimraf ./build/contracts/*",
     "provision:multisig:contract": "truffle compile && bash ./scripts/provision-multisig-contract.sh",
     "start:blockchain:client": "bash ./scripts/start-blockchain-client.sh",
     "stop:blockchain:client": "bash ./scripts/stop-blockchain-client.sh",
     "test:contracts": "npm run start:blockchain:client & truffle migrate --reset --compile-all && truffle test --network development",
     "test:contracts:gasCosts": "npm run start:blockchain:client & truffle migrate --reset --compile-all && truffle test gasCosts/gasCosts.js --network development",
-    "test:contracts:coverage": "SOLIDITY_COVERAGE=1 solidity-coverage && istanbul check-coverage --statements 100 --branches 92.86 --functions 100 --lines 100",
+    "test:contracts:coverage": "SOLIDITY_COVERAGE=1 truffle run coverage --network coverage --temp build --file='./test/*'",
     "pretest:contracts": "sed -ie \"s/eth-gas-reporter/mocha-circleci-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
     "pretest:contracts:gasCosts": "sed -ie \"s/mocha-circleci-reporter/eth-gas-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
     "pretest:contracts:coverage": "sed -ie \"s/eth-gas-reporter/mocha-circleci-reporter/g\" ./truffle.js && rimraf ./truffle.jse",
@@ -27,7 +27,7 @@
   },
   "pre-commit": [
     "eslint-staged",
-    "solium-staged"
+    "solhint-staged"
   ],
   "repository": {
     "type": "git",
@@ -56,7 +56,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eth-gas-reporter": "0.1.10",
-    "ethlint": "^1.2.3",
+    "ethlint": "^1.2.5",
     "ganache-cli": "^6.10.2",
     "istanbul": "^0.4.5",
     "mocha": "^6.0.2",
@@ -65,9 +65,10 @@
     "prettier": "^1.14.2",
     "rimraf": "^2.6.3",
     "shortid": "^2.2.14",
-    "solidity-coverage": "^0.6.0-beta.4",
+    "solhint": "^3.2.2",
+    "solidity-coverage": "^0.7.13",
     "solidity-steamroller": "^1.1.0",
-    "truffle": "^5.0.10",
+    "truffle": "^5.1.48",
     "web3-utils": "^1.0.0-beta.51"
   }
 }

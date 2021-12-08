@@ -1,9 +1,9 @@
 /* eslint-disable no-console, no-unused-expressions */
 import shortid from "shortid";
-import { sha3 } from "web3-utils";
+import {sha3} from "web3-utils";
 import chai from "chai";
 
-const { expect } = chai;
+const {expect} = chai;
 
 export function web3GetNetwork() {
   return new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@ export async function checkErrorRevert(promise, errorMessage) {
   let receipt;
   let reason;
   try {
-    ({ receipt } = await promise);
+    ({receipt} = await promise);
     // If the promise is from Truffle, then we have the receipt already.
     // If this tx has come from the mining client, the promise has just resolved to a tx hash and we need to do the following
     if (!receipt) {
@@ -87,7 +87,7 @@ export async function checkErrorRevert(promise, errorMessage) {
       receipt = await web3GetTransactionReceipt(txid);
     }
   } catch (err) {
-    ({ receipt, reason } = err);
+    ({receipt, reason} = err);
     expect(reason).to.equal(errorMessage);
   }
   // Check the receipt `status` to ensure transaction failed.
@@ -139,7 +139,7 @@ export async function getBlockTime(blockNumber) {
 }
 
 export async function expectEvent(tx, eventName) {
-  const { logs } = await tx;
+  const {logs} = await tx;
   const event = logs.find(e => e.event === eventName);
   return expect(event).to.exist;
 }

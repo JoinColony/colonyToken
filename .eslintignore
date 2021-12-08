@@ -2,7 +2,7 @@
 
 build
 contracts
-coverage
+coverage-contracts
 lib
 migrations
 flattened

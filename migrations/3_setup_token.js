@@ -1,7 +1,7 @@
 const MultiSigWallet = artifacts.require("./MultiSigWallet");
 const TokenAuthority = artifacts.require("./TokenAuthority");
 const Token = artifacts.require("./Token");
-const Vesting = artifacts.require("./Vesting");
+const VestingSimple = artifacts.require("./VestingSimple");
 
 module.exports = (deployer) => {
   const TOTAL_SUPPLY = 1000;
@@ -19,7 +19,7 @@ module.exports = (deployer) => {
     })
     .then(instance => {
       tokenAuthority = instance;
-      return Vesting.deployed();
+      return VestingSimple.deployed();
     })
     .then(instance => {
       vesting = instance;
