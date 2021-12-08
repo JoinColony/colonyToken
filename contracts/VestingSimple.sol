@@ -35,7 +35,7 @@ contract VestingSimple is DSMath, DSAuth {
   uint256 public vestingDuration; // The period of time (in seconds) over which the vesting occurs
   uint256 public startTime; // The timestamp of activation, when vesting begins
 
-  uint256 public totalGrants; // Sum of all grants
+  uint256 public totalAmount; // Sum of all grant amounts
   uint256 public totalClaimed; // Sum of all claimed tokens
 
   struct Grant {
@@ -66,7 +66,7 @@ contract VestingSimple is DSMath, DSAuth {
     Grant storage grant = grants[_recipient];
     require(grant.claimed <= _amount, "vesting-simple-bad-amount");
 
-    totalGrants = add(_amount, sub(totalGrants, grant.amount));
+    totalAmount = add(_amount, sub(totalAmount, grant.amount));
     grant.amount = _amount;
 
     emit GrantSet(_recipient, _amount);
@@ -87,7 +87,9 @@ contract VestingSimple is DSMath, DSAuth {
 
     grant.claimed = add(grant.claimed, claimable);
     totalClaimed = add(totalClaimed, claimable);
+
     assert(grant.amount >= grant.claimed);
+    assert(totalAmount >= totalClaimed);
 
     require(token.transfer(msg.sender, claimable), "vesting-simple-transfer-failed");
 
