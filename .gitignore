@@ -4,6 +4,7 @@ test-accounts.json
 ganache-accounts.json
 test-results.xml
 coverage.json
+/coverage
 /coverage-contracts
 /migrations/coverage
 /flattened/*
