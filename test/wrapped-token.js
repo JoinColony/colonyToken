@@ -40,7 +40,7 @@ contract("Wrapped Token", accounts => {
       locked = await wrappedToken.locked();
       expect(locked).to.be.true;
 
-      await checkErrorRevert(wrappedToken.unlock({ from: USER1 }), "ds-auth-unauthorized");
+      await checkErrorRevert(wrappedToken.unlock({from: USER1}), "ds-auth-unauthorized");
 
       await wrappedToken.unlock();
 
@@ -119,8 +119,11 @@ contract("Wrapped Token", accounts => {
     });
 
     it("cannot unwrap tokens while locked, unless authorized", async () => {
+      await token.approve(wrappedToken.address, WAD, {from: USER0});
+      await wrappedToken.deposit(WAD, {from: USER0});
+
       // Authorised, as owner
-      await checkErrorRevert(wrappedToken.withdraw(WAD, {from: USER0}), undefined);
+      await wrappedToken.withdraw(WAD, {from: USER0});
 
       // Not authorised
       await checkErrorRevert(wrappedToken.withdraw(WAD, {from: USER1}), "colony-token-unauthorised");
@@ -130,14 +133,17 @@ contract("Wrapped Token", accounts => {
     });
 
     it("cannot transfer tokens while locked, unless authorized", async () => {
-      // Authorised, as owner
-      await checkErrorRevert(wrappedToken.transfer(USER0, WAD, {from: USER0}), "ds-token-insufficient-balance");
+      await token.approve(wrappedToken.address, WAD, {from: USER0});
+      await wrappedToken.deposit(WAD, {from: USER0});
 
-      // Not authorised
-      await checkErrorRevert(wrappedToken.transfer(USER1, WAD, {from: USER1}), "colony-token-unauthorised");
+      // Authorised, as owner
+      await wrappedToken.transfer(USER2, WAD, {from: USER0});
 
       // Authorised, by token authority
-      await checkErrorRevert(wrappedToken.transfer(USER2, WAD, {from: USER2}), "ds-token-insufficient-balance");
+      await wrappedToken.transfer(USER1, WAD, {from: USER2});
+
+      // Not authorised
+      await checkErrorRevert(wrappedToken.transfer(USER0, WAD, {from: USER1}), "colony-token-unauthorised");
     });
   });
 });
