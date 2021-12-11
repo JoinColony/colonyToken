@@ -18,8 +18,8 @@
 pragma solidity 0.8.10;
 
 import "../lib/dappsys/base.sol";
+import "./Token.sol";
 import "./Lockable.sol";
-
 
 contract WrappedToken is DSTokenBase(0), Lockable {
   event  Deposit(address indexed dst, uint256 wad);
@@ -29,6 +29,18 @@ contract WrappedToken is DSTokenBase(0), Lockable {
 
   constructor(address _token) public {
     token = _token;
+  }
+
+  function decimals() public view returns (uint8) {
+    return Token(token).decimals();
+  }
+
+  function name() public view returns (string memory) {
+    return string(abi.encodePacked("Wrapped ", Token(token).name()));
+  }
+
+  function symbol() public view returns (string memory) {
+    return string(abi.encodePacked("W", Token(token).symbol()));
   }
 
   function deposit(uint256 wad) public unlocked {
