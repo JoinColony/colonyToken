@@ -281,5 +281,43 @@ contract("Vesting Simple", accounts => {
       totalClaimed = await vesting.totalClaimed();
       expect(totalClaimed).to.eq.BN(GRANT.muln(2));
     });
+
+    it("can vest immediately if given a vesting duration of 1", async () => {
+      vesting = await VestingSimple.new(token.address, BASE, 1, {from: USER0});
+      await token.mint(vesting.address, GRANT);
+      await vesting.setGrant(USER1, GRANT);
+      await vesting.activate();
+
+      const balance0 = await token.balanceOf(USER1);
+
+      const timestamp = await currentBlockTime();
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp + 1, this);
+
+      const balance1 = await token.balanceOf(USER1);
+      expect(balance1.sub(balance0)).to.eq.BN(GRANT);
+    });
+
+    it("can vest linearly if given an initial claimable of of 0", async () => {
+      vesting = await VestingSimple.new(token.address, 0, YEAR, {from: USER0});
+      await token.mint(vesting.address, GRANT);
+      await vesting.setGrant(USER1, GRANT);
+      await vesting.activate();
+
+      const balance0 = await token.balanceOf(USER1);
+
+      let timestamp = await currentBlockTime();
+
+      timestamp += YEAR / 2;
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
+
+      const balance1 = await token.balanceOf(USER1);
+      expect(balance1.sub(balance0)).to.eq.BN(GRANT.divn(2));
+
+      timestamp += YEAR / 2;
+      await makeTxAtTimestamp(vesting.claimGrant, [{from: USER1}], timestamp, this);
+
+      const balance2 = await token.balanceOf(USER1);
+      expect(balance2.sub(balance0)).to.eq.BN(GRANT);
+    });
   });
 });
