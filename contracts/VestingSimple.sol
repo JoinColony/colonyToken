@@ -16,7 +16,6 @@
 */
 
 pragma solidity 0.8.10;
-pragma experimental ABIEncoderV2;
 
 import "./Token.sol";
 import "../lib/dappsys/auth.sol";
@@ -45,8 +44,9 @@ contract VestingSimple is DSMath, DSAuth {
 
   mapping (address => Grant) public grants;
 
-  constructor(address _token, uint256 _initialClaimable, uint256 _vestingDuration) public {
+  constructor(address _token, uint256 _initialClaimable, uint256 _vestingDuration) {
     require(_token != address(0x0), "vesting-simple-invalid-token");
+    require(_vestingDuration > 0, "vesting-simple-invalid-duration");
 
     token = Token(_token);
     initialClaimable = _initialClaimable;
