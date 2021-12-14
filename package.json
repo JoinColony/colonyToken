@@ -45,6 +45,7 @@
     "@babel/preset-env": "^7.4.2",
     "@babel/register": "^7.4.0",
     "@colony/eslint-config-colony": "^7.0.0",
+    "@truffle/hdwallet-provider": "^1.0.9",
     "babel-eslint": "^10.0.1",
     "bn-chai": "^1.0.1",
     "bn.js": "^4.11.8",

@@ -1,5 +1,6 @@
 require("@babel/register");
 require("@babel/polyfill");
+const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -18,6 +19,12 @@ module.exports = {
       network_id: "1999",
       gasPrice: 0x01, // <-- Use this low gas price
       skipDryRun: true
+    },
+    xdai: {
+      provider: () => {
+        return new HDWalletProvider("private-key-here", "https://rpc.xdaichain.com/");
+      },
+      network_id: "100"
     }
   },
   plugins: ["solidity-coverage"],
