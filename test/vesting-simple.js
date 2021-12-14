@@ -22,7 +22,7 @@ contract("Vesting Simple", accounts => {
   const WAD = new BN(10).pow(new BN(18));
   const BASE = WAD.muln(100000);
   const GRANT = BASE.muln(5);
-  const DURATION = 60 * 60 * 24 * 365;
+  const DURATION = 60 * 60 * 24 * 365 * 2;
 
   before(async () => {
     token = await Token.new("Colony Token", "CLNY", 18);
@@ -30,19 +30,19 @@ contract("Vesting Simple", accounts => {
   });
 
   beforeEach(async () => {
-    vesting = await VestingSimple.new(token.address, BASE, DURATION, {from: USER0});
+    vesting = await VestingSimple.new(token.address, {from: USER0});
   });
 
   describe("when initialised", () => {
     it("can fetch the storage variables", async () => {
       const tokenAddress = await vesting.token();
-      const initialClaimable = await vesting.initialClaimable();
-      const vestingDuration = await vesting.vestingDuration();
+      // const initialClaimable = await vesting.initialClaimable();
+      // const vestingDuration = await vesting.vestingDuration();
       const startTime = await vesting.startTime();
 
       expect(token.address).to.equal(tokenAddress);
-      expect(initialClaimable).to.eq.BN(BASE);
-      expect(vestingDuration).to.eq.BN(DURATION);
+      // expect(initialClaimable).to.eq.BN(BASE);
+      // expect(vestingDuration).to.eq.BN(DURATION);
       expect(startTime).to.be.zero;
     });
 
@@ -281,7 +281,7 @@ contract("Vesting Simple", accounts => {
       expect(totalClaimed).to.eq.BN(GRANT.muln(2));
     });
 
-    it("can vest immediately if given a vesting duration of 1", async () => {
+    it.skip("can vest immediately if given a vesting duration of 1", async () => {
       vesting = await VestingSimple.new(token.address, BASE, 1, {from: USER0});
       await token.mint(vesting.address, GRANT);
       await vesting.setGrant(USER1, GRANT);
@@ -296,7 +296,7 @@ contract("Vesting Simple", accounts => {
       expect(balance1.sub(balance0)).to.eq.BN(GRANT);
     });
 
-    it("can vest linearly if given an initial claimable of of 0", async () => {
+    it.skip("can vest linearly if given an initial claimable of of 0", async () => {
       vesting = await VestingSimple.new(token.address, 0, DURATION, {from: USER0});
       await token.mint(vesting.address, GRANT);
       await vesting.setGrant(USER1, GRANT);
