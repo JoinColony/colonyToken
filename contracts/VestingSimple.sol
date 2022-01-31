@@ -16,7 +16,6 @@
 */
 
 pragma solidity 0.8.10;
-pragma experimental ABIEncoderV2;
 
 import "./Token.sol";
 import "../lib/dappsys/auth.sol";
@@ -31,8 +30,8 @@ contract VestingSimple is DSMath, DSAuth {
 
   Token public token; // The token being distributed
 
-  uint256 public initialClaimable; // The amount of tokens claimable upon activation
-  uint256 public vestingDuration; // The period of time (in seconds) over which the vesting occurs
+  uint256 constant public INITIAL_CLAIMABLE = 100000 * WAD; // The amount of tokens claimable upon activation
+  uint256 constant public VESTING_DURATION = 365 days * 2; // The period of time (in seconds) over which the vesting occurs
   uint256 public startTime; // The timestamp of activation, when vesting begins
 
   uint256 public totalAmount; // Sum of all grant amounts
@@ -45,12 +44,10 @@ contract VestingSimple is DSMath, DSAuth {
 
   mapping (address => Grant) public grants;
 
-  constructor(address _token, uint256 _initialClaimable, uint256 _vestingDuration) public {
+  constructor(address _token) {
     require(_token != address(0x0), "vesting-simple-invalid-token");
 
     token = Token(_token);
-    initialClaimable = _initialClaimable;
-    vestingDuration = _vestingDuration;
   }
 
   function withdraw(uint256 _amount) external auth {
@@ -98,8 +95,8 @@ contract VestingSimple is DSMath, DSAuth {
 
   function getClaimable(uint256 _amount) public view returns (uint256) {
     if (startTime == 0) { return 0; }
-    uint256 fractionUnlocked = min(WAD, wdiv((block.timestamp - startTime), vestingDuration)); // Max 1
-    uint256 remainder = sub(max(initialClaimable, _amount), initialClaimable); // Avoid underflows for small grants
-    return min(_amount, add(initialClaimable, wmul(fractionUnlocked, remainder)));
+    uint256 fractionUnlocked = min(WAD, wdiv((block.timestamp - startTime), VESTING_DURATION)); // Max 1
+    uint256 remainder = sub(max(INITIAL_CLAIMABLE, _amount), INITIAL_CLAIMABLE); // Avoid underflows for small grants
+    return min(_amount, add(INITIAL_CLAIMABLE, wmul(fractionUnlocked, remainder)));
   }
 }

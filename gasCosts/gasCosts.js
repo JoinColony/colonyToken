@@ -13,17 +13,17 @@ contract("Gas Costs", accounts => {
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
   const WAD = new BN(10).pow(new BN(18));
-  const BASE = WAD.muln(250000);
+  const BASE = WAD.muln(100000);
   const GRANT = BASE.muln(5);
 
-  const YEAR = 60 * 60 * 24 * 365;
+  // const YEAR = 60 * 60 * 24 * 365 * 2;
 
   let token;
   let vesting;
 
   beforeEach(async () => {
     token = await Token.new("Colony token", "CLNY", 18);
-    vesting = await VestingSimple.new(token.address, BASE, YEAR);
+    vesting = await VestingSimple.new(token.address);
 
     const tokenAuthority = await TokenAuthority.new(token.address, ZERO_ADDRESS, [vesting.address]);
     const dsAuthToken = await DSAuth.at(token.address);
