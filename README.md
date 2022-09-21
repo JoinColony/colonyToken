@@ -17,9 +17,9 @@ If you've found a bug, please reach out to us here on github or by [email](mailt
 ```
 git clone https://github.com/JoinColony/colonyToken.git
 cd colonyToken
-yarn
+npm ci
 git submodule update --remote --init
-yarn run provision:multisig:contract
+npm run provision:multisig:contract
 ```
 
 ## Contracts
@@ -51,19 +51,19 @@ Public functions:
 
 To run all tests:
 ```
-yarn test:contracts
+npm run test:contracts
 ```
 To run tests with code coverage using [solidity-coverage](https://github.com/sc-forks/solidity-coverage):
 ```
-yarn test:contracts:coverage
+npm run test:contracts:coverage
 ```
 To lint contracts using [Solium](https://github.com/duaraghav8/Solium)
 ```
-yarn lint:contracts
+npm run lint:contracts
 ```
 
 ## Deployment
 
 We use a hosted Ethereum node cluster - [Infura](https://infura.io) for deployment to main and test networks.
 
-Flattened contracts are in source control under `flattened` folder and can be generated via `yarn run flatten:contracts` which uses [/solidity-steamroller](https://github.com/JoinColony/solidity-steamroller)
+Flattened contracts are in source control under `flattened` folder and can be generated via `npm run flatten:contracts` which uses [/solidity-steamroller](https://github.com/JoinColony/solidity-steamroller)

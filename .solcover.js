@@ -4,7 +4,7 @@ const log = console.log;
 // Copies pre-built token artifacts to .coverage_artifacts/contracts
 function provisionMultisig(config){
   let output;
-  const provisionMultisig = "yarn run provision:multisig:contract";
+  const provisionMultisig = "npm run provision:multisig:contract";
 
   log('Provisioning ColonyToken contracts...')
   output = execSync(provisionMultisig);
