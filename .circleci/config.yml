@@ -10,19 +10,19 @@ job_common: &job_common
 step_save_cache: &step_save_cache
   save_cache:
     paths:
-      - ~/.cache/yarn
-    key: node-modules-{{ checksum "yarn.lock" }}
+      - ~/.npm
+    key: node-modules-{{ checksum "package-lock.json" }}
 step_restore_cache: &step_restore_cache
   restore_cache:
     keys:
-      - node-modules-{{ checksum "yarn.lock" }}
+      - node-modules-{{ checksum "package-lock.json" }}
 step_setup_global_packages: &step_setup_global_packages
   run:
     name: "Set up global packages"
     command: |
-      yarn --pure-lockfile --network-concurrency 1
+      npm ci
       git submodule update --remote --init
-      yarn run provision:multisig:contract
+      npm run provision:multisig:contract
 step_pull_solc_docker: &step_pull_solc_docker
     run:
       name: "Pull solc docker image"
@@ -44,19 +44,19 @@ jobs:
             sudo apt-get install lsof
       - run:
           name: "Linting JavaScript"
-          command: yarn run eslint
+          command: npm run eslint
       - run:
           name: "Linting Solidity"
-          command: yarn run solhint
+          command: npm run solhint
       - run:
           name: "Running unit tests"
-          command: yarn run test:contracts
+          command: npm run test:contracts
       - run:
           name: "Running gas cost tests"
-          command: yarn run test:contracts:gasCosts
+          command: npm run test:contracts:gasCosts
       - run:
           name: "Running unit tests with coverage"
-          command: yarn run test:contracts:coverage
+          command: npm run test:contracts:coverage
       - <<: *step_save_cache
       # Save test results
       - store_test_results:

@@ -33,9 +33,9 @@ contract("Gas Costs", accounts => {
   describe("VestingSimple", () => {
     it("working with grants", async () => {
       await token.mint(vesting.address, GRANT);
-      await vesting.setGrant(USER1, GRANT, {from: USER0});
-      await vesting.activate({from: USER0});
-      await vesting.claimGrant({from: USER1});
+      await vesting.setGrant(USER1, GRANT, { from: USER0 });
+      await vesting.activate({ from: USER0 });
+      await vesting.claimGrant({ from: USER1 });
     });
   });
 });

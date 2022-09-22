@@ -3,9 +3,9 @@
 import chai from "chai";
 import bnChai from "bn-chai";
 
-import {checkErrorRevert, expectEvent} from "../helpers/test-helper";
+import { checkErrorRevert, expectEvent } from "../helpers/test-helper";
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(bnChai(web3.utils.BN));
 
 const TokenTransferBinaryRegulator = artifacts.require("TokenTransferBinaryRegulator");
@@ -38,11 +38,11 @@ contract("Binary Regulator", accounts => {
       const a2BalanceBefore = await token.balanceOf(ADDRESS_2);
 
       // Confirm we cannot send directly
-      await checkErrorRevert(token.transfer(ADDRESS_2, 500, {from: ADDRESS_1}), "colony-token-unauthorised");
+      await checkErrorRevert(token.transfer(ADDRESS_2, 500, { from: ADDRESS_1 }), "colony-token-unauthorised");
 
       // Make request to regulator
-      await token.approve(regulator.address, 500, {from: ADDRESS_1});
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, {from: ADDRESS_1});
+      await token.approve(regulator.address, 500, { from: ADDRESS_1 });
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
 
       const transferCount = await regulator.transferCount();
 
@@ -59,7 +59,7 @@ contract("Binary Regulator", accounts => {
     });
 
     it("shouldn't allow me to propose a transfer of someone else's tokens", async () => {
-      await checkErrorRevert(regulator.requestTransfer(ADDRESS_2, ADDRESS_1, 500, {from: ADDRESS_1}), "colony-token-regulator-not-from-address");
+      await checkErrorRevert(regulator.requestTransfer(ADDRESS_2, ADDRESS_1, 500, { from: ADDRESS_1 }), "colony-token-regulator-not-from-address");
     });
 
     it("should't allow anyone but the owner to execute transfer", async () => {
@@ -67,29 +67,29 @@ contract("Binary Regulator", accounts => {
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       // Make request to regulator
-      await token.approve(regulator.address, 1000, {from: ADDRESS_1});
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, {from: ADDRESS_1});
+      await token.approve(regulator.address, 1000, { from: ADDRESS_1 });
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
 
       const transferCount = await regulator.transferCount();
       await checkErrorRevert(regulator.executeTransfer(transferCount.toNumber()), "colony-token-regulator-only-owner-can-execute");
     });
 
     it("shouldn't allow me to cancel someone else's transfer", async () => {
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, {from: ADDRESS_1});
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
       const transferCount = await regulator.transferCount();
       await checkErrorRevert(regulator.invalidateRequest(transferCount), "colony-token-regulator-not-from-address");
     });
 
     it("should allow me to cancel a transfer I proposed", async () => {
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, {from: ADDRESS_1});
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
       const transferCount = await regulator.transferCount();
-      await regulator.invalidateRequest(transferCount, {from: ADDRESS_1});
+      await regulator.invalidateRequest(transferCount, { from: ADDRESS_1 });
       const transfer = await regulator.transfers(transferCount);
       expect(transfer.valid).to.be.false;
     });
 
     it("should allow an admin to decline a transfer", async () => {
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, {from: ADDRESS_1});
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
       let transferCount = await regulator.transferCount();
       transferCount = transferCount.toNumber();
 
@@ -110,8 +110,8 @@ contract("Binary Regulator", accounts => {
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       // Make request to regulator
-      await token.approve(regulator.address, 1000, {from: ADDRESS_1});
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, {from: ADDRESS_1});
+      await token.approve(regulator.address, 1000, { from: ADDRESS_1 });
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 500, { from: ADDRESS_1 });
 
       let transferCount = await regulator.transferCount();
       transferCount = transferCount.toNumber();
@@ -140,12 +140,12 @@ contract("Binary Regulator", accounts => {
       await colonyMultiSig.submitTransaction(token.address, 0, txData);
 
       // Confirm we cannot send directly
-      await checkErrorRevert(token.transfer(ADDRESS_2, 500, {from: ADDRESS_1}), "colony-token-unauthorised");
+      await checkErrorRevert(token.transfer(ADDRESS_2, 500, { from: ADDRESS_1 }), "colony-token-unauthorised");
 
       // Make 2 separate requests to regulator totalling the entire amount
-      await token.approve(regulator.address, 500, {from: ADDRESS_1});
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 100, {from: ADDRESS_1});
-      await regulator.requestTransfer(ADDRESS_1, ADDRESS_3, 400, {from: ADDRESS_1});
+      await token.approve(regulator.address, 500, { from: ADDRESS_1 });
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_2, 100, { from: ADDRESS_1 });
+      await regulator.requestTransfer(ADDRESS_1, ADDRESS_3, 400, { from: ADDRESS_1 });
 
       let transferCount = await regulator.transferCount();
       transferCount = transferCount.toNumber();
