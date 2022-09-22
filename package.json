@@ -66,9 +66,9 @@
     "rimraf": "^2.6.3",
     "shortid": "^2.2.14",
     "solhint": "^3.2.2",
-    "solidity-coverage": "^0.7.13",
+    "solidity-coverage": "^0.8.2",
     "solidity-steamroller": "^1.1.0",
-    "truffle": "^5.1.48",
+    "truffle": "^5.4.23",
     "web3-utils": "^1.0.0-beta.51"
   }
 }
