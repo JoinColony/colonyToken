@@ -13,7 +13,7 @@ const DSTokenBase = artifacts.require("DSTokenBase");
 const TokenAuthority = artifacts.require("TokenAuthority");
 const WrappedToken = artifacts.require("WrappedToken");
 
-contract("Wrapped Token", accounts => {
+contract("Wrapped Token", (accounts) => {
   let token;
   let wrappedToken;
 

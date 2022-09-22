@@ -1,8 +1,8 @@
 const babelConfig = {
-  presets: ["@babel/preset-env"]
+  presets: ["@babel/preset-env"],
 };
 
-module.exports = babel => {
+module.exports = (babel) => {
   babel.cache.never();
   return babelConfig;
 };

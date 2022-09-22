@@ -12,7 +12,7 @@ chai.use(bnChai(web3.utils.BN));
 const Token = artifacts.require("Token");
 const VestingSimple = artifacts.require("VestingSimple");
 
-contract("Vesting Simple", accounts => {
+contract("Vesting Simple", (accounts) => {
   let token;
   let vesting;
 
