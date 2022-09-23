@@ -12,7 +12,7 @@ const TokenTransferBinaryRegulator = artifacts.require("TokenTransferBinaryRegul
 const Token = artifacts.require("Token");
 const MultiSigWallet = artifacts.require("MultiSigWallet");
 
-contract("Binary Regulator", accounts => {
+contract("Binary Regulator", (accounts) => {
   const ADDRESS_1 = accounts[1];
   const ADDRESS_2 = accounts[2];
   const ADDRESS_3 = accounts[3];

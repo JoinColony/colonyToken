@@ -1,4 +1,3 @@
-/* eslint-disable no-console, no-unused-expressions */
 import shortid from "shortid";
 import { sha3 } from "web3-utils";
 import chai from "chai";
@@ -102,10 +101,7 @@ export function getRandomString(_length) {
   const length = _length || 7;
   let randString = "";
   while (randString.length < length) {
-    randString += shortid
-      .generate()
-      .replace(/_/g, "")
-      .toLowerCase();
+    randString += shortid.generate().replace(/_/g, "").toLowerCase();
   }
   return randString.slice(0, length);
 }
@@ -140,7 +136,7 @@ export async function getBlockTime(blockNumber) {
 
 export async function expectEvent(tx, eventName) {
   const { logs } = await tx;
-  const event = logs.find(e => e.event === eventName);
+  const event = logs.find((e) => e.event === eventName);
   return expect(event).to.exist;
 }
 
@@ -155,9 +151,9 @@ export async function mineBlock(timestamp) {
         jsonrpc: "2.0",
         method: "evm_mine",
         params: timestamp ? [timestamp] : [],
-        id: new Date().getTime()
+        id: new Date().getTime(),
       },
-      err => {
+      (err) => {
         if (err) {
           return reject(err);
         }
@@ -174,9 +170,9 @@ export async function stopMining() {
         jsonrpc: "2.0",
         method: "miner_stop",
         params: [],
-        id: new Date().getTime()
+        id: new Date().getTime(),
       },
-      err => {
+      (err) => {
         if (err) {
           return reject(err);
         }
@@ -193,9 +189,9 @@ export async function startMining() {
         jsonrpc: "2.0",
         method: "miner_start",
         params: [],
-        id: new Date().getTime()
+        id: new Date().getTime(),
       },
-      err => {
+      (err) => {
         if (err) {
           return reject(err);
         }
@@ -247,15 +243,15 @@ export async function forwardTime(seconds, test) {
     if (client.indexOf("TestRPC") === -1) {
       resolve(test.skip());
     } else {
-      console.log(`Forwarding time with ${seconds}s ...`);
+      console.info(`Forwarding time with ${seconds}s ...`);
       web3.currentProvider.send(
         {
           jsonrpc: "2.0",
           method: "evm_increaseTime",
           params: [seconds],
-          id: 0
+          id: 0,
         },
-        err => {
+        (err) => {
           if (err) {
             return reject(err);
           }
@@ -264,7 +260,7 @@ export async function forwardTime(seconds, test) {
               jsonrpc: "2.0",
               method: "evm_mine",
               params: [],
-              id: 0
+              id: 0,
             },
             (err2, res) => {
               if (err2) {

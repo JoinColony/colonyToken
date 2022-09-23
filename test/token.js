@@ -13,7 +13,7 @@ const TokenAuthority = artifacts.require("TokenAuthority");
 const DSAuth = artifacts.require("DSAuth");
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-contract("Token", accounts => {
+contract("Token", (accounts) => {
   const COLONY_ACCOUNT = accounts[5];
   const ACCOUNT_TWO = accounts[1];
   const ACCOUNT_THREE = accounts[2];

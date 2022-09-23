@@ -2,7 +2,7 @@ version: 2
 
 job_common: &job_common
   docker:
-    - image: circleci/node:10.12-stretch
+    - image: cimg/node:14.18.2
       auth:
         username: colonyci
         password: $COLONYCI_DOCKERHUB_PASSWORD
@@ -20,8 +20,10 @@ step_setup_global_packages: &step_setup_global_packages
   run:
     name: "Set up global packages"
     command: |
-      npm ci
       git submodule update --remote --init
+      npm set cache ~/.npm
+      sudo npm install -g npm@8.5.5
+      npm ci
       npm run provision:multisig:contract
 step_pull_solc_docker: &step_pull_solc_docker
     run:

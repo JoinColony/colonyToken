@@ -10,15 +10,15 @@ module.exports = {
       port: 8545,
       network_id: "*", // Match any network id
       gasPrice: 0,
-      skipDryRun: true
+      skipDryRun: true,
     },
     coverage: {
       host: "127.0.0.1",
       port: 8555,
       network_id: "1999",
       gasPrice: 0x01, // <-- Use this low gas price
-      skipDryRun: true
-    }
+      skipDryRun: true,
+    },
   },
   plugins: ["solidity-coverage"],
   mocha: {
@@ -26,8 +26,8 @@ module.exports = {
     reporterOptions: {
       currency: "USD",
       gasPrice: 1,
-      onlyCalledMethods: true
-    }
+      onlyCalledMethods: true,
+    },
   },
   compilers: {
     solc: {
@@ -37,10 +37,10 @@ module.exports = {
       settings: {
         optimizer: {
           enabled: true,
-          runs: 200
+          runs: 200,
         },
-        evmVersion: "petersburg"
-      }
-    }
-  }
+        evmVersion: "petersburg",
+      },
+    },
+  },
 };

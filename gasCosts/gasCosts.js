@@ -7,7 +7,7 @@ const TokenAuthority = artifacts.require("TokenAuthority");
 const VestingSimple = artifacts.require("VestingSimple");
 const DSAuth = artifacts.require("DSAuth");
 
-contract("Gas Costs", accounts => {
+contract("Gas Costs", (accounts) => {
   const USER0 = accounts[0];
   const USER1 = accounts[1];
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
